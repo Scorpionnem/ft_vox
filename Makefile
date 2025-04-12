@@ -15,7 +15,7 @@ OBJ_DIR := ./obj/
 
 OBJECTS = $(SOURCES:.cpp=.o)
 
-CPP_FILES := main glad
+CPP_FILES := main init glad hooks utils Shader
 
 CPP_FILES := $(addsuffix .cpp, $(CPP_FILES))
 
@@ -40,8 +40,7 @@ glfw:
 	fi
 
 glad:
-	@echo hello
-
+	
 $(OBJECTS): $(OBJ_DIR)%.o : $(SOURCE_DIR)%.cpp
 	@c++ $(CFLAGS) $(INCLUDE_DIRS) -c $< -o $@
 
