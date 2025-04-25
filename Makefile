@@ -1,7 +1,7 @@
 NAME := ft_vox
 
 OBJ_DIR := ./obj/
-INCLUDE_DIRS := ./includes/ ./GLFW/include/GLFW ./includes/glad ./includes/KHR
+INCLUDE_DIRS := ./includes/ ./GLFW/include/GLFW ./includes/glad ./includes/KHR 
 
 GLFWARCHIVE = GLFW/build/src/libglfw3.a
 
@@ -15,15 +15,16 @@ OBJ_DIR := ./obj/
 
 OBJECTS = $(SOURCES:.cpp=.o)
 
-CPP_FILES := main init glad hooks utils Shader
+CPP_FILES := main init glad hooks utils Shader Texture Camera Block Chunk
 
 CPP_FILES := $(addsuffix .cpp, $(CPP_FILES))
 
 SOURCES := $(addprefix $(SOURCE_DIR), $(CPP_FILES))
 
 OBJECTS := $(addprefix $(OBJ_DIR), $(CPP_FILES:.cpp=.o))
+DEPS := $(addprefix $(OBJ_DIR), $(CPP_FILES:.cpp=.d))
 
-CFLAGS = -Wall -Werror -Wextra -g
+CFLAGS = -MP -MMD -Wall -Werror -Wextra -g
 
 all: glfw glad $(NAME)
 
@@ -63,3 +64,5 @@ fclean:
 re: fclean all
 
 .PHONY: all clean fclean re
+
+-include $(DEPS)

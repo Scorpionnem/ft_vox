@@ -6,271 +6,186 @@
 /*   By: mbatty <mbatty@student.42angouleme.fr>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/10 13:33:29 by mbatty            #+#    #+#             */
-/*   Updated: 2025/04/12 22:52:31 by mbatty           ###   ########.fr       */
+/*   Updated: 2025/04/25 16:20:14 by mbatty           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "ft_vox.hpp"
-#define STB_IMAGE_IMPLEMENTATION
-#include "stb_image.h"
+#include "EBO.hpp"
+
+float	SCREEN_WIDTH = 800.0f;
+float	SCREEN_HEIGHT = 800.0f;
+
+float cube_vertices[] = {
+	// back face
+-0.5f, -0.5f, -0.5f, 0.0f, 0.0f, // bottom-left	0
+0.5f, 0.5f, -0.5f, 1.0f, 1.0f, // top-right		1
+0.5f, -0.5f, -0.5f, 1.0f, 0.0f, // bottom-right	2
+0.5f, 0.5f, -0.5f, 1.0f, 1.0f, // top-right		3
+-0.5f, -0.5f, -0.5f, 0.0f, 0.0f, // bottom-left	4
+-0.5f, 0.5f, -0.5f, 0.0f, 1.0f, // top-left		6
+// front face
+-0.5f, -0.5f, 0.5f, 0.0f, 0.0f, // bottom-left	7
+0.5f, -0.5f, 0.5f, 1.0f, 0.0f, // bottom-right	8
+0.5f, 0.5f, 0.5f, 1.0f, 1.0f, // top-right		9
+0.5f, 0.5f, 0.5f, 1.0f, 1.0f, // top-right		10
+-0.5f, 0.5f, 0.5f, 0.0f, 1.0f, // top-left		11
+-0.5f, -0.5f, 0.5f, 0.0f, 0.0f, // bottom-left	12
+// left face
+-0.5f, 0.5f, 0.5f, 1.0f, 0.0f, // top-right		13
+-0.5f, 0.5f, -0.5f, 1.0f, 1.0f, // top-left		14
+-0.5f, -0.5f, -0.5f, 0.0f, 1.0f, // bottom-left	15
+-0.5f, -0.5f, -0.5f, 0.0f, 1.0f, // bottom-left	16
+-0.5f, -0.5f, 0.5f, 0.0f, 0.0f, // bottom-right	17
+-0.5f, 0.5f, 0.5f, 1.0f, 0.0f, // top-right		18
+// right face
+0.5f, 0.5f, 0.5f, 1.0f, 0.0f, // top-left		19
+0.5f, -0.5f, -0.5f, 0.0f, 1.0f, // bottom-right	20
+0.5f, 0.5f, -0.5f, 1.0f, 1.0f, // top-right		21
+0.5f, -0.5f, -0.5f, 0.0f, 1.0f, // bottom-right	22
+0.5f, 0.5f, 0.5f, 1.0f, 0.0f, // top-left		23
+0.5f, -0.5f, 0.5f, 0.0f, 0.0f, // bottom-left	24
+// bottom face
+-0.5f, -0.5f, -0.5f, 0.0f, 1.0f, // top-right	25
+0.5f, -0.5f, -0.5f, 1.0f, 1.0f, // top-left		26
+0.5f, -0.5f, 0.5f, 1.0f, 0.0f, // bottom-left	27
+0.5f, -0.5f, 0.5f, 1.0f, 0.0f, // bottom-left	28
+-0.5f, -0.5f, 0.5f, 0.0f, 0.0f, // bottom-right	29
+-0.5f, -0.5f, -0.5f, 0.0f, 1.0f, // top-right	30
+// top face
+-0.5f, 0.5f, -0.5f, 0.0f, 1.0f, // top-left		31
+0.5f, 0.5f, 0.5f, 1.0f, 0.0f, // bottom-right	32
+0.5f, 0.5f, -0.5f, 1.0f, 1.0f, // top-right		33
+0.5f, 0.5f, 0.5f, 1.0f, 0.0f, // bottom-right	34
+-0.5f, 0.5f, -0.5f, 0.0f, 1.0f, // top-left		35
+-0.5f, 0.5f, 0.5f, 0.0f, 0.0f // bottom-left	36
+};
+
+const unsigned int cube_indices[] = {
+    0, 1, 2,    3, 4, 5,      // back face
+    6, 7, 8,    9,10,11,      // front face
+   12,13,14,   15,16,17,      // left face
+   18,19,20,   21,22,23,      // right face
+   24,25,26,   27,28,29,      // bottom face
+   30,31,32,   33,34,35       // top face
+};
 
 float square_vertices[] = {
-	-0.5f,	-0.5f,	-0.5f,		0.0f,	0.0f,
-	0.5f,	-0.5f,	-0.5f,		1.0f,	0.0f,
-	0.5f,	0.5f,	-0.5f,		1.0f,	1.0f,
-	0.5f,	0.5f,	-0.5f,		1.0f,	1.0f,
-	-0.5f,	0.5f,	-0.5f,		0.0f,	1.0f,
-	-0.5f,	-0.5f,	-0.5f,		0.0f,	0.0f,
-	-0.5f,	-0.5f,	0.5f,		0.0f,	0.0f,
-	0.5f,	-0.5f,	0.5f,		1.0f,	0.0f,
-	0.5f,	0.5f,	0.5f,		1.0f,	1.0f,
-	0.5f,	0.5f,	0.5f,		1.0f,	1.0f,
-	-0.5f,	0.5f,	0.5f,		0.0f,	1.0f,
-	-0.5f,	-0.5f,	0.5f,		0.0f,	0.0f,
-	-0.5f,	0.5f,	0.5f,		1.0f,	0.0f,
-	-0.5f,	0.5f,	-0.5f,		1.0f,	1.0f,
-	-0.5f,	-0.5f,	-0.5f,		0.0f,	1.0f,
-	-0.5f,	-0.5f,	-0.5f,		0.0f,	1.0f,
-	-0.5f,	-0.5f,	0.5f,		0.0f,	0.0f,
-	-0.5f,	0.5f,	0.5f,		1.0f,	0.0f,
-	0.5f,	0.5f,	0.5f,		1.0f,	0.0f,
-	0.5f,	0.5f,	-0.5f,		1.0f,	1.0f,
-	0.5f,	-0.5f,	-0.5f,		0.0f,	1.0f,
-	0.5f,	-0.5f,	-0.5f,		0.0f,	1.0f,
-	0.5f,	-0.5f,	0.5f,		0.0f,	0.0f,
-	0.5f,	0.5f,	0.5f,		1.0f,	0.0f,
-	-0.5f,	-0.5f,	-0.5f,		0.0f,	1.0f,
-	0.5f,	-0.5f,	-0.5f,		1.0f,	1.0f,
-	0.5f,	-0.5f,	0.5f,		1.0f,	0.0f,
-	0.5f,	-0.5f,	0.5f,		1.0f,	0.0f,
-	-0.5f,	-0.5f,	0.5f,		0.0f,	0.0f,
-	-0.5f,	-0.5f,	-0.5f,		0.0f,	1.0f,
-	-0.5f,	0.5f,	-0.5f,		0.0f,	1.0f,
-	0.5f,	0.5f,	-0.5f,		1.0f,	1.0f,
-	0.5f,	0.5f,	0.5f,		1.0f,	0.0f,
-	0.5f,	0.5f,	0.5f,		1.0f,	0.0f,
-	-0.5f,	0.5f,	0.5f,		0.0f,	0.0f,
-	-0.5f,	0.5f,	-0.5f,		0.0f,	1.0f
+	// positions         // colors
+	 0.5f, -0.5f, 0.0f,  1.0f, 0.0f, 0.0f,  // bottom right
+	-0.5f, -0.5f, 0.0f,  0.0f, 1.0f, 0.0f,  // bottom left
+	 0.0f,  0.5f, 0.0f,  0.0f, 0.0f, 1.0f   // top 
 };
 
-unsigned int square_indices[] = {  // note that we start from 0!
-    0, 1, 3,
-	1, 2, 3
-};
+std::vector<Block>	cubes;
 
-const char	*fragmentShaderSource1 =
-"#version 330 core\n"
-"out vec4 FragColor;\n"
-"in vec2 fragCoord;\n"
-"void main()\n"
-"{\n"
-" FragColor = vec4(fragCoord.x, 0.1f, 0.5f, 1.0f);\n"
-"}\0";
+Assets	assets;
 
-// void	render_triangle(unsigned int shader, float *vertices)
-// {
-// }
-
-// void	load_triangle_objects(unsigned int *VAO, unsigned int *VBO, float *vertices)
-// {
-// 	glGenVertexArrays(1, VAO);
-//     glGenBuffers(1, VBO);
-
-// 	(void)vertices;
-// 	glBindVertexArray(*VAO);
-//     glBindBuffer(GL_ARRAY_BUFFER, *VBO);
-//     glBufferData(GL_ARRAY_BUFFER, sizeof(triangle_vertices1), vertices, GL_STATIC_DRAW);
-// 	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
-//     glEnableVertexAttribArray(0);
-// 	glBindBuffer(GL_ARRAY_BUFFER, 0); 
-// 	glBindVertexArray(0);
-// }
-
-void	load_multiple_objects(unsigned int *EBO, unsigned int *VAO, unsigned int *VBO, float *vertices, unsigned int *indices)
+void	loadAssets()
 {
-	(void)EBO;(void)indices;(void)vertices;
-	glGenVertexArrays(1, VAO);
-    glGenBuffers(1, VBO);
-
-    glBindVertexArray(*VAO);
-
-    glBindBuffer(GL_ARRAY_BUFFER, *VBO);
-    glBufferData(GL_ARRAY_BUFFER, sizeof(square_vertices), square_vertices, GL_STATIC_DRAW);
-
-    // position attribute
-    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 5 * sizeof(float), (void*)0);
-    glEnableVertexAttribArray(0);
-    // texture coord attribute
-    glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 5 * sizeof(float), (void*)(3 * sizeof(float)));
-    glEnableVertexAttribArray(1);
+	assets.loadTexture("missing", "textures/missing.png");
+	assets.loadTexture("dirt", "textures/dirt.png");
+	assets.loadTexture("grass_top", "textures/grass_top.png");
+	assets.loadTexture("grass_side", "textures/grass_side.png");
 }
 
-#include <cmath>
-#include <sys/time.h>
-#include <unistd.h>
-
-class	Texture
+Block genBlock(std::string id)
 {
-	public:
-		Texture(const char *path)
-		{
-			stbi_set_flip_vertically_on_load(true);
-			data = stbi_load(path, &this->width, &this->height, &this->nrChannels, 0);
-			glGenTextures(1, &this->ID);
-			glBindTexture(GL_TEXTURE_2D, this->ID);
-			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
-			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
-			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-			glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, data);
-			glGenerateMipmap(GL_TEXTURE_2D);
-			stbi_image_free(data);
-		}
-		unsigned char	*data;
-		unsigned int	ID;
-		int width;
-		int height;
-		int nrChannels;
-};
-
-glm::vec3 cameraPos = glm::vec3(0.0f, 0.0f, 3.0f);
-glm::vec3 cameraFront = glm::vec3(0.0f, 0.0f, -1.0f);
-glm::vec3 cameraUp = glm::vec3(0.0f, 1.0f, 0.0f);
-
-float	deltaTime = 0.0f;
-float	lastFrame = 0.0f;
-
-float yaw = -90.0f;
-float pitch = 0.0f;
-
-#include <sys/time.h>
-void display_fps(struct timeval start_time, int target_fps)
-{
-    struct timeval        end_time;
-    int                    start;
-    int                    end;
-
-    gettimeofday(&end_time, NULL);
-    start = start_time.tv_sec * 1000000 + start_time.tv_usec;
-    end = end_time.tv_sec * 1000000 + end_time.tv_usec;
-    while (1000000 / abs(end - start + 1) > target_fps)
-    {
-        gettimeofday(&end_time, NULL);
-        end = end_time.tv_sec * 1000000 + end_time.tv_usec;
-    }
-    gettimeofday(&end_time, NULL);
-    end = end_time.tv_sec * 1000000 + end_time.tv_usec;
-    printf("%d\n", 1000000 / abs(end - start + 1));
+	if (id == "grass_block")
+		return (Block(glm::vec3(0, 0, 0), "grass", "grass_top"));
+	if (id == "dirt")
+		return (Block(glm::vec3(0, 0, 0), "dirt", "dirt"));
+	if (id == "air")
+		return (Block(glm::vec3(0, 0, 0), "air", "air"));
+	return (Block(glm::vec3(0, 0, 0), "", ""));
 }
+
+#include "World.hpp"
 
 int	main(void)
 {	
 	GLFWwindow	*window = initWindow();
 	if (!window)
 		return (1);
-	
-	Shader	shaderProgram("shaders/shader.vs", "shaders/shader.fs");
-	Texture	texture("textures/mossy_bricks.png");
 
-	unsigned int VBO, VAO;
-	unsigned int VBO1, VAO1, EBO;
+	loadAssets();
 
-	load_multiple_objects(&EBO, &VAO1, &VBO1, square_vertices, square_indices);
+	Shader	shaderProgram("shaders/block_shader.vs", "shaders/block_shader.fs");
 
-	glEnable(GL_DEPTH_TEST);
+	assets.loadShader("block", shaderProgram.ID);
 
-	std::vector<glm::vec3>	cubes;
+	VAO	vao;
+	vao.bind();
+	VBO	vbo(cube_vertices, sizeof(cube_vertices));
+	EBO	ebo(cube_indices, 36 * sizeof(unsigned int));
+	vao.attribFloat(vbo, 0, 3, GL_FLOAT, 5 * sizeof(float), (void*)0);
+	vao.attribFloat(vbo, 1, 2, GL_FLOAT, 5 * sizeof(float), (void*)(3 * sizeof(float)));
+	vao.unbind();
 
-	for (int i = 0; i < 10; i++)
-		for (int j = 0; j < 2; j++)
-			for (int k = 0; k < 10; k++)
-				cubes.push_back(glm::vec3(i, j, k));
+	std::vector<Chunk>	chunks;
 
-	// glm::vec3	cubPositions[] =
-	// {
-	// 	glm::vec3( 0.0f, 0.0f, 0.0f),
-	// 	glm::vec3( 0.0f, 1.0f, 0.0f),
-	// 	glm::vec3( 0.0f, 2.0f, 0.0f),
-	// 	glm::vec3( 1.0f, -1.0f, 0.0f),
-	// 	glm::vec3( -1.0f, -1.0f, 0.0f),
-	// 	glm::vec3(-1.7f, 3.0f, -7.5f),
-	// 	glm::vec3( 1.3f, -2.0f, -2.5f),
-	// 	glm::vec3( 1.5f, 2.0f, -2.5f),
-	// 	glm::vec3( 1.5f, 0.2f, -1.5f),
-	// 	glm::vec3(-1.3f, 1.0f, -1.5f)
-	// };
+	for (int x = 0; x < 4; x++)
+		for (int z = 0; z < 4; z++)
+			chunks.push_back(Chunk(glm::vec3(x, 0, z)));
 
-	glBindTexture(GL_TEXTURE_2D, texture.ID);
 	glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
 
 	struct timeval tv;
+	Camera	camera;
+
+	for (int i = 0; i < 16; i++)
+	{
+		for (int x = 0; x < 16; x++)
+			for (int z = 0; z < 16; z++)
+				chunks[i].setBlock(x, 0, z, genBlock("grass"));
+	}
+
+	glfwSwapInterval(0);
+
+	int	lastprout = 0;
 
 	while (!glfwWindowShouldClose(window))
 	{
+		// std::cout << "World pos (x, y, z) " << pos.x << " " << pos.y << " " << pos.z << std::endl;
+		// std::cout << "Chunk pos (x, y, z) " << (int)pos.x / 16 << " " << (int)pos.y / 16 << " " << (int)pos.z / 16 << std::endl;
+
 		gettimeofday(&tv, NULL);
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 		float currentFrame = glfwGetTime();
 		deltaTime = currentFrame - lastFrame;
 		lastFrame = currentFrame;
-		
+
 		key_hook(window);
 
-		glClearColor(0.2f, 0.1f, 0.1f, 1.0f);
-		glClear(GL_COLOR_BUFFER_BIT);
+		camera.update();
+		glm::mat4	view = camera.getViewMatrix();
+		glm::mat4	projection = glm::perspective(glm::radians(90.0f), SCREEN_WIDTH / SCREEN_HEIGHT, 0.1f, 160.0f);;
+		shaderProgram.setMat4("view", view);
+		shaderProgram.setMat4("projection", projection);
 
-		shaderProgram.use();
+		vao.bind();
+
+		for (int i = 0; i < 1; i++)
+			chunks[i].draw();
 
 
-		
-		glm::mat4	view = glm::mat4(1.0f);
-		glm::mat4 projection = glm::mat4(1.0f);
-		
-		glm::vec3 direction;
-		direction.x = cos(glm::radians(yaw)); // convert to radians first
-		direction.y = sin(glm::radians(pitch));
-		direction.z = sin(glm::radians(yaw));
+		vao.unbind();
 
-		cameraFront = glm::normalize(direction);
-		
-		projection = glm::perspective(glm::radians(90.0f), 800.0f / 800.0f, 0.1f, 100.0f);
-		// view = glm::translate(view, glm::vec3(player_x, player_y, player_z));
-
-		view = glm::lookAt(cameraPos, cameraPos + cameraFront, cameraUp);
-
-		unsigned int	Loc = glGetUniformLocation(shaderProgram.ID, "view");
-		glUniformMatrix4fv(Loc, 1, GL_FALSE, glm::value_ptr(view));
-		Loc = glGetUniformLocation(shaderProgram.ID, "projection");
-		glUniformMatrix4fv(Loc, 1, GL_FALSE, glm::value_ptr(projection));
-		
-
-		
-		glBindVertexArray(VAO1);
-		for(std::vector<glm::vec3>::iterator it = cubes.begin(); it != cubes.end(); it++)
-		{
-			glm::mat4 model = glm::mat4(1.0f);
-			model = glm::translate(model, *it);
-			// float angle = 20.0f * (i + 1) * glfwGetTime();
-			float angle = 0;
-			model = glm::rotate(model, glm::radians(angle), glm::vec3(1.0f, 0.3f, 0.5f));
-			
-			Loc = glGetUniformLocation(shaderProgram.ID, "model");
-			glUniformMatrix4fv(Loc, 1, GL_FALSE, glm::value_ptr(model));
-			
-			glDrawArrays(GL_TRIANGLES, 0, 36);
-		}
-		
-		glBindVertexArray(0);
 		glfwSwapBuffers(window);
 		glfwPollEvents();
-		display_fps(tv, 500);
+
+		if ((int)glfwGetTime() != lastprout)
+		{
+			display_fps(window, tv, 5000);
+			lastprout = (int)glfwGetTime();
+		}
 	}
-	glDeleteVertexArrays(1, &VAO);
-	glDeleteBuffers(1, &VBO);
-	glDeleteVertexArrays(1, &VAO1);
-	glDeleteBuffers(1, &VBO1);
 	glDeleteProgram(shaderProgram.ID);
-	glDeleteTextures(1, &texture.ID);
+	
+	vao.free();
+	vbo.free();
+	assets.free();
 	glfwTerminate();
 	return (0);
 }

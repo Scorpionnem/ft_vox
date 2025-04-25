@@ -6,7 +6,7 @@
 /*   By: mbatty <mbatty@student.42angouleme.fr>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/12 14:32:50 by mbatty            #+#    #+#             */
-/*   Updated: 2025/04/12 22:40:53 by mbatty           ###   ########.fr       */
+/*   Updated: 2025/04/25 15:14:24 by mbatty           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,6 +16,14 @@ void resize_hook(GLFWwindow* window, int width, int height)
 {
 	(void)window;(void)width;(void)height;
 	glViewport(0, 0, width, height);
+	SCREEN_WIDTH = width;
+	SCREEN_HEIGHT = height;
+}
+
+void key_callback(GLFWwindow* window, int key, int scancode, int action, int mods)
+{
+	(void)scancode;(void)window;(void)action;(void)mods;(void)key;
+    // std::cout << (char)key << std::endl;
 }
 
 void	key_hook(GLFWwindow *window)
@@ -25,18 +33,23 @@ void	key_hook(GLFWwindow *window)
 
 	float cameraSpeed = 15.0f * deltaTime;
 
+	if (glfwGetKey(window, GLFW_KEY_LEFT_CONTROL) == GLFW_PRESS)
+		cameraSpeed *= 20;
+		
 	if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS)
-		cameraPos += cameraSpeed * cameraFront;
+		pos += cameraSpeed * front;
 	if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS)
-		cameraPos -= cameraSpeed * cameraFront;
+		pos -= cameraSpeed * front;
+	if (glfwGetKey(window, GLFW_KEY_SPACE) == GLFW_PRESS)
+		pos += cameraSpeed * up;
+	if (glfwGetKey(window, GLFW_KEY_LEFT_SHIFT) == GLFW_PRESS)
+		pos -= cameraSpeed * up;
+		
 	if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS)
-		cameraPos -=  glm::normalize(glm::cross(cameraFront, cameraUp)) * cameraSpeed;
+		pos -=  glm::normalize(glm::cross(front, up)) * cameraSpeed;
 	if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS)
-		cameraPos +=  glm::normalize(glm::cross(cameraFront, cameraUp)) * cameraSpeed;
-	// if (glfwGetKey(window, GLFW_KEY_SPACE) == GLFW_PRESS)
-	// 	player_y -= 0.1f;
-	// if (glfwGetKey(window, GLFW_KEY_LEFT_SHIFT) == GLFW_PRESS)
-	// 	player_y += 0.1f;
+		pos +=  glm::normalize(glm::cross(front, up)) * cameraSpeed;
+		
 	if (glfwGetKey(window, GLFW_KEY_LEFT) == GLFW_PRESS)
 		yaw -= 1.f;
 	if (glfwGetKey(window, GLFW_KEY_RIGHT) == GLFW_PRESS)
@@ -45,6 +58,13 @@ void	key_hook(GLFWwindow *window)
 		pitch += 1.f;
 	if (glfwGetKey(window, GLFW_KEY_DOWN) == GLFW_PRESS)
 		pitch -= 1.f;
+
+	if (pos.x < 0)
+		pos.x = 0;
+	if (pos.y < 0)
+		pos.y = 0;
+	if (pos.z < 0)
+		pos.z = 0;
 }
 
 void	move_mouse_hook(GLFWwindow* window, double xpos, double ypos)
@@ -52,12 +72,9 @@ void	move_mouse_hook(GLFWwindow* window, double xpos, double ypos)
 	(void)window;
 	(void)xpos;
 	(void)ypos;
-
-	// double	wwidth;
-	// double	wheight;
 	
-	static float lastX = 400;
-	static float lastY = 400;
+	static float lastX = SCREEN_WIDTH / 2;
+	static float lastY = SCREEN_HEIGHT / 2;
 
 	float xoffset = xpos - lastX;
 	float yoffset = lastY - ypos; // reversed: y ranges bottom to top
@@ -77,12 +94,4 @@ void	move_mouse_hook(GLFWwindow* window, double xpos, double ypos)
 		pitch = 89.0f;
 	if(pitch < -89.0f)
 		pitch = -89.0f;
-
-	// getMouseRealPos(window, &wwidth, &wheight, xpos, ypos);
-	// square_vertices[24] = wwidth;
-	// square_vertices[25] = wheight;
-	// square_vertices[0] = 0 - wwidth;
-	// square_vertices[1] = wheight;
-	// std::cout << xpos << std::endl;
-	// triangle_vertices1[] = ypos / 800.f;
 }

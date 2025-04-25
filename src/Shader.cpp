@@ -6,7 +6,7 @@
 /*   By: mbatty <mbatty@student.42angouleme.fr>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/12 18:20:21 by mbatty            #+#    #+#             */
-/*   Updated: 2025/04/12 18:29:39 by mbatty           ###   ########.fr       */
+/*   Updated: 2025/04/24 15:27:27 by mbatty           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -79,7 +79,6 @@ static int	loadShaderProgram(const char *vertex, const char *fragment)
 	return (res);
 }
 
-
 Shader::Shader(const char *vertexPath, const char *fragmentPath)
 {
 	std::string	vertexCode;
@@ -112,6 +111,11 @@ Shader::Shader(const char *vertexPath, const char *fragmentPath)
 	this->ID = loadShaderProgram(vShaderCode, fShaderCode);
 }
 
+Shader::Shader(unsigned int ID)
+{
+	this->ID = ID;
+}
+
 void	Shader::use()
 {
 	glUseProgram(this->ID);
@@ -130,4 +134,9 @@ void	Shader::setInt(const std::string &name, int value) const
 void	Shader::setFloat(const std::string &name, float value) const
 {
 	glUniform1f(glGetUniformLocation(this->ID, name.c_str()), value);
+}
+
+void	Shader::setMat4(const std::string &name, glm::mat4 value) const
+{
+	glUniformMatrix4fv(glGetUniformLocation(this->ID, name.c_str()), 1, GL_FALSE, glm::value_ptr(value));
 }
