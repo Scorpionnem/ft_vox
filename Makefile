@@ -1,7 +1,7 @@
 NAME := ft_vox
 
 OBJ_DIR := ./obj/
-INCLUDE_DIRS := ./includes/ ./GLFW/include/GLFW ./includes/glad ./includes/KHR 
+INCLUDE_DIRS := ./includes/ ./GLFW/include/GLFW ./includes/glad ./includes/KHR ./includes/render ./includes/player
 
 GLFWARCHIVE = GLFW/build/src/libglfw3.a
 
@@ -15,7 +15,11 @@ OBJ_DIR := ./obj/
 
 OBJECTS = $(SOURCES:.cpp=.o)
 
-CPP_FILES := main init glad hooks utils Shader Texture Camera Block Chunk
+CPP_FILES :=	main \
+				utils/init utils/glad utils/utils \
+				player/hooks player/Camera player/Input \
+				render/Shader render/Texture \
+				assets/Assets assets/Block assets/Chunk assets/World
 
 CPP_FILES := $(addsuffix .cpp, $(CPP_FILES))
 

@@ -6,11 +6,12 @@
 /*   By: mbatty <mbatty@student.42angouleme.fr>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/12 18:20:21 by mbatty            #+#    #+#             */
-/*   Updated: 2025/04/24 15:27:27 by mbatty           ###   ########.fr       */
+/*   Updated: 2025/04/26 11:25:14 by mbatty           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "ft_vox.hpp"
+#include "Shader.hpp"
 
 static int	loadVertexShader(const char *shader)
 {
@@ -139,4 +140,9 @@ void	Shader::setFloat(const std::string &name, float value) const
 void	Shader::setMat4(const std::string &name, glm::mat4 value) const
 {
 	glUniformMatrix4fv(glGetUniformLocation(this->ID, name.c_str()), 1, GL_FALSE, glm::value_ptr(value));
+}
+
+void	Shader::setVec3(const std::string &name, glm::vec3 value) const
+{
+	glUniform3fv(glGetUniformLocation(this->ID, name.c_str()), 1, glm::value_ptr(value));
 }

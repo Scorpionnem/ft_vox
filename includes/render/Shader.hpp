@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   VBO.hpp                                            :+:      :+:    :+:   */
+/*   Shader.hpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: mbatty <mbatty@student.42angouleme.fr>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/04/25 11:45:35 by mbatty            #+#    #+#             */
-/*   Updated: 2025/04/25 11:45:46 by mbatty           ###   ########.fr       */
+/*   Created: 2025/04/12 18:17:29 by mbatty            #+#    #+#             */
+/*   Updated: 2025/04/26 11:22:23 by mbatty           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,32 +14,18 @@
 
 #include "ft_vox.hpp"
 
-class VBO
+class Shader
 {
 	public:
-		VBO(float *vertices, GLsizeiptr size)
-		{
-			glGenBuffers(1, &this->ID);
-			glBindBuffer(GL_ARRAY_BUFFER, this->ID);
-			glBufferData(GL_ARRAY_BUFFER, size, vertices, GL_STATIC_DRAW);
-		}
-		void free()
-		{
-			glDeleteBuffers(1, &this->ID);
-		}
-
-		unsigned int	getID() const
-		{
-			return (this->ID);
-		}
-		void bind()
-		{
-			glBindBuffer(GL_ARRAY_BUFFER, this->ID);
-		}
-		void unbind()
-		{
-			glBindBuffer(GL_ARRAY_BUFFER, 0);
-		}
-	private:
 		unsigned int	ID;
+
+		Shader(unsigned int ID);
+		Shader(const char *vertexPath, const char *fragmentPath);
+
+		void	use();
+		void	setBool(const std::string &name, bool value) const;
+		void	setInt(const std::string &name, int value) const;
+		void	setFloat(const std::string &name, float value) const;
+		void	setMat4(const std::string &name, glm::mat4 value) const;
+		void	setVec3(const std::string &name, glm::vec3 value) const;
 };

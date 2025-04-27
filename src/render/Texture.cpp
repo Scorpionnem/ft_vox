@@ -6,13 +6,15 @@
 /*   By: mbatty <mbatty@student.42angouleme.fr>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/24 12:54:31 by mbatty            #+#    #+#             */
-/*   Updated: 2025/04/24 13:20:26 by mbatty           ###   ########.fr       */
+/*   Updated: 2025/04/26 11:10:21 by mbatty           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "ft_vox.hpp"
 #define STB_IMAGE_IMPLEMENTATION
 #include "stb_image.h"
+
+#include "Texture.hpp"
 
 Texture::Texture(const char *path)
 {

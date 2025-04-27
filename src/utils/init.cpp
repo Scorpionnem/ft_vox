@@ -6,11 +6,14 @@
 /*   By: mbatty <mbatty@student.42angouleme.fr>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/12 14:31:04 by mbatty            #+#    #+#             */
-/*   Updated: 2025/04/24 18:57:23 by mbatty           ###   ########.fr       */
+/*   Updated: 2025/04/27 13:18:26 by mbatty           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "ft_vox.hpp"
+#include "Camera.hpp"
+#include "Hooks.hpp"
+#include "Input.hpp"
 
 static void	initGLFW(void)
 {
@@ -24,7 +27,7 @@ GLFWwindow	*initWindow(void)
 {
 	initGLFW();
 	
-	GLFWwindow	*res = glfwCreateWindow(SCREEN_WIDTH, SCREEN_HEIGHT, "OpenGL", NULL, NULL);
+	GLFWwindow	*res = glfwCreateWindow(SCREEN_WIDTH, SCREEN_HEIGHT, "ft_vox", NULL, NULL);
 	if (!res)
 	{
 		std::cout << "Failed to create window" << std::endl;
@@ -41,8 +44,9 @@ GLFWwindow	*initWindow(void)
 	glViewport(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT);
 	glfwSetFramebufferSizeCallback(res, resize_hook);
 	glfwSetCursorPosCallback(res, move_mouse_hook);
-	glfwSetKeyCallback(res, key_callback);
-	glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
+	glfwSetCharCallback(res, char_callback);
+	glfwSetKeyCallback(res, special_callback);
+	glClearColor(0.2f, 0.2f, 0.5f, 1.0f);
 	glEnable(GL_DEPTH_TEST);
 	glEnable(GL_CULL_FACE);
 	return (res);

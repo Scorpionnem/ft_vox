@@ -1,30 +1,22 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   World.hpp                                          :+:      :+:    :+:   */
+/*   Input.hpp                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: mbatty <mbatty@student.42angouleme.fr>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/04/23 21:29:51 by mbatty            #+#    #+#             */
-/*   Updated: 2025/04/27 13:41:43 by mbatty           ###   ########.fr       */
+/*   Created: 2025/04/27 12:59:23 by mbatty            #+#    #+#             */
+/*   Updated: 2025/04/27 13:16:09 by mbatty           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
+#pragma once
+
 #include "ft_vox.hpp"
-#include "Chunk.hpp"
-#include <unordered_map>
 
-class	World
-{
-	public:
-		World(){}
-		void	setBlock(int x, int y, int z, bool state);
-		bool	getBlock(int x, int y, int z);
-		Chunk	*getChunk(glm::vec3 targetPos);
-		void	addChunk(glm::vec3 targetPos);
-		void	drawChunks(glm::vec3 playerPos, int radius);
+extern bool 		isTyping;
+extern std::string	playerInput;
 
-	std::unordered_map<std::string, Chunk> worldData;	
-};
-
-extern World world;
+void	char_callback(GLFWwindow *window, unsigned int codepoint);
+void	use_input();
+void	special_callback(GLFWwindow *window, int key, int scancode, int action, int mods);

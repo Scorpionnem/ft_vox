@@ -6,7 +6,7 @@
 /*   By: mbatty <mbatty@student.42angouleme.fr>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/12 16:30:52 by mbatty            #+#    #+#             */
-/*   Updated: 2025/04/25 10:57:15 by mbatty           ###   ########.fr       */
+/*   Updated: 2025/04/27 12:25:56 by mbatty           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,6 +27,11 @@ int	convertIndex(int x, int y, int z)
 	return (x + z * 16 + y * 16 * 16);
 }
 
+glm::vec2	getAtlasOffset(int HorizontalOffset, int VerticalOffset)
+{
+	return (glm::vec2((float)HorizontalOffset * 4.0, (float)VerticalOffset * 4.0));
+}
+
 void display_fps(GLFWwindow	*window, struct timeval start_time, int target_fps)
 {
     struct timeval        end_time;
@@ -34,18 +39,26 @@ void display_fps(GLFWwindow	*window, struct timeval start_time, int target_fps)
     int                    end;
 
     gettimeofday(&end_time, NULL);
-    start = start_time.tv_sec * 1000000 + start_time.tv_usec;
-    end = end_time.tv_sec * 1000000 + end_time.tv_usec;
-    while (1000000 / abs(end - start + 1) > target_fps)
+    start = start_time.tv_sec;
+    end = end_time.tv_sec;
+    while (abs(end - start + 1) > target_fps)
     {
         gettimeofday(&end_time, NULL);
-        end = end_time.tv_sec * 1000000 + end_time.tv_usec;
+        end = end_time.tv_sec;
     }
     gettimeofday(&end_time, NULL);
-    end = end_time.tv_sec * 1000000 + end_time.tv_usec;
+    end = end_time.tv_sec;
 
 	std::stringstream	strs;
 	strs << 1000000 / abs(end - start + 1) << " fps";
 
 	glfwSetWindowTitle(window, strs.str().c_str());
+}
+
+std::string	format_coords(glm::vec3 coords)
+{
+	std::stringstream	strs;
+
+	strs << (int)coords.x << "|" << (int)coords.y << "|" << (int)coords.z;
+	return (strs.str());
 }

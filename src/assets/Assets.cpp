@@ -1,30 +1,24 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   World.hpp                                          :+:      :+:    :+:   */
+/*   Assets.cpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: mbatty <mbatty@student.42angouleme.fr>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/04/23 21:29:51 by mbatty            #+#    #+#             */
-/*   Updated: 2025/04/27 13:41:43 by mbatty           ###   ########.fr       */
+/*   Created: 2025/04/26 10:30:46 by mbatty            #+#    #+#             */
+/*   Updated: 2025/04/27 12:54:15 by mbatty           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "ft_vox.hpp"
-#include "Chunk.hpp"
-#include <unordered_map>
+#include "Assets.hpp"
 
-class	World
+Assets	assets; //Global
+
+void	loadAssets()
 {
-	public:
-		World(){}
-		void	setBlock(int x, int y, int z, bool state);
-		bool	getBlock(int x, int y, int z);
-		Chunk	*getChunk(glm::vec3 targetPos);
-		void	addChunk(glm::vec3 targetPos);
-		void	drawChunks(glm::vec3 playerPos, int radius);
-
-	std::unordered_map<std::string, Chunk> worldData;	
-};
-
-extern World world;
+	assets.loadTexture("atlas", "textures/atlas.png");
+	assets.loadAtlasMap("grass_top", 0);
+	assets.loadAtlasMap("grass_side", 1);
+	assets.loadAtlasMap("dirt", 2);
+	assets.loadShader("block", Shader("shaders/block_shader.vs", "shaders/block_shader.fs").ID);
+}

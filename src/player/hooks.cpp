@@ -6,11 +6,13 @@
 /*   By: mbatty <mbatty@student.42angouleme.fr>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/12 14:32:50 by mbatty            #+#    #+#             */
-/*   Updated: 2025/04/25 15:14:24 by mbatty           ###   ########.fr       */
+/*   Updated: 2025/04/27 13:14:53 by mbatty           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "ft_vox.hpp"
+#include "Camera.hpp"
+#include "Input.hpp"
 
 void resize_hook(GLFWwindow* window, int width, int height)
 {
@@ -20,16 +22,19 @@ void resize_hook(GLFWwindow* window, int width, int height)
 	SCREEN_HEIGHT = height;
 }
 
-void key_callback(GLFWwindow* window, int key, int scancode, int action, int mods)
-{
-	(void)scancode;(void)window;(void)action;(void)mods;(void)key;
+// void key_callback(GLFWwindow* window, int key, int scancode, int action, int mods)
+// {
+	// (void)scancode;(void)window;(void)action;(void)mods;(void)key;
     // std::cout << (char)key << std::endl;
-}
+// }
 
 void	key_hook(GLFWwindow *window)
 {
 	if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
 		glfwSetWindowShouldClose(window, true);
+
+	if (isTyping)
+		return ;
 
 	float cameraSpeed = 15.0f * deltaTime;
 
@@ -59,12 +64,12 @@ void	key_hook(GLFWwindow *window)
 	if (glfwGetKey(window, GLFW_KEY_DOWN) == GLFW_PRESS)
 		pitch -= 1.f;
 
-	if (pos.x < 0)
-		pos.x = 0;
-	if (pos.y < 0)
-		pos.y = 0;
-	if (pos.z < 0)
-		pos.z = 0;
+	// if (pos.x < 0)
+	// 	pos.x = 0;
+	// if (pos.y < 0)
+	// 	pos.y = 0;
+	// if (pos.z < 0)
+	// 	pos.z = 0;
 }
 
 void	move_mouse_hook(GLFWwindow* window, double xpos, double ypos)
