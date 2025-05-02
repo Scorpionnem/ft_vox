@@ -6,7 +6,7 @@
 /*   By: mbatty <mbatty@student.42angouleme.fr>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/27 12:28:19 by mbatty            #+#    #+#             */
-/*   Updated: 2025/04/27 14:08:28 by mbatty           ###   ########.fr       */
+/*   Updated: 2025/05/01 10:56:37 by mbatty           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,27 +28,7 @@ void	World::addChunk(glm::vec3 targetPos)
 {
 	if (targetPos.x < 0 || targetPos.y < 0 || targetPos.z < 0 || targetPos.y > 15)
 		return ;
-	Chunk	*tmp;
 	this->worldData.insert(std::make_pair(format_coords(targetPos), Chunk(targetPos)));
-	this->getChunk(targetPos)->calcCulling();
-	tmp = this->getChunk(glm::vec3(targetPos.x, targetPos.y - 1, targetPos.z));
-	if (tmp)
-		tmp->calcCulling();
-	tmp = this->getChunk(glm::vec3(targetPos.x, targetPos.y + 1, targetPos.z));
-	if (tmp)
-		tmp->calcCulling();
-	tmp = this->getChunk(glm::vec3(targetPos.x, targetPos.y, targetPos.z - 1));
-	if (tmp)
-		tmp->calcCulling();
-	tmp = this->getChunk(glm::vec3(targetPos.x, targetPos.y, targetPos.z + 1));
-	if (tmp)
-		tmp->calcCulling();
-	tmp = this->getChunk(glm::vec3(targetPos.x - 1, targetPos.y, targetPos.z));
-	if (tmp)
-		tmp->calcCulling();
-	tmp = this->getChunk(glm::vec3(targetPos.x + 1, targetPos.y, targetPos.z));
-	if (tmp)
-		tmp->calcCulling();
 }
 
 void	World::drawChunks(glm::vec3 playerPos, int radius)
@@ -67,12 +47,18 @@ void	World::drawChunks(glm::vec3 playerPos, int radius)
 					int chunkY = (playerChunkY + dy);
 					int chunkZ = (playerChunkZ + dz);
 
+					if (chunkX < 0 || chunkY < 0 || chunkZ < 0 || chunkY > 15)
+						continue ;
 					Chunk	*tmp;
 					tmp = getChunk(glm::vec3(chunkX, chunkY, chunkZ));
 					if (tmp)
 						tmp->draw();
 					else
+					{
 						addChunk(glm::vec3(chunkX, chunkY, chunkZ));
+						world.getChunk(glm::vec3(chunkX, chunkY, chunkZ))->gen();
+						world.getChunk(glm::vec3(chunkX, chunkY, chunkZ))->calcCulling();
+					}
 				}
 			}
 		}

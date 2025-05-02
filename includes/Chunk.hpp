@@ -6,7 +6,7 @@
 /*   By: mbatty <mbatty@student.42angouleme.fr>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/23 21:27:54 by mbatty            #+#    #+#             */
-/*   Updated: 2025/04/27 14:19:35 by mbatty           ###   ########.fr       */
+/*   Updated: 2025/04/27 20:12:02 by mbatty           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -57,8 +57,8 @@ class Chunk
 					int worldZ = _coords.z * 16 + z;
 		
 					// Compute the world height at (worldX, worldZ)
-					float heightValue = std::sin(worldX * 0.08f) + std::sin(worldZ * 0.08f);
-					int terrainHeight = static_cast<int>(((heightValue + 2.0f) / 4.0f) * 20.0f); // now mapped 0-255
+					float heightValue = std::sin(worldX * 0.04f) + std::sin(worldZ * 0.04f);
+					int terrainHeight = static_cast<int>(((heightValue + 2.0f) / 4.0f) * 60.0f); // now mapped 0-255
 		
 					// Calculate this chunk's vertical bounds
 					int chunkYStart = _coords.y * 16;
@@ -67,7 +67,7 @@ class Chunk
 						int worldY = chunkYStart + y;
 		
 						if (worldY <= terrainHeight) {
-							setBlock(x, y, z, true); // or Dirt/Stone depending
+							chunkData[convertIndex(x, y, z)] = true;
 						}
 					}
 				}
@@ -79,4 +79,5 @@ class Chunk
 		std::vector<bool>	chunkData;
 		glm::vec3			_coords;
 		Mesh				mesh;
+		bool				isMeshed;
 };

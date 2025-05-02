@@ -6,7 +6,7 @@
 /*   By: mbatty <mbatty@student.42angouleme.fr>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/23 21:29:51 by mbatty            #+#    #+#             */
-/*   Updated: 2025/04/27 13:41:43 by mbatty           ###   ########.fr       */
+/*   Updated: 2025/04/27 20:17:39 by mbatty           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,7 +24,7 @@ class	World
 		void	addChunk(glm::vec3 targetPos);
 		void	drawChunks(glm::vec3 playerPos, int radius);
 
-	std::unordered_map<std::string, Chunk> worldData;	
+	std::unordered_map<std::string, Chunk> worldData;
 };
 
 extern World world;

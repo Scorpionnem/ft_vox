@@ -6,7 +6,7 @@
 /*   By: mbatty <mbatty@student.42angouleme.fr>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/10 13:33:29 by mbatty            #+#    #+#             */
-/*   Updated: 2025/04/27 14:21:36 by mbatty           ###   ########.fr       */
+/*   Updated: 2025/05/01 12:59:10 by mbatty           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -95,48 +95,54 @@ int	main(void)
 
 	loadAssets();
 
-	// glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
+	glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
 
 	Camera	camera;
 	
-	world.addChunk(glm::vec3(0, 0, 0));
-	world.getChunk(glm::vec3(0, 0, 0))->gen();
-	world.addChunk(glm::vec3(0, 1, 0));
-	world.getChunk(glm::vec3(0, 1, 0))->gen();
-	world.addChunk(glm::vec3(1, 0, 0));
-	world.getChunk(glm::vec3(1, 0, 0))->gen();
-	world.addChunk(glm::vec3(1, 1, 0));
-	world.getChunk(glm::vec3(1, 1, 0))->gen();
+	for (int x = 0; x < 16; x++)
+		for (int z = 0; z < 16; z++)
+			for (int y = 0; y < 4; y++)
+			{
+				world.addChunk(glm::vec3(x, y, z));
+				world.getChunk(glm::vec3(x, y, z))->gen();
+			}
 
-	// glfwSwapInterval(0);
+	for (int x = 0; x < 16; x++)
+		for (int z = 0; z < 16; z++)
+			for (int y = 0; y < 4; y++)
+			{
+				world.getChunk(glm::vec3(x, y, z))->calcCulling();
+			}
+
+	glfwSwapInterval(0);
 
 	assets.getTexture("atlas").bind();
 	while (!glfwWindowShouldClose(window))
 	{
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-		
+
 		float currentFrame = glfwGetTime();
 		deltaTime = currentFrame - lastFrame;
 		
 
 		key_hook(window);
-
+		
 		
 		camera.update();
 		glm::mat4	view = camera.getViewMatrix();
-		glm::mat4	projection = glm::perspective(glm::radians(90.0f), SCREEN_WIDTH / SCREEN_HEIGHT, 0.1f, 160.0f);;
+		glm::mat4	projection = glm::perspective(glm::radians(90.0f), SCREEN_WIDTH / SCREEN_HEIGHT, 0.1f, 180.0f);;
 		glm::mat4	model(1.0f);
 		
 		
 		assets.getShader("block").use();
 		assets.getShader("block").setMat4("view", view);
 		assets.getShader("block").setMat4("projection", projection);
-		assets.getShader("block").setVec3("lightColor", glm::vec3(1.0, 1.0, 1.0));
-		assets.getShader("block").setVec3("lightPos", glm::vec3(0, 0, 0));
+		assets.getShader("block").setVec3("lightColor", glm::vec3(0.8, 0.8, 0.8));
+		assets.getShader("block").setVec3("lightPos", glm::vec3(0, 500000.0, 0));
 		assets.getShader("block").setMat4("model", model);
 		assets.getShader("block").setFloat("time", glfwGetTime());
 
-		world.drawChunks(pos, 3);
+		world.drawChunks(pos, 10);
 
 		glfwSwapBuffers(window);
 		glfwPollEvents();
