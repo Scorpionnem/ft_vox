@@ -6,7 +6,7 @@
 /*   By: mbatty <mbatty@student.42angouleme.fr>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/02 16:04:06 by mbatty            #+#    #+#             */
-/*   Updated: 2026/01/06 15:36:44 by mbatty           ###   ########.fr       */
+/*   Updated: 2026/01/06 18:05:00 by mbatty           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,7 +23,7 @@ class	Camera
 			void	normalize()
 			{
 				float	ratio = std::sqrt(A * A + B * B + C * C);
-				
+
 				A /= ratio;
 				B /= ratio;
 				C /= ratio;
@@ -41,20 +41,32 @@ class	Camera
 		struct	Frustum
 		{
 			Plane top, bottom, right, left, zNear, zFar;
-			bool	isInside(Vec3 point)
+			bool	isInside(Vec3 minCorner, Vec3 maxCorner)
 			{
+				Vec3	point = Vec3(top.A >= 0 ? maxCorner.x : minCorner.x, top.B >= 0 ? maxCorner.y : minCorner.y, top.C >= 0 ? maxCorner.z : minCorner.z);
 				if (top.getDist(point) < 0)
 					return (false);
+
+				point = Vec3(bottom.A >= 0 ? maxCorner.x : minCorner.x, bottom.B >= 0 ? maxCorner.y : minCorner.y, bottom.C >= 0 ? maxCorner.z : minCorner.z);
 				if (bottom.getDist(point) < 0)
 					return (false);
+
+				point = Vec3(right.A >= 0 ? maxCorner.x : minCorner.x, right.B >= 0 ? maxCorner.y : minCorner.y, right.C >= 0 ? maxCorner.z : minCorner.z);
 				if (right.getDist(point) < 0)
 					return (false);
+
+				point = Vec3(left.A >= 0 ? maxCorner.x : minCorner.x, left.B >= 0 ? maxCorner.y : minCorner.y, left.C >= 0 ? maxCorner.z : minCorner.z);
 				if (left.getDist(point) < 0)
 					return (false);
+
+				point = Vec3(zNear.A >= 0 ? maxCorner.x : minCorner.x, zNear.B >= 0 ? maxCorner.y : minCorner.y, zNear.C >= 0 ? maxCorner.z : minCorner.z);
 				if (zNear.getDist(point) < 0)
 					return (false);
+
+				point = Vec3(zFar.A >= 0 ? maxCorner.x : minCorner.x, zFar.B >= 0 ? maxCorner.y : minCorner.y, zFar.C >= 0 ? maxCorner.z : minCorner.z);
 				if (zFar.getDist(point) < 0)
 					return (false);
+
 				return (true);
 			}
 		};

@@ -6,7 +6,7 @@
 /*   By: mbatty <mbatty@student.42angouleme.fr>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/03 20:22:52 by mbatty            #+#    #+#             */
-/*   Updated: 2026/01/06 15:39:30 by mbatty           ###   ########.fr       */
+/*   Updated: 2026/01/06 18:02:34 by mbatty           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -61,7 +61,7 @@ struct World
 					if (!chunk->_meshed)
 						continue ;
 					_loadedChunks.push_back(chunk);
-					if (camera.frustum.isInside((chunk->_pos * Vec3i(CHUNK_SIZE)) + (CHUNK_SIZE / 2)))
+					if (camera.frustum.isInside(chunk->_pos * Vec3i(CHUNK_SIZE), chunk->_pos * Vec3i(CHUNK_SIZE) + Vec3i(CHUNK_SIZE)))
 						_visibleChunks.push_back(chunk);
 				}
 	}
