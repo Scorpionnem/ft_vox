@@ -55,7 +55,7 @@ DEPS =	$(SRCS:%.cpp=$(OBJ_DIR)/%.d)
 
 ###
 
-compile: stb_image
+compile: stb_image glad
 	@make -j all --no-print-directory
 
 all: $(NAME)
@@ -72,6 +72,14 @@ stb_image: $(EXTERNAL_DIR)
 		mkdir -p external/stb_image; \
 		curl --silent -o external/stb_image/stb_image.h https://raw.githubusercontent.com/nothings/stb/master/stb_image.h;\
 		echo "\033[31;1mDownloaded stb_image.h\033[0m"; \
+	fi
+
+glad:
+	@if ls external | grep -q "glad"; then \
+		echo "\033[32;1;4mglad Found\033[0m"; \
+	else \
+		echo "\033[31;1mDownloading glad sources\033[0m"; \
+		git clone git@github.com:Scorpionnem/glad-config.git external/glad; \
 	fi
 
 $(NAME): $(OBJS)
