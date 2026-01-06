@@ -6,7 +6,7 @@
 /*   By: mbatty <mbatty@student.42angouleme.fr>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/03 20:22:47 by mbatty            #+#    #+#             */
-/*   Updated: 2026/01/06 16:23:09 by mbatty           ###   ########.fr       */
+/*   Updated: 2026/01/06 20:09:40 by mbatty           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -202,7 +202,26 @@ inline float	calcNoise(const Vec3i &pos, float freq, float amp, int noisiness)
 	float	res = 0;
 	for (int i = 0; i < noisiness; i++)
 	{
-		res += perlin(pos.x * freq, pos.z * freq) * amp;
+		res += perlin(pos.x * freq, pos.y * freq, pos.z * freq) * amp;
+
+		freq *= 2;
+		amp /= 2;
+	}
+
+	if (res > 1.0f)
+		res = 1.0f;
+	else if (res < -1.0f)
+		res = -1.0f;
+
+	return (res);
+}
+
+inline float	calcNoise(const Vec2i &pos, float freq, float amp, int noisiness)
+{
+	float	res = 0;
+	for (int i = 0; i < noisiness; i++)
+	{
+		res += perlin(pos.x * freq, pos.y * freq) * amp;
 
 		freq *= 2;
 		amp /= 2;
@@ -226,28 +245,50 @@ class	Chunk
 		{
 			return (pos + _pos * CHUNK_SIZE);
 		}
+		int	getGenerationHeight(Vec2i pos)
+		{
+			return (std::floor(calcNoise(pos, 0.0125, 1, 1) * 100));
+		}
 		BLOCK	getGenerationBlock(Vec3i pos)
 		{
-			// return ((pos.x == 0 && pos.y == 0 && pos.z == 0) ? true : false);
 			Vec3i	wp = worldPos(pos);
 
-			if (wp.y < calcNoise(wp, 0.0125, 1, 1) * 100)
+			if (wp.y < getGenerationHeight(Vec2i(wp.x, wp.z)))
 				return (true);
 			return (false);
+		}
+		void	generateTerrain()
+		{
+			for (int x = 0; x < CHUNK_SIZE; x++)
+				for (int z = 0; z < CHUNK_SIZE; z++)
+				{
+					Vec3i	wp = worldPos(Vec3i(x, 0, z));
+
+					int	terrainHeight = getGenerationHeight(Vec2i(wp.x, wp.z));
+
+					if (wp.y > terrainHeight)
+						continue ;
+
+					for (int y = CHUNK_SIZE; y >= 0; y--)
+					{
+						if (worldPos(Vec3i(x, y, z)).y > terrainHeight)
+							continue ;
+
+						Vec3i	pos = Vec3i(x, y, z);
+						setBlock(pos, getGenerationBlock(pos));
+					}
+				}
+		}
+		void	generateFeatures()
+		{
+
 		}
 		void	generate()
 		{
 			_blocks.resize(CHUNK_VOLUME);
 
-			for (int x = 0; x < CHUNK_SIZE; x++)
-				for (int z = 0; z < CHUNK_SIZE; z++)
-				{
-					for (int y = 0; y < CHUNK_SIZE; y++)
-					{
-						Vec3i	pos = Vec3i(x, y, z);
-						setBlock(pos, getGenerationBlock(pos));
-					}
-				}
+			generateTerrain();
+			generateFeatures();
 			_generated = true;
 		}
 		void	upload()

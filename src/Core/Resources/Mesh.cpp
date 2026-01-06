@@ -6,7 +6,7 @@
 /*   By: mbatty <mbatty@student.42angouleme.fr>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/02 15:32:26 by mbatty            #+#    #+#             */
-/*   Updated: 2026/01/05 17:12:08 by mbatty           ###   ########.fr       */
+/*   Updated: 2026/01/06 19:44:53 by mbatty           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,6 +14,9 @@
 
 void	Mesh::draw(std::shared_ptr<Shader> shader)
 {
+	if (_triangleCount == 0)
+		return ;
+
 	shader->use();
 
 	for (auto &pair : _materialGroups)
@@ -94,6 +97,9 @@ void	Mesh::load(const std::string &path)
 
 void	Mesh::upload()
 {
+	if (_triangleCount == 0)
+		return ;
+
 	if (uploaded)
 		unlink();
 	uploaded = true;

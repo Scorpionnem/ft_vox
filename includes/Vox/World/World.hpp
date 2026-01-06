@@ -6,7 +6,7 @@
 /*   By: mbatty <mbatty@student.42angouleme.fr>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/03 20:22:52 by mbatty            #+#    #+#             */
-/*   Updated: 2026/01/06 18:02:34 by mbatty           ###   ########.fr       */
+/*   Updated: 2026/01/06 19:54:32 by mbatty           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,7 +17,8 @@
 #include <memory>
 #include <ChunkGenerator.hpp>
 
-#define RENDER_DISTANCE 5
+#define HORIZONTAL_RENDER_DISTANCE 8
+#define VERTICAL_RENDER_DISTANCE 4
 
 struct World
 {
@@ -39,12 +40,12 @@ struct World
 	{
 		Vec3	camChunkPos = Vec3((int)(camera.pos.x / CHUNK_SIZE), (int)(camera.pos.y / CHUNK_SIZE), (int)(camera.pos.z / CHUNK_SIZE));
 
-		int	startX = camChunkPos.x + RENDER_DISTANCE;
-		int	startZ = camChunkPos.z + RENDER_DISTANCE;
-		int	startY = camChunkPos.y + RENDER_DISTANCE;
-		int	endX = camChunkPos.x - RENDER_DISTANCE;
-		int	endZ = camChunkPos.z - RENDER_DISTANCE;
-		int	endY = camChunkPos.y - RENDER_DISTANCE;
+		int	startX = camChunkPos.x + HORIZONTAL_RENDER_DISTANCE;
+		int	startZ = camChunkPos.z + HORIZONTAL_RENDER_DISTANCE;
+		int	startY = camChunkPos.y + VERTICAL_RENDER_DISTANCE;
+		int	endX = camChunkPos.x - HORIZONTAL_RENDER_DISTANCE;
+		int	endZ = camChunkPos.z - HORIZONTAL_RENDER_DISTANCE;
+		int	endY = camChunkPos.y - VERTICAL_RENDER_DISTANCE;
 
 		_loadedChunks.clear();
 		_visibleChunks.clear();
