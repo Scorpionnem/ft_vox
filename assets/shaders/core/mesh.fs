@@ -87,7 +87,18 @@ void main()
 
 	result += CalcSunLight(vNormal, vWorldPos, vec3(-0.5, -1, -0.25), vec3(1));
 
+	vec3	fogColor = vec3(0.1, 0.1, 0.15);
+	float	horizontalRenderDistance = 256.0;
+	float	verticalRenderDistance = 128.0;
+	int		fogPower = 4;
+
+	float	fogFactorHorizontal = pow(length(uViewPos.xz - vWorldPos.xz) / horizontalRenderDistance, fogPower);
+	fogFactorHorizontal = clamp(fogFactorHorizontal, 0.0, 1.0);
+
+	float	fogFactorVertical = pow(length(uViewPos.y - vWorldPos.y) / verticalRenderDistance, fogPower);
+	fogFactorVertical = clamp(fogFactorVertical, 0.0, 1.0);
+
 	materialColor.rgb = materialColor.rgb * clamp(result, 0.0, 1.0);
 
-	FragColor = materialColor;
+	FragColor = vec4(mix(mix(materialColor.rgb, fogColor, fogFactorHorizontal), fogColor, fogFactorVertical), 1.0);
 }
