@@ -76,10 +76,11 @@ stb_image: $(EXTERNAL_DIR)
 
 glad:
 	@if ls external | grep -q "glad"; then \
-		echo "\033[32;1;4mglad Found\033[0m"; \
+		printf ""; \
 	else \
-		echo "\033[31;1mDownloading glad sources\033[0m"; \
-		git clone git@github.com:Scorpionnem/glad-config.git external/glad; \
+		echo "\033[31;1mDownloading glad config\033[0m"; \
+		git clone git@github.com:Scorpionnem/glad-config.git external/glad -q; \
+		echo "\033[31;1mDownloaded glad config\033[0m"; \
 	fi
 
 $(NAME): $(OBJS)
