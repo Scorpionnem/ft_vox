@@ -6,7 +6,7 @@
 /*   By: mbatty <mbatty@student.42angouleme.fr>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/02 13:00:48 by mbatty            #+#    #+#             */
-/*   Updated: 2026/01/06 19:08:41 by mbatty           ###   ########.fr       */
+/*   Updated: 2026/01/07 14:16:05 by mbatty           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,6 +14,7 @@
 
 #include "Vec3.hpp"
 #include "Vec3i.hpp"
+#include "Vec3d.hpp"
 #include "Vec2.hpp"
 #include "Vec2i.hpp"
 #include "Mat4.hpp"

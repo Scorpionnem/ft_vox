@@ -27,6 +27,7 @@ SRCS :=	main\
 		Core/Window\
 		Math/Vec3\
 		Math/Vec3i\
+		Math/Vec3d\
 		Core/Engine\
 		Core/Resources/Shader\
 		Core/Resources/Mesh\

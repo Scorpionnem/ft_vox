@@ -6,7 +6,7 @@
 /*   By: mbatty <mbatty@student.42angouleme.fr>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/03 20:15:34 by mbatty            #+#    #+#             */
-/*   Updated: 2026/01/06 16:28:35 by mbatty           ###   ########.fr       */
+/*   Updated: 2026/01/07 14:23:59 by mbatty           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -58,7 +58,7 @@ void	Cube::addFace(std::shared_ptr<Mesh> mesh, Vec3i pos, Direction dir)
 
 void	VoxScene::build()
 {
-	_camera.pos = Vec3(0, 0, 0);
+	_camera.pos = Vec3d(0, 0, 0);
 	_camera.pitch = -20;
 
 	_shader = _engine.loadShader("assets/shaders/core/mesh");
@@ -122,7 +122,6 @@ void	VoxScene::_updateCamera(float delta, const Window::Events &events)
 
 	_camera.update(_engine.getWindow().aspectRatio());
 	_world.update(_camera);
-	std::cout << 1.0 / delta << std::endl;
 }
 
 void	VoxScene::display()
@@ -139,14 +138,14 @@ void	VoxScene::display()
 	_shader->setMat4("uProjection", projection);
 
 	_shader->setFloat("uTime", _engine.getTime());
-	_shader->setVec3("uViewPos", _camera.pos);
+	_shader->setVec3("uViewPos", Vec3(0));
 
 	auto chunks = _world.getVisibleChunks();
 	for (auto chunk : chunks)
 	{
 		chunk->upload();
 		_shader->use();
-		_shader->setMat4("uModel", translate(chunk->_pos * CHUNK_SIZE));
+		_shader->setMat4("uModel", translate(Vec3d(chunk->_pos * CHUNK_SIZE) - _camera.pos));
 		chunk->draw(_shader);
 	}
 }

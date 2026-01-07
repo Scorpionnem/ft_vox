@@ -6,7 +6,7 @@
 /*   By: mbatty <mbatty@student.42angouleme.fr>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/02 16:04:06 by mbatty            #+#    #+#             */
-/*   Updated: 2026/01/06 18:05:00 by mbatty           ###   ########.fr       */
+/*   Updated: 2026/01/07 14:16:19 by mbatty           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -80,7 +80,7 @@ class	Camera
 		}
 		Mat4	getViewMatrix()
 		{
-			return (lookAt(pos, pos + front, up));
+			return (lookAt(Vec3(0), Vec3(0) + front, up));
 		}
 		void	update(float aspectRatio)
 		{
@@ -97,7 +97,7 @@ class	Camera
 		}
 		float	yaw = -90;
 		float	pitch = 0;
-		Vec3	pos;
+		Vec3d	pos;
 		Vec3	front;
 		Vec3	up;
 		Frustum	frustum;
