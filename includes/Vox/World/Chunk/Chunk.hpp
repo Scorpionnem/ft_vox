@@ -6,7 +6,7 @@
 /*   By: mbatty <mbatty@student.42angouleme.fr>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/03 20:22:47 by mbatty            #+#    #+#             */
-/*   Updated: 2026/01/06 20:09:40 by mbatty           ###   ########.fr       */
+/*   Updated: 2026/01/07 15:00:28 by mbatty           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -139,13 +139,13 @@ namespace Cube
 	const Mesh::Face EAST_FACE1(
 		Mesh::Vertex(V3, Vec3(1,0,0), UV11),
 		Mesh::Vertex(V2, Vec3(1,0,0), UV01),
-		Mesh::Vertex(V6, Vec3(1,0,0), UV10)
+		Mesh::Vertex(V6, Vec3(1,0,0), UV00)
 	);
 
 	const Mesh::Face EAST_FACE2(
 		Mesh::Vertex(V3, Vec3(1,0,0), UV11),
-		Mesh::Vertex(V6, Vec3(1,0,0), UV10),
-		Mesh::Vertex(V7, Vec3(1,0,0), UV00)
+		Mesh::Vertex(V6, Vec3(1,0,0), UV00),
+		Mesh::Vertex(V7, Vec3(1,0,0), UV10)
 	);
 
 	const Mesh::Face WEST_FACE1(
