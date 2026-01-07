@@ -6,7 +6,7 @@
 /*   By: mbatty <mbatty@student.42angouleme.fr>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/03 20:15:34 by mbatty            #+#    #+#             */
-/*   Updated: 2026/01/07 17:45:52 by mbatty           ###   ########.fr       */
+/*   Updated: 2026/01/07 18:04:56 by mbatty           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -68,6 +68,11 @@ void	VoxScene::build()
 	_shader = _engine.loadShader("assets/shaders/core/mesh");
 }
 
+float	getFpsFromArray(void *tab, int id)
+{
+	return (((float*)tab)[id]);
+}
+
 void	VoxScene::update(float delta, const Window::Events &events)
 {
 	// int	windowWidth = _engine.getWindow().width();
@@ -87,9 +92,14 @@ void	VoxScene::update(float delta, const Window::Events &events)
 
 	_updateCamera(delta, events);
 
+	_fpss.push_back(1.0 / delta);
+	if (_fpss.size() > 16)
+		_fpss.erase(_fpss.begin());
+
 	if (ImGui::Begin("Scene Info", (bool *)__null))
 	{
 		ImGui::Text("FPS: %.3f", 1.0 / delta);
+		ImGui::PlotLines("FPS Graph", getFpsFromArray, (void*)_fpss.data(), _fpss.size(), 0, __null, 50, 70);
 		ImGui::Text("Time: %.3f", _engine.getTime());
 	}
 	ImGui::End();

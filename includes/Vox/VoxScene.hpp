@@ -6,7 +6,7 @@
 /*   By: mbatty <mbatty@student.42angouleme.fr>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/03 20:13:58 by mbatty            #+#    #+#             */
-/*   Updated: 2026/01/04 14:01:38 by mbatty           ###   ########.fr       */
+/*   Updated: 2026/01/07 17:59:23 by mbatty           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -36,4 +36,5 @@ class	VoxScene : public Scene
 		Camera	_camera;
 		World	_world;
 		std::shared_ptr<Light>	_light;
+		std::vector<float>		_fpss;
 };
