@@ -2,13 +2,18 @@ NAME :=	ft_vox
 
 ###
 
+EXTERNAL_DIR := external
+
+###
+
 CXX :=	c++
 CXXFLAGS :=	-Wall -Wextra -Werror -g -MP -MMD -std=c++17
 LFLAGS :=	-lSDL2 -lGL
 
 ###
 
-INCLUDE_DIRS :=	includes/\
+INCLUDE_DIRS :=	external/imgui/\
+				includes/\
 				includes/Core\
 				includes/Math\
 				includes/Vox\
@@ -50,6 +55,18 @@ SRCS :=	$(addsuffix .cpp, $(SRCS))
 SRCS +=	external/glad/glad.cpp\
 		external/stb_image/stb_image.cpp
 
+IMGUI := $(EXTERNAL_DIR)/imgui
+IMGUI_SRCS_RAW =	imgui.cpp\
+					imgui_draw.cpp\
+					imgui_widgets.cpp\
+					imgui_tables.cpp\
+					imgui_demo.cpp\
+					backends/imgui_impl_opengl3.cpp\
+					backends/imgui_impl_sdl2.cpp
+IMGUI_SRCS = $(addprefix $(IMGUI)/, $(IMGUI_SRCS_RAW))
+
+SRCS +=	$(IMGUI_SRCS)
+
 ###
 
 OBJ_DIR :=	obj
@@ -59,12 +76,11 @@ DEPS =	$(SRCS:%.cpp=$(OBJ_DIR)/%.d)
 
 ###
 
-compile: stb_image glad
+compile: stb_image glad imgui
 	@make -j all --no-print-directory
 
 all: $(NAME)
 
-EXTERNAL_DIR := external
 $(EXTERNAL_DIR):
 	@mkdir -p external
 
@@ -78,13 +94,22 @@ stb_image: $(EXTERNAL_DIR)
 		echo "\033[31;1mDownloaded stb_image.h\033[0m"; \
 	fi
 
-glad:
+glad: $(EXTERNAL_DIR)
 	@if ls external | grep -q "glad"; then \
 		printf ""; \
 	else \
 		echo "\033[31;1mDownloading glad config\033[0m"; \
 		git clone git@github.com:Scorpionnem/glad-config.git external/glad -q; \
 		echo "\033[31;1mDownloaded glad config\033[0m"; \
+	fi
+
+imgui: $(EXTERNAL_DIR)
+	@if ls external | grep -q "imgui"; then \
+		printf ""; \
+	else \
+		echo "\033[31;1mDownloading imgui config\033[0m";\
+		git clone https://github.com/ocornut/imgui.git $(IMGUI) -q;\
+		echo "\033[31;1mDownloaded imgui config\033[0m";\
 	fi
 
 $(NAME): $(OBJS)

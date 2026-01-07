@@ -6,12 +6,16 @@
 /*   By: mbatty <mbatty@student.42angouleme.fr>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/03 20:15:34 by mbatty            #+#    #+#             */
-/*   Updated: 2026/01/07 14:27:19 by mbatty           ###   ########.fr       */
+/*   Updated: 2026/01/07 17:45:52 by mbatty           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "VoxScene.hpp"
 #include "Math.hpp"
+
+#include <imgui.h>
+#include <backends/imgui_impl_sdl2.h>
+#include <backends/imgui_impl_opengl3.h>
 
 void	Cube::addFace(std::shared_ptr<Mesh> mesh, Vec3i pos, Direction dir)
 	{
@@ -66,11 +70,11 @@ void	VoxScene::build()
 
 void	VoxScene::update(float delta, const Window::Events &events)
 {
-	int	windowWidth = _engine.getWindow().width();
-	int	windowHeight = _engine.getWindow().height();
+	// int	windowWidth = _engine.getWindow().width();
+	// int	windowHeight = _engine.getWindow().height();
 
-	if (events.getMouseBtn(SDL_BUTTON_LEFT))
-		_engine.getWindow().setMousePos(windowWidth / 2, windowHeight / 2);
+	// if (events.getMouseBtn(SDL_BUTTON_LEFT))
+	// 	_engine.getWindow().setMousePos(windowWidth / 2, windowHeight / 2);
 
 	if (events.getKey(SDLK_ESCAPE))
 		requestStop();
@@ -82,12 +86,19 @@ void	VoxScene::update(float delta, const Window::Events &events)
 	}
 
 	_updateCamera(delta, events);
+
+	if (ImGui::Begin("Scene Info", (bool *)__null))
+	{
+		ImGui::Text("FPS: %.3f", 1.0 / delta);
+		ImGui::Text("Time: %.3f", _engine.getTime());
+	}
+	ImGui::End();
 }
 
 void	VoxScene::_updateCamera(float delta, const Window::Events &events)
 {
 	float	speed = 50 * delta;
-	float	sensitivity = 0.3;
+	// float	sensitivity = 0.3;
 
 	if (events.getKey(SDLK_w))
 		_camera.pos = _camera.pos + _camera.front * speed;
@@ -110,15 +121,15 @@ void	VoxScene::_updateCamera(float delta, const Window::Events &events)
 	if (events.getKey(SDLK_LEFT))
 		_camera.yaw -= speed * 2;
 
-	if (events.getMouseBtnPressed(SDL_BUTTON_LEFT))
-		SDL_ShowCursor(SDL_DISABLE);
-	if (events.getMouseBtnLifted(SDL_BUTTON_LEFT))
-		SDL_ShowCursor(SDL_ENABLE);
-	if (events.getMouseBtn(SDL_BUTTON_LEFT))
-	{
-		_camera.pitch -= events.getMouseDeltaY() * sensitivity;
-		_camera.yaw += events.getMouseDeltaX() * sensitivity;
-	}
+	// if (events.getMouseBtnPressed(SDL_BUTTON_LEFT))
+	// 	SDL_ShowCursor(SDL_DISABLE);
+	// if (events.getMouseBtnLifted(SDL_BUTTON_LEFT))
+	// 	SDL_ShowCursor(SDL_ENABLE);
+	// if (events.getMouseBtn(SDL_BUTTON_LEFT))
+	// {
+	// 	_camera.pitch -= events.getMouseDeltaY() * sensitivity;
+	// 	_camera.yaw += events.getMouseDeltaX() * sensitivity;
+	// }
 
 	_camera.update(_engine.getWindow().aspectRatio());
 	_world.update(_camera);
@@ -136,6 +147,9 @@ void	VoxScene::display()
 	_shader->use();
 	_shader->setMat4("uView", view);
 	_shader->setMat4("uProjection", projection);
+
+	_shader->setFloat("horizontalRenderDistance", _world.getHorizontalRenderDistance() * CHUNK_SIZE);
+	_shader->setFloat("verticalRenderDistance", _world.getVerticalRenderDistance() * CHUNK_SIZE);
 
 	_shader->setFloat("uTime", _engine.getTime());
 	_shader->setVec3("uViewPos", Vec3(0));

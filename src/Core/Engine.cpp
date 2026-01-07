@@ -6,11 +6,14 @@
 /*   By: mbatty <mbatty@student.42angouleme.fr>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/03 12:17:16 by mbatty            #+#    #+#             */
-/*   Updated: 2026/01/06 16:27:42 by mbatty           ###   ########.fr       */
+/*   Updated: 2026/01/07 17:20:11 by mbatty           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "Engine.hpp"
+#include <imgui.h>
+#include <backends/imgui_impl_sdl2.h>
+#include <backends/imgui_impl_opengl3.h>
 
 void	Engine::start(std::unique_ptr<Scene> scene)
 {
@@ -48,6 +51,10 @@ void	Engine::_loop()
 		deltaTime = (currentFrame.tv_sec - _lastFrame.tv_sec) + (currentFrame.tv_nsec - _lastFrame.tv_nsec) * 1e-9;
 		_lastFrame = currentFrame;
 
+		ImGui_ImplOpenGL3_NewFrame();
+		ImGui_ImplSDL2_NewFrame();
+		ImGui::NewFrame();
+
 		_window.pollEvents();
 
 		if (_scene)
@@ -55,6 +62,9 @@ void	Engine::_loop()
 			_scene->update(deltaTime, _window.getEvents());
 			_scene->display();
 		}
+
+		ImGui::Render();
+		ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
 
 		_window.display();
 	}

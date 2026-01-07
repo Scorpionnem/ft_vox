@@ -6,7 +6,7 @@
 /*   By: mbatty <mbatty@student.42angouleme.fr>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/03 20:22:52 by mbatty            #+#    #+#             */
-/*   Updated: 2026/01/07 16:04:49 by mbatty           ###   ########.fr       */
+/*   Updated: 2026/01/07 17:26:27 by mbatty           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -44,7 +44,11 @@ class World
 		
 		std::vector<std::shared_ptr<Chunk>>	&getLoadedChunks() {return (_loadedChunks);}
 		std::vector<std::shared_ptr<Chunk>>	&getVisibleChunks() {return (_visibleChunks);}
+		int	getHorizontalRenderDistance() {return (_horizontalRenderDistance);}
+		int	getVerticalRenderDistance() {return (_verticalRenderDistance);}
 	private:
+		int	_horizontalRenderDistance = HORIZONTAL_RENDER_DISTANCE;
+		int	_verticalRenderDistance = VERTICAL_RENDER_DISTANCE;
 		ChunkGenerator	_generator;
 
 		std::unordered_map<uint64_t, std::shared_ptr<Chunk>>	_chunks;

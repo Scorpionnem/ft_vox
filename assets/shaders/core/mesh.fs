@@ -73,6 +73,9 @@ vec3 CalcSunLight(vec3 normal, vec3 fragPos, vec3 sunDir, vec3 sunColor)
 	return (diff * sunColor);
 }
 
+uniform float	horizontalRenderDistance;
+uniform float	verticalRenderDistance;
+
 void main()
 {
 	vec3 viewDir = normalize(uViewPos - vWorldPos);
@@ -91,8 +94,6 @@ void main()
 	result += CalcSunLight(vNormal, vWorldPos, vec3(-0.5, -1, -0.25), sunColor);
 
 	vec3	fogColor = vec3(0.1, 0.1, 0.15);
-	float	horizontalRenderDistance = 256.0;
-	float	verticalRenderDistance = 128.0;
 	int		fogPower = 4;
 
 	float	fogFactorHorizontal = pow(length(uViewPos.xz - vWorldPos.xz) / horizontalRenderDistance, fogPower);

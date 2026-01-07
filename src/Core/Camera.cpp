@@ -6,11 +6,15 @@
 /*   By: mbatty <mbatty@student.42angouleme.fr>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/07 16:08:20 by mbatty            #+#    #+#             */
-/*   Updated: 2026/01/07 16:10:09 by mbatty           ###   ########.fr       */
+/*   Updated: 2026/01/07 17:37:43 by mbatty           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "Camera.hpp"
+
+#include <imgui.h>
+#include <backends/imgui_impl_sdl2.h>
+#include <backends/imgui_impl_opengl3.h>
 
 void	Camera::update(float aspectRatio)
 {
@@ -19,11 +23,27 @@ void	Camera::update(float aspectRatio)
 	if (pitch < -89.0f)
 		pitch = -89.0f;
 
+	if (yaw > 360)
+		yaw = 0;
+	if (yaw < 0)
+		yaw = 360;
+
 	_direction.x = cos(radians(yaw)) * cos(radians(pitch));
 	_direction.y = sin(radians(pitch));
 	_direction.z = sin(radians(yaw)) * cos(radians(pitch));
 	front = normalize(_direction);
 	_updatePlaneNormals(aspectRatio);
+
+	if (ImGui::Begin("Camera", (bool *)__null))
+	{
+		ImGui::InputDouble("X", &pos.x);
+		ImGui::InputDouble("Y", &pos.y);
+		ImGui::InputDouble("Z", &pos.z);
+
+		ImGui::InputFloat("Pitch", &pitch);
+		ImGui::InputFloat("Yaw", &yaw);
+	}
+	ImGui::End();
 }
 
 void	Camera::_updatePlaneNormals(float aspectRatio)

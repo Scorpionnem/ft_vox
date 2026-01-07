@@ -6,11 +6,14 @@
 /*   By: mbatty <mbatty@student.42angouleme.fr>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/01 21:51:41 by mbatty            #+#    #+#             */
-/*   Updated: 2026/01/06 16:46:55 by mbatty           ###   ########.fr       */
+/*   Updated: 2026/01/07 17:40:31 by mbatty           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "Window.hpp"
+#include <imgui.h>
+#include <backends/imgui_impl_sdl2.h>
+#include <backends/imgui_impl_opengl3.h>
 
 void	Window::open(uint32_t width, uint32_t height, const std::string &title)
 {
@@ -66,6 +69,17 @@ void	Window::open(uint32_t width, uint32_t height, const std::string &title)
 
 	SDL_GL_SetSwapInterval(1);
 
+	
+	IMGUI_CHECKVERSION();
+	ImGui::CreateContext();
+	ImGuiIO& io = ImGui::GetIO();
+	io.ConfigFlags = ImGuiConfigFlags_NoMouseCursorChange;
+	(void)io;
+	ImGui::StyleColorsDark();
+	ImGui_ImplSDL2_InitForOpenGL(_window, _GLContext);
+	ImGui_ImplOpenGL3_Init();
+
+
 	std::cout << "OpenGL version: " << glGetString(GL_VERSION) << std::endl;
 }
 
@@ -83,6 +97,7 @@ void	Window::pollEvents()
 	_events.reset();
 	while (SDL_PollEvent(&event))
 	{
+		ImGui_ImplSDL2_ProcessEvent(&event);
 		switch (event.type)
 		{
 			case SDL_QUIT:

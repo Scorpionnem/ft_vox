@@ -6,13 +6,13 @@
 /*   By: mbatty <mbatty@student.42angouleme.fr>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/01 21:44:54 by mbatty            #+#    #+#             */
-/*   Updated: 2026/01/03 11:16:19 by mbatty           ###   ########.fr       */
+/*   Updated: 2026/01/07 17:06:51 by mbatty           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #pragma once
 
-#include "SDL2/SDL.h"
+#include <SDL2/SDL.h>
 #include <glad/glad.h>
 #include <stdint.h>
 #include <string>
