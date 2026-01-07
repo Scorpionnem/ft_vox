@@ -6,7 +6,7 @@
 /*   By: mbatty <mbatty@student.42angouleme.fr>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/03 20:15:34 by mbatty            #+#    #+#             */
-/*   Updated: 2026/01/07 18:04:56 by mbatty           ###   ########.fr       */
+/*   Updated: 2026/01/07 18:34:17 by mbatty           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -92,14 +92,36 @@ void	VoxScene::update(float delta, const Window::Events &events)
 
 	_updateCamera(delta, events);
 
-	_fpss.push_back(1.0 / delta);
-	if (_fpss.size() > 16)
-		_fpss.erase(_fpss.begin());
+	static double lastFpsUpdate = 0;
+	static double lastMinMaxFpsUpdate = 0;
+	static double maxFPS = 0;
+	static double minFPS = 0;
+
+	double FPS = 1.0 / delta;
+
+	if (_engine.getTime() - lastFpsUpdate > 0.1)
+	{
+		_fpss.push_back(FPS);
+		if (_fpss.size() > 16)
+			_fpss.erase(_fpss.begin());
+		lastFpsUpdate = _engine.getTime();
+	}
+	if (_engine.getTime() - lastMinMaxFpsUpdate > 1)
+	{
+		lastMinMaxFpsUpdate = _engine.getTime();
+		minFPS = FPS;
+		maxFPS = FPS;
+	}
+
+	if (FPS > maxFPS)
+		maxFPS = FPS;
+	if (FPS < minFPS)
+		minFPS = FPS;
 
 	if (ImGui::Begin("Scene Info", (bool *)__null))
 	{
-		ImGui::Text("FPS: %.3f", 1.0 / delta);
-		ImGui::PlotLines("FPS Graph", getFpsFromArray, (void*)_fpss.data(), _fpss.size(), 0, __null, 50, 70);
+		ImGui::Text("FPS: %.3f Min: %.3f Max: %.3f", FPS, minFPS, maxFPS);
+		ImGui::PlotLines("FPS Graph", getFpsFromArray, (void*)_fpss.data(), _fpss.size(), 0, __null, 50, 70, ImVec2(180, 48));
 		ImGui::Text("Time: %.3f", _engine.getTime());
 	}
 	ImGui::End();
