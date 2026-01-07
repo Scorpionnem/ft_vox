@@ -7,7 +7,7 @@ EXTERNAL_DIR := external
 ###
 
 CXX :=	c++
-CXXFLAGS :=	-Wall -Wextra -Werror -g -MP -MMD -std=c++17
+CXXFLAGS :=	-Wall -Wextra -Werror -g -MP -MMD -std=c++17 # -fsanitize=address -fno-omit-frame-pointer
 LFLAGS :=	-lSDL2 -lGL
 
 ###
@@ -19,6 +19,7 @@ INCLUDE_DIRS :=	external/imgui/\
 				includes/Vox\
 				includes/Utils\
 				includes/Vox/World\
+				includes/Vox/World/Block\
 				includes/Vox/World/Chunk\
 				includes/Vox/World/Generation\
 				includes/Core/Resources\
@@ -42,6 +43,7 @@ SRCS :=	main\
 		Core/Rendering/Light/Cache/LightCache\
 		Vox/VoxScene\
 		Vox/World/World\
+		Vox/World/Block/BlockType\
 		Vox/Generation/ChunkGenerator\
 		Math/Math
 
