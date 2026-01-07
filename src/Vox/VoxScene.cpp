@@ -6,7 +6,7 @@
 /*   By: mbatty <mbatty@student.42angouleme.fr>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/03 20:15:34 by mbatty            #+#    #+#             */
-/*   Updated: 2026/01/07 14:23:59 by mbatty           ###   ########.fr       */
+/*   Updated: 2026/01/07 14:27:19 by mbatty           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -59,7 +59,7 @@ void	Cube::addFace(std::shared_ptr<Mesh> mesh, Vec3i pos, Direction dir)
 void	VoxScene::build()
 {
 	_camera.pos = Vec3d(0, 0, 0);
-	_camera.pitch = -20;
+	_camera.pitch = 0;
 
 	_shader = _engine.loadShader("assets/shaders/core/mesh");
 }

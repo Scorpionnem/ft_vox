@@ -6,7 +6,7 @@
 /*   By: mbatty <mbatty@student.42angouleme.fr>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/03 20:22:52 by mbatty            #+#    #+#             */
-/*   Updated: 2026/01/07 13:43:50 by mbatty           ###   ########.fr       */
+/*   Updated: 2026/01/07 14:34:25 by mbatty           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -38,7 +38,10 @@ struct World
 
 	void	update(Camera &camera)
 	{
-		Vec3	camChunkPos = Vec3((int)(camera.pos.x / CHUNK_SIZE), (int)(camera.pos.y / CHUNK_SIZE), (int)(camera.pos.z / CHUNK_SIZE));
+		Vec3	camChunkPos;
+		camChunkPos.x = (int)(camera.pos.x / CHUNK_SIZE);
+		camChunkPos.y = (int)(camera.pos.y / CHUNK_SIZE);
+		camChunkPos.z = (int)(camera.pos.z / CHUNK_SIZE);
 
 		int	startX = camChunkPos.x + HORIZONTAL_RENDER_DISTANCE;
 		int	startZ = camChunkPos.z + HORIZONTAL_RENDER_DISTANCE;
