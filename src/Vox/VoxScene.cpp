@@ -6,7 +6,7 @@
 /*   By: mbatty <mbatty@student.42angouleme.fr>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/03 20:15:34 by mbatty            #+#    #+#             */
-/*   Updated: 2026/01/07 20:36:22 by mbatty           ###   ########.fr       */
+/*   Updated: 2026/01/07 21:45:23 by mbatty           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -177,8 +177,7 @@ void	VoxScene::display()
 	Mat4	view = _camera.getViewMatrix();
 	Mat4	projection = perspective(70, _engine.getWindow().aspectRatio(), 0.01, 1000);
 
-	_engine.getLightCache().setUniforms(_shader);
-	// _engine.getLightCache().draw(view, projection);
+	_engine.getLightCache().setUniforms(_shader, _camera.pos);
 
 	_shader->use();
 	_shader->setMat4("uView", view);
@@ -199,4 +198,6 @@ void	VoxScene::display()
 		_shader->setMat4("uModel", translate(Vec3d(chunk->_pos * CHUNK_SIZE) - _camera.pos));
 		chunk->draw(_shader);
 	}
+
+	_engine.getLightCache().draw(view, projection, _camera.pos);
 }

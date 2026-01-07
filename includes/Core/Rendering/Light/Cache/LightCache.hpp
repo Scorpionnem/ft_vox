@@ -6,7 +6,7 @@
 /*   By: mbatty <mbatty@student.42angouleme.fr>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/03 16:20:07 by mbatty            #+#    #+#             */
-/*   Updated: 2026/01/03 20:18:58 by mbatty           ###   ########.fr       */
+/*   Updated: 2026/01/07 21:36:41 by mbatty           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,18 +24,18 @@ class	LightCache
 		~LightCache() {}
 
 		std::shared_ptr<Light>	add(Vec3 pos, Vec3 color);
-		void	setUniforms(std::shared_ptr<Shader> shader)
+		void	setUniforms(std::shared_ptr<Shader> shader, Vec3 camPos)
 		{
 			shader->use();
 			shader->setInt("NR_POINT_LIGHTS", _lights.size());
 			int	i = 0;
 			for (auto light : _lights)
-				light->setUniforms(i++, shader);
+				light->setUniforms(i++, shader, camPos);
 		}
-		void	draw(Mat4 view, Mat4 proj)
+		void	draw(Mat4 view, Mat4 proj, Vec3 camPos)
 		{
 			for (auto light : _lights)
-				light->draw(view, proj);
+				light->draw(view, proj, camPos);
 		}
 		void	unload()
 		{

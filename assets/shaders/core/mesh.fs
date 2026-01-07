@@ -45,17 +45,17 @@ uniform int uTriangleCount;
 
 uniform sampler2D tex;
 
-vec3 CalcPointLight(Light light, vec3 normal, vec3 fragPos, vec3 viewDir)
+vec3 CalcPointLight(Light light, vec3 normal, vec3 fragPos, vec3 viewPos)
 {
-	vec3 N = normalize(vNormal);
-	vec3 L = normalize(light.pos - fragPos);
-	vec3 H = normalize(L + viewDir);
+	vec3	norm = normalize(normal);
+	vec3	lightDir = normalize(light.pos - fragPos);
+	float	diff = max(dot(norm, lightDir), 0.0);
+	vec3	diffuse = light.color * (diff * uMaterial.diffuse);
 
-	float diff = max(dot(N, L), 0.0);
-	vec3 diffuse = uMaterial.diffuse * diff * light.color;
-
-	float spec = pow(max(dot(N, H), 0.0), uMaterial.shininess);
-	vec3 specular = uMaterial.specular * spec * light.color;
+	vec3	viewDir = normalize(viewPos - fragPos);
+	vec3	reflectDir = reflect(-lightDir, norm);
+	float	spec = pow(max(dot(viewDir, reflectDir), 0.0), uMaterial.shininess);
+	vec3	specular = light.color * (spec * uMaterial.specular);
 
 	float	distance = length(light.pos - fragPos);
 	float	attenuation = 1.0 / (light.constant + light.linear * distance + light.quadratic * (distance * distance));
@@ -68,9 +68,10 @@ vec3 CalcPointLight(Light light, vec3 normal, vec3 fragPos, vec3 viewDir)
 vec3 CalcSunLight(vec3 normal, vec3 fragPos, vec3 sunDir, vec3 sunColor)
 {
 	vec3 sunLightDir = normalize(-sunDir);
+	vec3 normNormal = normalize(normal);
 
-	float diff = max(dot(normalize(normal), sunLightDir), 0.0);
-	return (diff * sunColor);
+	float diff = max(dot(normalize(normNormal), sunLightDir), 0.0);
+	return (sunColor * (diff * uMaterial.diffuse));
 }
 
 uniform float	horizontalRenderDistance;
@@ -89,7 +90,7 @@ void main()
 
 	vec3 result = sunColor * ambientIntensity;
 	for (int i = 0; i < NR_POINT_LIGHTS; i++)
-		result += CalcPointLight(uLight[i], vNormal, vWorldPos, viewDir);
+		result += CalcPointLight(uLight[i], vNormal, vWorldPos, uViewPos);
 
 	result += CalcSunLight(vNormal, vWorldPos, vec3(-0.5, -1, -0.25), sunColor);
 

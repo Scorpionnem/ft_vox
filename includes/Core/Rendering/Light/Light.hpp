@@ -6,7 +6,7 @@
 /*   By: mbatty <mbatty@student.42angouleme.fr>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/03 16:04:31 by mbatty            #+#    #+#             */
-/*   Updated: 2026/01/05 14:59:43 by mbatty           ###   ########.fr       */
+/*   Updated: 2026/01/07 21:36:30 by mbatty           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,20 +27,21 @@ class	Light
 			_color = color;
 			_genMesh();
 		}
-		void	draw(Mat4 view, Mat4 proj)
+		void	draw(Mat4 view, Mat4 proj, Vec3 camPos)
 		{
 			_shader->use();
 			_shader->setMat4("uModel", Mat4(1));
 			_shader->setMat4("uView", view);
 			_shader->setMat4("uProjection", proj);
-			_shader->setVec3("uCenter", _pos);
+			_shader->setVec3("uCenter", _pos - camPos);
 			_shader->setVec3("uColor", _color);
 
 			_mesh->draw(_shader);
 		}
-		void	setUniforms(int id, std::shared_ptr<Shader> shader)
+		void	setUniforms(int id, std::shared_ptr<Shader> shader, Vec3 camPos)
 		{
-			shader->setVec3("uLight[" + std::to_string(id) + "].pos", _pos);
+			(void)camPos;
+			shader->setVec3("uLight[" + std::to_string(id) + "].pos", _pos - camPos);
 			shader->setVec3("uLight[" + std::to_string(id) + "].color", _color);
 
 			shader->setFloat("uLight[" + std::to_string(id) + "].contant", _constant);

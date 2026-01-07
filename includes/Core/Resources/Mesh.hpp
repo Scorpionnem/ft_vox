@@ -6,7 +6,7 @@
 /*   By: mbatty <mbatty@student.42angouleme.fr>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/01 22:22:50 by mbatty            #+#    #+#             */
-/*   Updated: 2026/01/05 17:11:02 by mbatty           ###   ########.fr       */
+/*   Updated: 2026/01/07 21:28:38 by mbatty           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -62,7 +62,7 @@ class	Mesh
 			Vec3	diffuse = Vec3(1); // Kd
 			Vec3	specular = Vec3(0); // Ks
 
-			float	shininess = 0; // Ns
+			float	shininess = 1; // Ns
 			float	opacity = 1; // d / Tr
 
 			std::shared_ptr<Texture>	texture;
