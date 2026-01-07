@@ -6,7 +6,7 @@
 /*   By: mbatty <mbatty@student.42angouleme.fr>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/03 20:15:34 by mbatty            #+#    #+#             */
-/*   Updated: 2026/01/07 18:34:17 by mbatty           ###   ########.fr       */
+/*   Updated: 2026/01/07 20:36:22 by mbatty           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -92,6 +92,8 @@ void	VoxScene::update(float delta, const Window::Events &events)
 
 	_updateCamera(delta, events);
 
+	_world.update(_camera);
+
 	static double lastFpsUpdate = 0;
 	static double lastMinMaxFpsUpdate = 0;
 	static double maxFPS = 0;
@@ -123,6 +125,9 @@ void	VoxScene::update(float delta, const Window::Events &events)
 		ImGui::Text("FPS: %.3f Min: %.3f Max: %.3f", FPS, minFPS, maxFPS);
 		ImGui::PlotLines("FPS Graph", getFpsFromArray, (void*)_fpss.data(), _fpss.size(), 0, __null, 50, 70, ImVec2(180, 48));
 		ImGui::Text("Time: %.3f", _engine.getTime());
+		ImGui::Text("Loaded chunks: %zu", _world.getLoadedChunks().size());
+		ImGui::Text("Visible chunks: %zu", _world.getVisibleChunks().size());
+		ImGui::ProgressBar((float)_world.getLoadedChunks().size() / (float)_world.getMaxLoadedChunks());
 	}
 	ImGui::End();
 }
@@ -164,7 +169,6 @@ void	VoxScene::_updateCamera(float delta, const Window::Events &events)
 	// }
 
 	_camera.update(_engine.getWindow().aspectRatio());
-	_world.update(_camera);
 }
 
 void	VoxScene::display()
@@ -189,7 +193,8 @@ void	VoxScene::display()
 	auto chunks = _world.getVisibleChunks();
 	for (auto chunk : chunks)
 	{
-		chunk->upload();
+		if (chunk->upload())
+			continue ;
 		_shader->use();
 		_shader->setMat4("uModel", translate(Vec3d(chunk->_pos * CHUNK_SIZE) - _camera.pos));
 		chunk->draw(_shader);

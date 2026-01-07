@@ -6,7 +6,7 @@
 /*   By: mbatty <mbatty@student.42angouleme.fr>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/03 20:22:47 by mbatty            #+#    #+#             */
-/*   Updated: 2026/01/07 16:34:14 by mbatty           ###   ########.fr       */
+/*   Updated: 2026/01/07 20:37:40 by mbatty           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -291,11 +291,16 @@ class	Chunk
 			generateFeatures();
 			_generated = true;
 		}
-		void	upload()
+		bool	upload()
 		{
 			if (!_uploaded)
+			{
 				_mesh->upload();
+				_uploaded = true;
+				return (true);
+			}
 			_uploaded = true;
+			return (false);
 		}
 		void	genMesh(MeshCache &meshCache)
 		{
