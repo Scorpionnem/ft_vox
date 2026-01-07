@@ -81,11 +81,14 @@ void main()
 	if (uMaterial.hasDiffuseTex == 1)
 		materialColor = texture(tex, vUV);
 
-	vec3 result = vec3(0);
+	vec3	sunColor = vec3(1);
+	float	ambientIntensity = 0.2;
+
+	vec3 result = sunColor * ambientIntensity;
 	for (int i = 0; i < NR_POINT_LIGHTS; i++)
 		result += CalcPointLight(uLight[i], vNormal, vWorldPos, viewDir);
 
-	result += CalcSunLight(vNormal, vWorldPos, vec3(-0.5, -1, -0.25), vec3(1));
+	result += CalcSunLight(vNormal, vWorldPos, vec3(-0.5, -1, -0.25), sunColor);
 
 	vec3	fogColor = vec3(0.1, 0.1, 0.15);
 	float	horizontalRenderDistance = 256.0;

@@ -6,7 +6,7 @@
 /*   By: mbatty <mbatty@student.42angouleme.fr>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/03 20:22:47 by mbatty            #+#    #+#             */
-/*   Updated: 2026/01/07 15:00:28 by mbatty           ###   ########.fr       */
+/*   Updated: 2026/01/07 16:34:14 by mbatty           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -149,15 +149,15 @@ namespace Cube
 	);
 
 	const Mesh::Face WEST_FACE1(
-		Mesh::Vertex(V5, Vec3(-1,0,0), UV10),
-		Mesh::Vertex(V1, Vec3(-1,0,0), UV01),
-		Mesh::Vertex(V4, Vec3(-1,0,0), UV11)
+		Mesh::Vertex(V5, Vec3(-1,0,0), UV01),
+		Mesh::Vertex(V1, Vec3(-1,0,0), UV00),
+		Mesh::Vertex(V4, Vec3(-1,0,0), UV10)
 	);
 
 	const Mesh::Face WEST_FACE2(
-		Mesh::Vertex(V5, Vec3(-1,0,0), UV10),
-		Mesh::Vertex(V4, Vec3(-1,0,0), UV11),
-		Mesh::Vertex(V8, Vec3(-1,0,0), UV00)
+		Mesh::Vertex(V5, Vec3(-1,0,0), UV01),
+		Mesh::Vertex(V4, Vec3(-1,0,0), UV10),
+		Mesh::Vertex(V8, Vec3(-1,0,0), UV11)
 	);
 
 	const Mesh::Face TOP_FACE1(
@@ -247,7 +247,7 @@ class	Chunk
 		}
 		int	getGenerationHeight(Vec2i pos)
 		{
-			return (std::floor(calcNoise(pos, 0.0125, 1, 1) * 100));
+			return (std::floor(calcNoise(pos, 0.0125, 1, 4) * 100));
 		}
 		BLOCK	getGenerationBlock(Vec3i pos)
 		{

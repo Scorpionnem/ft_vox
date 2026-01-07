@@ -29,12 +29,15 @@ SRCS :=	main\
 		Math/Vec3i\
 		Math/Vec3d\
 		Core/Engine\
+		Core/Camera\
 		Core/Resources/Shader\
 		Core/Resources/Mesh\
 		Core/Resources/Cache/MeshCache\
 		Core/Resources/Cache/ShaderCache\
 		Core/Rendering/Light/Cache/LightCache\
 		Vox/VoxScene\
+		Vox/World/World\
+		Vox/Generation/ChunkGenerator\
 		Math/Math
 
 ###
