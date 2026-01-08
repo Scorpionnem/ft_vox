@@ -43,6 +43,7 @@ SRCS :=	main\
 		Core/Rendering/Light/Cache/LightCache\
 		Vox/VoxScene\
 		Vox/World/World\
+		Vox/World/Chunk/Chunk\
 		Vox/World/Block/BlockType\
 		Vox/Generation/ChunkGenerator\
 		Math/Math

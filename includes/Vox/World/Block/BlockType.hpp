@@ -6,7 +6,7 @@
 /*   By: mbatty <mbatty@student.42angouleme.fr>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/07 22:53:45 by mbatty            #+#    #+#             */
-/*   Updated: 2026/01/08 15:31:33 by mbatty           ###   ########.fr       */
+/*   Updated: 2026/01/08 16:00:58 by mbatty           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -80,6 +80,7 @@ class	BlockType
 				_properties.insert(std::make_pair(prop.name, prop));
 			_solid = solid;
 			_processHashLayout();
+			_genBlockStates();
 		}
 		const BlockState	&getBlockState(std::map<std::string, uint8_t> properties)
 		{
@@ -88,7 +89,7 @@ class	BlockType
 				throw std::runtime_error("BlockState doesnt exist");
 			return (find->second);
 		}
-		const BlockState	&getDefault()
+		BlockState	&getDefault()
 		{
 			auto find = _blockStates.find(0);
 			if (find == _blockStates.end())
@@ -108,10 +109,18 @@ class	BlockType
 				return (0);
 			return (find->second.bitCount);
 		}
+		std::unordered_map<BlockStateHash, BlockState>	&getBlockStates()
+		{
+			return (_blockStates);
+		}
+		bool	isSolid()
+		{
+			return (_solid);
+		}
 	private:
 		void			_genBlockStates()
 		{
-			
+			_blockStates.insert({0, BlockState(this, 0)});
 		}
 		BlockStateHash	_getBlockStateHash(std::map<std::string, uint8_t> properties);
 		BlockStateHash	_setBits(BlockStateHash hash, uint8_t offset, uint8_t val);
@@ -124,3 +133,12 @@ class	BlockType
 		std::unordered_map<std::string, uint8_t>		_offsets;
 		std::unordered_map<std::string, Property>		_properties;
 };
+
+/*
+	World.registerBlock(BlockType);
+		BlockType._genBlockStates()
+		returns all blockStates of the blocktype
+
+	World.getBlock(string id)
+		Block.getState()
+*/

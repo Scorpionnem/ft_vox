@@ -6,7 +6,7 @@
 /*   By: mbatty <mbatty@student.42angouleme.fr>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/07 16:01:26 by mbatty            #+#    #+#             */
-/*   Updated: 2026/01/07 19:45:59 by mbatty           ###   ########.fr       */
+/*   Updated: 2026/01/08 15:53:03 by mbatty           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -74,7 +74,7 @@ std::shared_ptr<Chunk>	World::getChunk(Vec3i pos)
 
 void	World::genChunk(Vec3i pos)
 {
-	std::shared_ptr<Chunk>	chunk = std::make_shared<Chunk>(pos);
+	std::shared_ptr<Chunk>	chunk = std::make_shared<Chunk>(pos, this);
 
 	_generator.gen(chunk);
 	_chunks.insert(std::make_pair(pos.hash(), chunk));

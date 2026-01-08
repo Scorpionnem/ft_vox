@@ -6,7 +6,7 @@
 /*   By: mbatty <mbatty@student.42angouleme.fr>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/03 20:22:47 by mbatty            #+#    #+#             */
-/*   Updated: 2026/01/08 12:52:18 by mbatty           ###   ########.fr       */
+/*   Updated: 2026/01/08 16:07:16 by mbatty           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,7 +22,6 @@
 
 # define CHUNK_SIZE 32
 # define CHUNK_VOLUME CHUNK_SIZE * CHUNK_SIZE * CHUNK_SIZE
-# define BLOCK bool
 
 #define seed 12312343298412897
 
@@ -236,10 +235,15 @@ inline float	calcNoise(const Vec2i &pos, float freq, float amp, int noisiness)
 	return (res);
 }
 
+class	World;
+
 class	Chunk
 {
 	public:
-		Chunk(Vec3i pos) : _pos(pos) {}
+		Chunk(Vec3i pos, World *world) : _pos(pos)
+		{
+			_world = world;
+		}
 		~Chunk() {}
 
 		Vec3i	worldPos(Vec3i pos)
@@ -250,36 +254,8 @@ class	Chunk
 		{
 			return (std::floor(calcNoise(pos, 0.0125, 1, 4) * 100));
 		}
-		BlockStateId	getGenerationBlock(Vec3i pos)
-		{
-			Vec3i	wp = worldPos(pos);
-
-			if (wp.y < getGenerationHeight(Vec2i(wp.x, wp.z)))
-				return (true);
-			return (false);
-		}
-		void	generateTerrain()
-		{
-			for (int x = 0; x < CHUNK_SIZE; x++)
-				for (int z = 0; z < CHUNK_SIZE; z++)
-				{
-					Vec3i	wp = worldPos(Vec3i(x, 0, z));
-
-					int	terrainHeight = getGenerationHeight(Vec2i(wp.x, wp.z));
-
-					if (wp.y > terrainHeight)
-						continue ;
-
-					for (int y = CHUNK_SIZE; y >= 0; y--)
-					{
-						if (worldPos(Vec3i(x, y, z)).y > terrainHeight)
-							continue ;
-
-						Vec3i	pos = Vec3i(x, y, z);
-						setBlock(pos, getGenerationBlock(pos));
-					}
-				}
-		}
+		BlockStateId	getGenerationBlock(Vec3i pos);
+		void	generateTerrain();
 		void	generateFeatures()
 		{
 
@@ -303,32 +279,7 @@ class	Chunk
 			_uploaded = true;
 			return (false);
 		}
-		void	genMesh(MeshCache &meshCache)
-		{
-			_mesh = meshCache.gen();
-
-			for (int x = 0; x < CHUNK_SIZE; x++)
-				for (int y = 0; y < CHUNK_SIZE; y++)
-					for (int z = 0; z < CHUNK_SIZE; z++)
-					{
-						if (getBlock(Vec3i(x, y, z)))
-						{
-							if (!getBlock(Vec3i(x, y + 1, z)))
-								Cube::addFace(_mesh, Vec3i(x, y, z), Cube::Direction::TOP);
-							if (!getBlock(Vec3i(x, y - 1, z)))
-								Cube::addFace(_mesh, Vec3i(x, y, z), Cube::Direction::BOTTOM);
-							if (!getBlock(Vec3i(x + 1, y, z)))
-								Cube::addFace(_mesh, Vec3i(x, y, z), Cube::Direction::EAST);
-							if (!getBlock(Vec3i(x - 1, y, z)))
-								Cube::addFace(_mesh, Vec3i(x, y, z), Cube::Direction::WEST);
-							if (!getBlock(Vec3i(x, y, z + 1)))
-								Cube::addFace(_mesh, Vec3i(x, y, z), Cube::Direction::NORTH);
-							if (!getBlock(Vec3i(x, y, z - 1)))
-								Cube::addFace(_mesh, Vec3i(x, y, z), Cube::Direction::SOUTH);
-						}
-					}
-			_meshed = true;
-		}
+		void	genMesh(MeshCache &meshCache);
 		void	draw(std::shared_ptr<Shader> shader)
 		{
 			_mesh->draw(shader);
@@ -361,4 +312,5 @@ class	Chunk
 		bool						_uploaded = false;
 		std::atomic_bool			_generated = false;
 		std::atomic_bool			_meshed = false;
+		World						*_world;
 };

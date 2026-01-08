@@ -6,7 +6,7 @@
 /*   By: mbatty <mbatty@student.42angouleme.fr>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/03 20:22:52 by mbatty            #+#    #+#             */
-/*   Updated: 2026/01/07 19:45:21 by mbatty           ###   ########.fr       */
+/*   Updated: 2026/01/08 16:07:32 by mbatty           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,6 +17,7 @@
 #include <unordered_map>
 #include <memory>
 #include <ChunkGenerator.hpp>
+#include <BlockType.hpp>
 
 #define HORIZONTAL_RENDER_DISTANCE 8
 #define VERTICAL_RENDER_DISTANCE 4
@@ -36,7 +37,7 @@ class World
 		{
 			_generator.stop();
 		}
-
+		
 		void					update(Camera &camera);
 		
 		std::shared_ptr<Chunk>	getChunk(Vec3i pos);
@@ -52,6 +53,9 @@ class World
 		int	_verticalRenderDistance = VERTICAL_RENDER_DISTANCE;
 		ChunkGenerator	_generator;
 
+		std::unordered_map<std::string, BlockType>				_blockTypes;
+		std::unordered_map<BlockStateId, BlockState>			_blockStates;
+		
 		std::unordered_map<uint64_t, std::shared_ptr<Chunk>>	_chunks;
 		std::vector<std::shared_ptr<Chunk>>						_loadedChunks;
 		std::vector<std::shared_ptr<Chunk>>						_visibleChunks;
