@@ -6,7 +6,7 @@
 /*   By: mbatty <mbatty@student.42angouleme.fr>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/07 22:53:45 by mbatty            #+#    #+#             */
-/*   Updated: 2026/01/08 14:27:32 by mbatty           ###   ########.fr       */
+/*   Updated: 2026/01/08 15:31:33 by mbatty           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,7 +33,6 @@ class	Property
 			this->minVal = minVal;
 			this->maxVal = maxVal;
 			bitCount = (int)(log(maxVal) / log(2) + 1);
-			std::cout << name << " uses " << (int)bitCount << std::endl;
 		}
 
 		const char	*name;
@@ -49,7 +48,7 @@ class	BlockType;
 class	BlockState
 {
 	public:
-		BlockState(BlockType *parent, std::vector<Property> properties)
+		BlockState(BlockType *parent, BlockStateHash properties)
 		{
 			this->parent = parent;
 			_properties = properties;
@@ -58,9 +57,14 @@ class	BlockState
 
 		BlockStateId	id() {return (_id);}
 
+		uint8_t	getProperty(const std::string &prop);
 		BlockType					*parent;
 	private:
-		std::vector<Property>		_properties;
+		uint8_t	_bitMask(uint8_t n)
+		{
+			return ((1u << n) - 1u);
+		}
+		BlockStateHash				_properties;
 
 		BlockStateId				_id;
 		static BlockStateId			_globalId;
@@ -72,40 +76,51 @@ class	BlockType
 		BlockType(const std::string &id, std::vector<Property> properties, bool solid = true)
 		{
 			_id = id;
-			_properties = properties;
+			for (Property &prop : properties)
+				_properties.insert(std::make_pair(prop.name, prop));
 			_solid = solid;
 			_processHashLayout();
 		}
-		std::string	id() {return (_id);}
-		BlockStateHash	getBlockStateHash(std::map<std::string, uint8_t> properties)
+		const BlockState	&getBlockState(std::map<std::string, uint8_t> properties)
 		{
-			BlockStateHash	res = 0;
-			for (Property &prop : _properties)
-			{
-				if (properties.find(prop.name) != properties.end())
-				{
-					res = setValue(res, _offsets[prop.name], properties.find(prop.name)->second);
-				}
-			}
-			return (res);
+			auto find = _blockStates.find(_getBlockStateHash(properties));
+			if (find == _blockStates.end())
+				throw std::runtime_error("BlockState doesnt exist");
+			return (find->second);
 		}
-		BlockStateHash	setValue(BlockStateHash hash, uint8_t offset, uint8_t val)
+		const BlockState	&getDefault()
 		{
-			return (hash |= val << offset);
+			auto find = _blockStates.find(0);
+			if (find == _blockStates.end())
+				throw std::runtime_error("BlockState doesnt exist");
+			return (find->second);
+		}
+
+		std::string	id() {return (_id);}
+		uint8_t	offsetOf(const std::string &prop)
+		{
+			return (_offsets[prop]);
+		}
+		uint8_t	sizeOf(const std::string &prop)
+		{
+			auto find = _properties.find(prop);
+			if (find == _properties.end())
+				return (0);
+			return (find->second.bitCount);
 		}
 	private:
-		void	_processHashLayout()
+		void			_genBlockStates()
 		{
-			uint32_t	offset = 0;
-			for (Property &prop : _properties)
-			{
-				std::cout << prop.name << " bits used at offset " << offset << std::endl;
-				_offsets[prop.name] = offset;
-				offset += prop.bitCount;
-			}
+			
 		}
+		BlockStateHash	_getBlockStateHash(std::map<std::string, uint8_t> properties);
+		BlockStateHash	_setBits(BlockStateHash hash, uint8_t offset, uint8_t val);
+		void			_processHashLayout();
+
 		bool											_solid;
 		std::string										_id;
-		std::vector<Property>							_properties;
+
+		std::unordered_map<BlockStateHash, BlockState>	_blockStates;
 		std::unordered_map<std::string, uint8_t>		_offsets;
+		std::unordered_map<std::string, Property>		_properties;
 };
