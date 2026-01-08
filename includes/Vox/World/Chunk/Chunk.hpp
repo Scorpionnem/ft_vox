@@ -6,7 +6,7 @@
 /*   By: mbatty <mbatty@student.42angouleme.fr>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/03 20:22:47 by mbatty            #+#    #+#             */
-/*   Updated: 2026/01/08 19:19:28 by mbatty           ###   ########.fr       */
+/*   Updated: 2026/01/08 21:32:28 by mbatty           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -194,7 +194,7 @@ namespace Cube
 		BOTTOM
 	};
 
-	void	addFace(std::shared_ptr<Mesh> mesh, Vec3i pos, Direction dir);
+	void	addFace(std::shared_ptr<Mesh> mesh, Vec3i pos, Direction dir, int textureId);
 }
 
 inline float	calcNoise(const Vec3i &pos, float freq, float amp, int noisiness)

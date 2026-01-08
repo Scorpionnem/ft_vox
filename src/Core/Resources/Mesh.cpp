@@ -6,7 +6,7 @@
 /*   By: mbatty <mbatty@student.42angouleme.fr>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/02 15:32:26 by mbatty            #+#    #+#             */
-/*   Updated: 2026/01/06 19:44:53 by mbatty           ###   ########.fr       */
+/*   Updated: 2026/01/08 21:29:16 by mbatty           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,7 +23,7 @@ void	Mesh::draw(std::shared_ptr<Shader> shader)
 	{
 		MaterialGroup	&mtl = pair.second;
 
-		mtl.material.texture = _txm.get("assets/cobblestone.png");
+		mtl.material.texture = _txm.get("assets/atlas.png");
 		if (mtl.material.texture)
 		{
 			shader->setInt("tex", 0);

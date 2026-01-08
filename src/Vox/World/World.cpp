@@ -6,7 +6,7 @@
 /*   By: mbatty <mbatty@student.42angouleme.fr>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/07 16:01:26 by mbatty            #+#    #+#             */
-/*   Updated: 2026/01/08 19:57:44 by mbatty           ###   ########.fr       */
+/*   Updated: 2026/01/08 21:37:58 by mbatty           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,6 +19,8 @@
 
 BlockStateId	Blocks::AIR;
 BlockStateId	Blocks::STONE;
+BlockStateId	Blocks::DIRT;
+BlockStateId	Blocks::GRASS;
 
 void	World::update(Camera &camera)
 {

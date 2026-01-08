@@ -6,7 +6,7 @@
 /*   By: mbatty <mbatty@student.42angouleme.fr>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/03 20:15:34 by mbatty            #+#    #+#             */
-/*   Updated: 2026/01/07 21:45:23 by mbatty           ###   ########.fr       */
+/*   Updated: 2026/01/08 21:43:48 by mbatty           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,7 +17,25 @@
 #include <backends/imgui_impl_sdl2.h>
 #include <backends/imgui_impl_opengl3.h>
 
-void	Cube::addFace(std::shared_ptr<Mesh> mesh, Vec3i pos, Direction dir)
+Vec2	getAtlasUV(Vec2 uv, int textureId)
+{
+		Vec2	baseUV = uv;
+
+		int row = 15 - (textureId / 16);;
+		int col = textureId % 16;
+
+		Vec2 cellSize = Vec2(16.0 / 256.0);
+		Vec2 atlasOffset;
+		atlasOffset.x = (float)col * cellSize.x;
+		atlasOffset.y = (float)row * cellSize.y;
+		Vec2 atlasUV;
+		atlasUV.x = atlasOffset.x + baseUV.x * cellSize.x;
+		atlasUV.y = atlasOffset.y + baseUV.y * cellSize.y;
+
+		return (atlasUV);
+}
+
+void	Cube::addFace(std::shared_ptr<Mesh> mesh, Vec3i pos, Direction dir, int textureId)
 	{
 		Mesh::Face	Face1;
 		Mesh::Face	Face2;
@@ -56,6 +74,15 @@ void	Cube::addFace(std::shared_ptr<Mesh> mesh, Vec3i pos, Direction dir)
 		Face2.v1.pos = Face2.v1.pos + pos;
 		Face2.v2.pos = Face2.v2.pos + pos;
 		Face2.v3.pos = Face2.v3.pos + pos;
+
+		Face1.v1.uv = getAtlasUV(Face1.v1.uv, textureId);
+		Face1.v2.uv = getAtlasUV(Face1.v2.uv, textureId);
+		Face1.v3.uv = getAtlasUV(Face1.v3.uv, textureId);
+
+		Face2.v1.uv = getAtlasUV(Face2.v1.uv, textureId);
+		Face2.v2.uv = getAtlasUV(Face2.v2.uv, textureId);
+		Face2.v3.uv = getAtlasUV(Face2.v3.uv, textureId);
+
 		mesh->addFace("default", Face1);
 		mesh->addFace("default", Face2);
 	}

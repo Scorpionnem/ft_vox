@@ -6,7 +6,7 @@
 /*   By: mbatty <mbatty@student.42angouleme.fr>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/01 21:51:41 by mbatty            #+#    #+#             */
-/*   Updated: 2026/01/08 01:40:18 by mbatty           ###   ########.fr       */
+/*   Updated: 2026/01/08 21:31:52 by mbatty           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,7 +30,7 @@ void	Window::open(uint32_t width, uint32_t height, const std::string &title)
 
 	SDL_GL_SetAttribute(SDL_GL_DOUBLEBUFFER, 1);
 	SDL_GL_SetAttribute(SDL_GL_DEPTH_SIZE, 24);
-	SDL_GL_SetAttribute(SDL_GL_MULTISAMPLESAMPLES, 4);
+	// SDL_GL_SetAttribute(SDL_GL_MULTISAMPLESAMPLES, 4);
 
 	_window = SDL_CreateWindow(_title.c_str(), SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, _width, _height,
 				SDL_WINDOW_OPENGL | SDL_WINDOW_SHOWN | SDL_WINDOW_RESIZABLE);
@@ -65,11 +65,11 @@ void	Window::open(uint32_t width, uint32_t height, const std::string &title)
 	glEnable(GL_CULL_FACE);
 	glCullFace(GL_CW);
 
-	glEnable(GL_MULTISAMPLE);
+	// glEnable(GL_MULTISAMPLE);
 
 	SDL_GL_SetSwapInterval(0);
 
-	
+
 	IMGUI_CHECKVERSION();
 	ImGui::CreateContext();
 	ImGuiIO& io = ImGui::GetIO();

@@ -6,7 +6,7 @@
 /*   By: mbatty <mbatty@student.42angouleme.fr>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/07 22:53:45 by mbatty            #+#    #+#             */
-/*   Updated: 2026/01/08 19:33:23 by mbatty           ###   ########.fr       */
+/*   Updated: 2026/01/08 21:43:28 by mbatty           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -74,19 +74,17 @@ class	BlockState
 class	BlockType
 {
 	public:
-		BlockType(const std::string &name, std::vector<Property> properties, bool solid)
+		BlockType(const std::string &name, int textureId, std::vector<Property> properties, bool solid)
 		{
 			_name = name;
 			for (Property &prop : properties)
 				_properties.insert(std::make_pair(prop.name, prop));
 			_solid = solid;
+			_textureId = textureId;
 			_processHashLayout();
 			_genBlockStates();
 		}
-		~BlockType()
-		{
-			std::cout << "destroyed blocktype" << std::endl;
-		}
+		~BlockType() {}
 		std::shared_ptr<BlockState>	getBlockState(std::map<std::string, uint8_t> properties)
 		{
 			auto find = _blockStates.find(_getBlockStateHash(properties));
@@ -103,6 +101,7 @@ class	BlockType
 		}
 
 		std::string	name() {return (_name);}
+		int	textureId() {return (_textureId);}
 		uint8_t	offsetOf(const std::string &prop)
 		{
 			return (_offsets[prop]);
@@ -131,8 +130,9 @@ class	BlockType
 		BlockStateHash	_setBits(BlockStateHash hash, uint8_t offset, uint8_t val);
 		void			_processHashLayout();
 
-		bool											_solid;
-		std::string										_name;
+		bool		_solid;
+		std::string	_name;
+		int			_textureId;
 
 		std::unordered_map<BlockStateHash, std::shared_ptr<BlockState>>	_blockStates;
 		std::unordered_map<std::string, uint8_t>		_offsets;

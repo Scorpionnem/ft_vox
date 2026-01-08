@@ -6,7 +6,7 @@
 /*   By: mbatty <mbatty@student.42angouleme.fr>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/08 15:52:47 by mbatty            #+#    #+#             */
-/*   Updated: 2026/01/08 19:58:08 by mbatty           ###   ########.fr       */
+/*   Updated: 2026/01/08 21:40:16 by mbatty           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,8 +17,15 @@ BlockStateId	Chunk::getGenerationBlock(Vec3i pos)
 {
 	Vec3i	wp = worldPos(pos);
 
-	if (wp.y < getGenerationHeight(Vec2i(wp.x, wp.z)))
+	int	genHeight = getGenerationHeight(Vec2i(wp.x, wp.z));
+	if (wp.y <= genHeight)
+	{
+		if (wp.y == genHeight)
+			return (Blocks::GRASS);
+		if (wp.y >= genHeight - 2)
+			return (Blocks::DIRT);
 		return (Blocks::STONE);
+	}
 	return (Blocks::AIR);
 }
 
@@ -62,18 +69,19 @@ void	Chunk::genMesh(MeshCache &meshCache)
 			{
 				if (isBlockSolid(Vec3i(x, y, z)))
 				{
+					int	textureId = _world->getBlockState(getBlock(Vec3i(x, y, z)))->parent->textureId();
 					if (!isBlockSolid(Vec3i(x, y + 1, z)))
-						Cube::addFace(_mesh, Vec3i(x, y, z), Cube::Direction::TOP);
+						Cube::addFace(_mesh, Vec3i(x, y, z), Cube::Direction::TOP, textureId);
 					if (!isBlockSolid(Vec3i(x, y - 1, z)))
-						Cube::addFace(_mesh, Vec3i(x, y, z), Cube::Direction::BOTTOM);
+						Cube::addFace(_mesh, Vec3i(x, y, z), Cube::Direction::BOTTOM, textureId);
 					if (!isBlockSolid(Vec3i(x + 1, y, z)))
-						Cube::addFace(_mesh, Vec3i(x, y, z), Cube::Direction::EAST);
+						Cube::addFace(_mesh, Vec3i(x, y, z), Cube::Direction::EAST, textureId);
 					if (!isBlockSolid(Vec3i(x - 1, y, z)))
-						Cube::addFace(_mesh, Vec3i(x, y, z), Cube::Direction::WEST);
+						Cube::addFace(_mesh, Vec3i(x, y, z), Cube::Direction::WEST, textureId);
 					if (!isBlockSolid(Vec3i(x, y, z + 1)))
-						Cube::addFace(_mesh, Vec3i(x, y, z), Cube::Direction::NORTH);
+						Cube::addFace(_mesh, Vec3i(x, y, z), Cube::Direction::NORTH, textureId);
 					if (!isBlockSolid(Vec3i(x, y, z - 1)))
-						Cube::addFace(_mesh, Vec3i(x, y, z), Cube::Direction::SOUTH);
+						Cube::addFace(_mesh, Vec3i(x, y, z), Cube::Direction::SOUTH, textureId);
 				}
 			}
 	_meshed = true;

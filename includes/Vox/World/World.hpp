@@ -6,7 +6,7 @@
 /*   By: mbatty <mbatty@student.42angouleme.fr>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/03 20:22:52 by mbatty            #+#    #+#             */
-/*   Updated: 2026/01/08 19:57:50 by mbatty           ###   ########.fr       */
+/*   Updated: 2026/01/08 21:39:09 by mbatty           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,15 +26,27 @@ struct Blocks
 {
 	static BlockStateId	AIR;
 	static BlockStateId	STONE;
+	static BlockStateId	DIRT;
+	static BlockStateId	GRASS;
 };
 
 class World
 {
+	private:
+		void	_setBlocksDefines()
+		{
+			Blocks::AIR = getDefaultStateId("air");
+			Blocks::STONE = getDefaultStateId("stone");
+			Blocks::DIRT = getDefaultStateId("dirt");
+			Blocks::GRASS = getDefaultStateId("grass");
+		}
 	public:
 		World(MeshCache &cache) : _generator(cache)
 		{
-			_registerBlock("air", {}, false);
-			_registerBlock("stone", {}, true);
+			_registerBlock("air", 0, {}, false);
+			_registerBlock("stone", 0, {}, true);
+			_registerBlock("dirt", 1, {}, true);
+			_registerBlock("grass", 3, {}, true);
 
 			_computeBlockStates();
 
@@ -101,14 +113,9 @@ class World
 
 			_setBlocksDefines();
 		}
-		void	_setBlocksDefines()
+		void	_registerBlock(const std::string &id, int textureId, std::vector<Property> properties, bool solid)
 		{
-			Blocks::AIR = getDefaultStateId("air");
-			Blocks::STONE = getDefaultStateId("stone");
-		}
-		void	_registerBlock(const std::string &id, std::vector<Property> properties, bool solid)
-		{
-			_blockTypes.insert(std::make_pair(id, std::make_shared<BlockType>(id, properties, solid)));
+			_blockTypes.insert(std::make_pair(id, std::make_shared<BlockType>(id, textureId, properties, solid)));
 		}
 		int	_horizontalRenderDistance = HORIZONTAL_RENDER_DISTANCE;
 		int	_verticalRenderDistance = VERTICAL_RENDER_DISTANCE;
