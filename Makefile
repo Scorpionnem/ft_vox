@@ -7,7 +7,7 @@ EXTERNAL_DIR := external
 ###
 
 CXX :=	c++
-CXXFLAGS :=	-Wall -Wextra -Werror -g -MP -MMD -std=c++17 # -fsanitize=address -fno-omit-frame-pointer
+CXXFLAGS :=	-Wall -Wextra -Werror -g -MP -MMD -std=c++17 -O3 # -fsanitize=address -fno-omit-frame-pointer
 LFLAGS :=	-lSDL2 -lGL
 
 ###
