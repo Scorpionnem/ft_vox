@@ -6,7 +6,7 @@
 /*   By: mbatty <mbatty@student.42angouleme.fr>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/07 23:36:34 by mbatty            #+#    #+#             */
-/*   Updated: 2026/01/08 15:16:20 by mbatty           ###   ########.fr       */
+/*   Updated: 2026/01/08 19:29:00 by mbatty           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,7 +16,9 @@ BlockStateId	BlockState::_globalId = 0;
 
 uint8_t	BlockState::getProperty(const std::string &prop)
 {
-	return ((_properties >> parent->offsetOf(prop)) & _bitMask(parent->sizeOf(prop)));
+	(void)prop;
+	return (0);
+	// return ((_properties >> parent->offsetOf(prop)) & _bitMask(parent->sizeOf(prop)));
 }
 
 BlockStateHash	BlockType::_getBlockStateHash(std::map<std::string, uint8_t> properties)
@@ -29,7 +31,7 @@ BlockStateHash	BlockType::_getBlockStateHash(std::map<std::string, uint8_t> prop
 		if (find != _properties.end())
 		{
 			Property	&prop = find->second;
-			
+
 			res = _setBits(res, _offsets[prop.name], properties.find(prop.name)->second);
 		}
 	}

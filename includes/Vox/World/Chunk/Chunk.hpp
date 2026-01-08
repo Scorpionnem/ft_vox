@@ -6,7 +6,7 @@
 /*   By: mbatty <mbatty@student.42angouleme.fr>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/03 20:22:47 by mbatty            #+#    #+#             */
-/*   Updated: 2026/01/08 16:07:16 by mbatty           ###   ########.fr       */
+/*   Updated: 2026/01/08 19:19:28 by mbatty           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -284,6 +284,7 @@ class	Chunk
 		{
 			_mesh->draw(shader);
 		}
+		bool	isBlockSolid(Vec3i pos);
 		BlockStateId	getBlock(Vec3i pos)
 		{
 			if (!isInBounds(pos))

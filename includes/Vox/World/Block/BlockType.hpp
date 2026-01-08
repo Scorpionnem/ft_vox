@@ -6,7 +6,7 @@
 /*   By: mbatty <mbatty@student.42angouleme.fr>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/07 22:53:45 by mbatty            #+#    #+#             */
-/*   Updated: 2026/01/08 16:00:58 by mbatty           ###   ########.fr       */
+/*   Updated: 2026/01/08 19:33:23 by mbatty           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,6 +18,7 @@
 #include <unordered_map>
 #include <map>
 #include <cmath>
+#include <memory>
 #include <iostream>
 
 using BlockStateId = uint32_t;
@@ -36,7 +37,7 @@ class	Property
 		}
 
 		const char	*name;
-		
+
 		uint8_t		minVal = 0;
 		uint8_t		maxVal = 0;
 
@@ -73,31 +74,35 @@ class	BlockState
 class	BlockType
 {
 	public:
-		BlockType(const std::string &id, std::vector<Property> properties, bool solid = true)
+		BlockType(const std::string &name, std::vector<Property> properties, bool solid)
 		{
-			_id = id;
+			_name = name;
 			for (Property &prop : properties)
 				_properties.insert(std::make_pair(prop.name, prop));
 			_solid = solid;
 			_processHashLayout();
 			_genBlockStates();
 		}
-		const BlockState	&getBlockState(std::map<std::string, uint8_t> properties)
+		~BlockType()
+		{
+			std::cout << "destroyed blocktype" << std::endl;
+		}
+		std::shared_ptr<BlockState>	getBlockState(std::map<std::string, uint8_t> properties)
 		{
 			auto find = _blockStates.find(_getBlockStateHash(properties));
 			if (find == _blockStates.end())
-				throw std::runtime_error("BlockState doesnt exist");
+				return (nullptr);
 			return (find->second);
 		}
-		BlockState	&getDefault()
+		std::shared_ptr<BlockState>	getDefault()
 		{
 			auto find = _blockStates.find(0);
 			if (find == _blockStates.end())
-				throw std::runtime_error("BlockState doesnt exist");
+				return (nullptr);
 			return (find->second);
 		}
 
-		std::string	id() {return (_id);}
+		std::string	name() {return (_name);}
 		uint8_t	offsetOf(const std::string &prop)
 		{
 			return (_offsets[prop]);
@@ -109,7 +114,7 @@ class	BlockType
 				return (0);
 			return (find->second.bitCount);
 		}
-		std::unordered_map<BlockStateHash, BlockState>	&getBlockStates()
+		std::unordered_map<BlockStateHash, std::shared_ptr<BlockState>>	&getBlockStates()
 		{
 			return (_blockStates);
 		}
@@ -120,16 +125,16 @@ class	BlockType
 	private:
 		void			_genBlockStates()
 		{
-			_blockStates.insert({0, BlockState(this, 0)});
+			_blockStates.insert({0, std::make_shared<BlockState>(this, 0)});
 		}
 		BlockStateHash	_getBlockStateHash(std::map<std::string, uint8_t> properties);
 		BlockStateHash	_setBits(BlockStateHash hash, uint8_t offset, uint8_t val);
 		void			_processHashLayout();
 
 		bool											_solid;
-		std::string										_id;
+		std::string										_name;
 
-		std::unordered_map<BlockStateHash, BlockState>	_blockStates;
+		std::unordered_map<BlockStateHash, std::shared_ptr<BlockState>>	_blockStates;
 		std::unordered_map<std::string, uint8_t>		_offsets;
 		std::unordered_map<std::string, Property>		_properties;
 };
