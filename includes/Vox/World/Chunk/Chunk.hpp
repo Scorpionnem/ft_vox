@@ -6,7 +6,7 @@
 /*   By: mbatty <mbatty@student.42angouleme.fr>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/03 20:22:47 by mbatty            #+#    #+#             */
-/*   Updated: 2026/01/07 20:37:40 by mbatty           ###   ########.fr       */
+/*   Updated: 2026/01/08 12:52:18 by mbatty           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,6 +18,7 @@
 #include <MeshCache.hpp>
 #include <atomic>
 #include <limits.h>
+#include "BlockType.hpp"
 
 # define CHUNK_SIZE 32
 # define CHUNK_VOLUME CHUNK_SIZE * CHUNK_SIZE * CHUNK_SIZE
@@ -249,7 +250,7 @@ class	Chunk
 		{
 			return (std::floor(calcNoise(pos, 0.0125, 1, 4) * 100));
 		}
-		BLOCK	getGenerationBlock(Vec3i pos)
+		BlockStateId	getGenerationBlock(Vec3i pos)
 		{
 			Vec3i	wp = worldPos(pos);
 
@@ -332,14 +333,14 @@ class	Chunk
 		{
 			_mesh->draw(shader);
 		}
-		BLOCK	getBlock(Vec3i pos)
+		BlockStateId	getBlock(Vec3i pos)
 		{
 			if (!isInBounds(pos))
 				return (getGenerationBlock(pos));
 			int index = pos.x + pos.y * CHUNK_SIZE + pos.z * CHUNK_SIZE * CHUNK_SIZE;
 			return (_blocks[index]);
 		}
-		void	setBlock(Vec3i pos, BLOCK block)
+		void	setBlock(Vec3i pos, BlockStateId block)
 		{
 			if (!isInBounds(pos))
 				return ;
@@ -354,10 +355,10 @@ class	Chunk
 			return (true);
 		}
 	// private:
-		std::vector<BLOCK>	_blocks;
-		Vec3i				_pos;
-		std::shared_ptr<Mesh>	_mesh;
-		bool					_uploaded = false;
-		std::atomic_bool		_generated = false;
-		std::atomic_bool		_meshed = false;
+		std::vector<BlockStateId>	_blocks;
+		Vec3i						_pos;
+		std::shared_ptr<Mesh>		_mesh;
+		bool						_uploaded = false;
+		std::atomic_bool			_generated = false;
+		std::atomic_bool			_meshed = false;
 };

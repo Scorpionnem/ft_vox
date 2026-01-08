@@ -6,7 +6,7 @@
 /*   By: mbatty <mbatty@student.42angouleme.fr>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/01 21:51:41 by mbatty            #+#    #+#             */
-/*   Updated: 2026/01/07 17:40:31 by mbatty           ###   ########.fr       */
+/*   Updated: 2026/01/08 01:40:18 by mbatty           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -67,7 +67,7 @@ void	Window::open(uint32_t width, uint32_t height, const std::string &title)
 
 	glEnable(GL_MULTISAMPLE);
 
-	SDL_GL_SetSwapInterval(1);
+	SDL_GL_SetSwapInterval(0);
 
 	
 	IMGUI_CHECKVERSION();

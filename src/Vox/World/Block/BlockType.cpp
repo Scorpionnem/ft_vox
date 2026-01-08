@@ -6,10 +6,10 @@
 /*   By: mbatty <mbatty@student.42angouleme.fr>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/07 23:36:34 by mbatty            #+#    #+#             */
-/*   Updated: 2026/01/08 00:12:07 by mbatty           ###   ########.fr       */
+/*   Updated: 2026/01/08 13:04:26 by mbatty           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "BlockType.hpp"
 
-uint32_t			BlockState::_gId = 0;
+uint32_t			BlockState::_globalId = 0;
