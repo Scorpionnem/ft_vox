@@ -6,7 +6,7 @@
 /*   By: mbatty <mbatty@student.42angouleme.fr>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/07 16:01:26 by mbatty            #+#    #+#             */
-/*   Updated: 2026/01/08 22:09:43 by mbatty           ###   ########.fr       */
+/*   Updated: 2026/01/08 22:46:42 by mbatty           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -46,7 +46,7 @@ void	World::update(Camera &camera)
 	int	startY = camChunkPos.y + (_verticalRenderDistance - 1);
 	int	endX = camChunkPos.x - _horizontalRenderDistance;
 	int	endZ = camChunkPos.z - _horizontalRenderDistance;
-	int	endY = camChunkPos.y - 3;
+	int	endY = camChunkPos.y - _verticalRenderDistance;
 
 	_loadedChunks.clear();
 	_visibleChunks.clear();

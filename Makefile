@@ -103,7 +103,7 @@ stb_image: $(EXTERNAL_DIR)
 
 json:
 	@if ls external | grep -q "json.h"; then \
-		echo "\033[32;1;4mjson.h Found\033[0m"; \
+		printf ""; \
 	else\
 		echo "\033[31;1mDownloading json.h\033[0m"; \
 		curl --silent -o external/json.h https://raw.githubusercontent.com/nlohmann/json/refs/heads/develop/single_include/nlohmann/json.hpp;\
