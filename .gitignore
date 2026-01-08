@@ -5,3 +5,4 @@ a.out
 limace/
 stb_image.h
 external/imgui/
+external/json.h

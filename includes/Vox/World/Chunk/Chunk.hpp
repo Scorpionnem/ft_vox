@@ -6,7 +6,7 @@
 /*   By: mbatty <mbatty@student.42angouleme.fr>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/03 20:22:47 by mbatty            #+#    #+#             */
-/*   Updated: 2026/01/08 21:32:28 by mbatty           ###   ########.fr       */
+/*   Updated: 2026/01/08 22:25:52 by mbatty           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,83 +19,10 @@
 #include <atomic>
 #include <limits.h>
 #include "BlockType.hpp"
+#include "Perlin2D.hpp"
 
 # define CHUNK_SIZE 32
 # define CHUNK_VOLUME CHUNK_SIZE * CHUNK_SIZE * CHUNK_SIZE
-
-#define seed 12312343298412897
-
-inline Vec2 randomGradient(int ix, int iy)
-{
-	const unsigned w = 8 * sizeof(unsigned);
-	const unsigned s = w / 2;
-	unsigned a = ix, b = iy;
-	a *= 3284157443 + (seed + 1);
-
-	b ^= a << s | a >> (w - s);
-	b *= 1911520717;
-
-	a ^= b << s | b >> (w - s);
-	a *= 2048419325;
-	float random = (a / (float)UINT_MAX) * 2.0f * M_PI;
-
-	Vec2 v;
-	v.x = sin(random);
-	v.y = cos(random);
-
-	return v;
-}
-
-inline float dotGridGradient(int ix, int iy, float x, float y)
-{
-	Vec2 gradient = randomGradient(ix, iy);
-
-	float dx = x - (float)ix;
-	float dy = y - (float)iy;
-
-	return (dx * gradient.x + dy * gradient.y);
-}
-
-inline float interpolate(float a0, float a1, float w)
-{
-	return (a1 - a0) * (3.0 - w * 2.0) * w * w + a0;
-}
-
-inline float perlin(float x, float y)
-{
-	int x0 = (int)std::floor(x);
-	int y0 = (int)std::floor(y);
-	int x1 = x0 + 1;
-	int y1 = y0 + 1;
-
-	float sx = x - (float)x0;
-	float sy = y - (float)y0;
-
-	float n0 = dotGridGradient(x0, y0, x, y);
-	float n1 = dotGridGradient(x1, y0, x, y);
-	float ix0 = interpolate(n0, n1, sx);
-
-	n0 = dotGridGradient(x0, y1, x, y);
-	n1 = dotGridGradient(x1, y1, x, y);
-	float ix1 = interpolate(n0, n1, sx);
-
-	float value = interpolate(ix0, ix1, sy);
-
-	return (value);
-}
-
-inline float	perlin(float x, float y, float z)
-{
-	float ab = perlin(x, y);
-	float bc = perlin(y, z);
-	float ac = perlin(x, z);
-
-	float ba = perlin(y, x);
-	float cb = perlin(z, y);
-	float ca = perlin(z, x);
-
-	return (ab + bc + ac + ba + cb + ca) / 6.0;
-}
 
 namespace Cube
 {
@@ -197,43 +124,7 @@ namespace Cube
 	void	addFace(std::shared_ptr<Mesh> mesh, Vec3i pos, Direction dir, int textureId);
 }
 
-inline float	calcNoise(const Vec3i &pos, float freq, float amp, int noisiness)
-{
-	float	res = 0;
-	for (int i = 0; i < noisiness; i++)
-	{
-		res += perlin(pos.x * freq, pos.y * freq, pos.z * freq) * amp;
-
-		freq *= 2;
-		amp /= 2;
-	}
-
-	if (res > 1.0f)
-		res = 1.0f;
-	else if (res < -1.0f)
-		res = -1.0f;
-
-	return (res);
-}
-
-inline float	calcNoise(const Vec2i &pos, float freq, float amp, int noisiness)
-{
-	float	res = 0;
-	for (int i = 0; i < noisiness; i++)
-	{
-		res += perlin(pos.x * freq, pos.y * freq) * amp;
-
-		freq *= 2;
-		amp /= 2;
-	}
-
-	if (res > 1.0f)
-		res = 1.0f;
-	else if (res < -1.0f)
-		res = -1.0f;
-
-	return (res);
-}
+#define WATERLEVEL 0
 
 class	World;
 
@@ -250,10 +141,7 @@ class	Chunk
 		{
 			return (pos + _pos * CHUNK_SIZE);
 		}
-		int	getGenerationHeight(Vec2i pos)
-		{
-			return (std::floor(calcNoise(pos, 0.0125, 1, 4) * 100));
-		}
+		int	getGenerationHeight(Vec2i pos);
 		BlockStateId	getGenerationBlock(Vec3i pos);
 		void	generateTerrain();
 		void	generateFeatures()

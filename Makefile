@@ -22,11 +22,13 @@ INCLUDE_DIRS :=	external/imgui/\
 				includes/Vox/World/Block\
 				includes/Vox/World/Chunk\
 				includes/Vox/World/Generation\
+				includes/Vox/World/Generation/Noise\
 				includes/Core/Resources\
 				includes/Core/Resources/Cache\
 				includes/Core/Rendering/Light\
 				includes/Core/Rendering/Light/Cache\
 				external/glad\
+				external/\
 				external/stb_image
 
 SRCS :=	main\
@@ -46,6 +48,8 @@ SRCS :=	main\
 		Vox/World/Chunk/Chunk\
 		Vox/World/Block/BlockType\
 		Vox/Generation/ChunkGenerator\
+		Vox/Generation/Spline\
+		Vox/Generation/Noise/Perlin2D\
 		Math/Math
 
 ###
@@ -79,7 +83,7 @@ DEPS =	$(SRCS:%.cpp=$(OBJ_DIR)/%.d)
 
 ###
 
-compile: stb_image glad imgui
+compile: stb_image glad imgui json
 	@make -j all --no-print-directory
 
 all: $(NAME)
@@ -95,6 +99,15 @@ stb_image: $(EXTERNAL_DIR)
 		mkdir -p external/stb_image; \
 		curl --silent -o external/stb_image/stb_image.h https://raw.githubusercontent.com/nothings/stb/master/stb_image.h;\
 		echo "\033[31;1mDownloaded stb_image.h\033[0m"; \
+	fi
+
+json:
+	@if ls external | grep -q "json.h"; then \
+		echo "\033[32;1;4mjson.h Found\033[0m"; \
+	else\
+		echo "\033[31;1mDownloading json.h\033[0m"; \
+		curl --silent -o external/json.h https://raw.githubusercontent.com/nlohmann/json/refs/heads/develop/single_include/nlohmann/json.hpp;\
+		echo "\033[31;1mDownloaded json.h\033[0m"; \
 	fi
 
 glad: $(EXTERNAL_DIR)

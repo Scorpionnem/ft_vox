@@ -6,7 +6,7 @@
 /*   By: mbatty <mbatty@student.42angouleme.fr>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/03 20:22:52 by mbatty            #+#    #+#             */
-/*   Updated: 2026/01/08 21:39:09 by mbatty           ###   ########.fr       */
+/*   Updated: 2026/01/08 22:23:40 by mbatty           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,6 +17,7 @@
 #include <unordered_map>
 #include <memory>
 #include <ChunkGenerator.hpp>
+#include <WorldGenerator.hpp>
 #include <BlockType.hpp>
 
 #define HORIZONTAL_RENDER_DISTANCE 8
@@ -43,6 +44,8 @@ class World
 	public:
 		World(MeshCache &cache) : _generator(cache)
 		{
+			wgen.load();
+
 			_registerBlock("air", 0, {}, false);
 			_registerBlock("stone", 0, {}, true);
 			_registerBlock("dirt", 1, {}, true);
@@ -59,6 +62,12 @@ class World
 		~World()
 		{
 			_generator.stop();
+		}
+
+		void	reload()
+		{
+			wgen.reload();
+			_chunks.clear();
 		}
 
 		std::shared_ptr<BlockType>	getBlockType(const std::string &id)
@@ -88,6 +97,7 @@ class World
 		int	getHorizontalRenderDistance() {return (_horizontalRenderDistance);}
 		int	getVerticalRenderDistance() {return (_verticalRenderDistance);}
 		int	getMaxLoadedChunks() {return ((_horizontalRenderDistance * 2) * (_horizontalRenderDistance * 2) * (_verticalRenderDistance * 2));}
+		WorldGenerator	wgen;
 	private:
 		void	_computeBlockStates()
 		{

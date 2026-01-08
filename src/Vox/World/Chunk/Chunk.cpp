@@ -6,12 +6,20 @@
 /*   By: mbatty <mbatty@student.42angouleme.fr>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/08 15:52:47 by mbatty            #+#    #+#             */
-/*   Updated: 2026/01/08 21:40:16 by mbatty           ###   ########.fr       */
+/*   Updated: 2026/01/08 22:34:59 by mbatty           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "Chunk.hpp"
 #include "World.hpp"
+
+int	Chunk::getGenerationHeight(Vec2i pos)
+{
+	float	freq = _world->wgen.getContinentalnessFreq();
+	float	amp = _world->wgen.getContinentalnessAmp();
+	float	noisiness = _world->wgen.getContinentalnessNoisiness();
+	return (_world->wgen.getContinentalness(Perlin2D::calcNoise(pos, freq, amp, noisiness)));
+}
 
 BlockStateId	Chunk::getGenerationBlock(Vec3i pos)
 {
@@ -20,6 +28,8 @@ BlockStateId	Chunk::getGenerationBlock(Vec3i pos)
 	int	genHeight = getGenerationHeight(Vec2i(wp.x, wp.z));
 	if (wp.y <= genHeight)
 	{
+		if (wp.y == genHeight && wp.y == 0)
+			return (Blocks::STONE);
 		if (wp.y == genHeight)
 			return (Blocks::GRASS);
 		if (wp.y >= genHeight - 2)
@@ -38,14 +48,11 @@ void	Chunk::generateTerrain()
 
 			int	terrainHeight = getGenerationHeight(Vec2i(wp.x, wp.z));
 
-			if (wp.y > terrainHeight)
+			if (wp.y > std::max(terrainHeight, WATERLEVEL))
 				continue ;
 
 			for (int y = CHUNK_SIZE; y >= 0; y--)
 			{
-				if (worldPos(Vec3i(x, y, z)).y > terrainHeight)
-					continue ;
-
 				Vec3i	pos = Vec3i(x, y, z);
 				setBlock(pos, getGenerationBlock(pos));
 			}
