@@ -6,7 +6,7 @@
 /*   By: mbatty <mbatty@student.42angouleme.fr>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/08 15:52:47 by mbatty            #+#    #+#             */
-/*   Updated: 2026/01/08 22:34:59 by mbatty           ###   ########.fr       */
+/*   Updated: 2026/01/09 16:26:24 by mbatty           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,10 +15,7 @@
 
 int	Chunk::getGenerationHeight(Vec2i pos)
 {
-	float	freq = _world->wgen.getContinentalnessFreq();
-	float	amp = _world->wgen.getContinentalnessAmp();
-	float	noisiness = _world->wgen.getContinentalnessNoisiness();
-	return (_world->wgen.getContinentalness(Perlin2D::calcNoise(pos, freq, amp, noisiness)));
+	return (_world->wgen.getNoise("continentalness", pos) + _world->wgen.getNoise("peaks_valleys", pos) + _world->wgen.getNoise("erosion", pos) + _world->wgen.getNoise("mountainness", pos));
 }
 
 BlockStateId	Chunk::getGenerationBlock(Vec3i pos)
@@ -28,10 +25,12 @@ BlockStateId	Chunk::getGenerationBlock(Vec3i pos)
 	int	genHeight = getGenerationHeight(Vec2i(wp.x, wp.z));
 	if (wp.y <= genHeight)
 	{
-		if (wp.y == genHeight && wp.y == 0)
-			return (Blocks::STONE);
 		if (wp.y == genHeight)
+		{
+			if (wp.y <= WATERLEVEL)
+				return (Blocks::SAND);
 			return (Blocks::GRASS);
+		}
 		if (wp.y >= genHeight - 2)
 			return (Blocks::DIRT);
 		return (Blocks::STONE);

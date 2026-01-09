@@ -6,7 +6,7 @@
 /*   By: mbatty <mbatty@student.42angouleme.fr>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/07 20:35:35 by mbatty            #+#    #+#             */
-/*   Updated: 2026/01/08 22:45:01 by mbatty           ###   ########.fr       */
+/*   Updated: 2026/01/09 15:22:47 by mbatty           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,6 +16,9 @@
 
 #include "Spline.hpp"
 #include <fstream>
+#include <unordered_map>
+#include <string>
+#include "Math.hpp"
 
 class	WorldGenerator
 {
@@ -37,26 +40,25 @@ class	WorldGenerator
 				throw std::runtime_error("Failed to parse " + std::string(CONTINENTALNESS_SPLINE_PATH));
 			}
 
-			if (data.contains("continentalness"))
-				_continentalness = data["continentalness"].get<Spline>();
-
-			if (data.contains("peaks_valleys"))
-				_peaksValleys = data["peaks_valleys"].get<Spline>();
+			for (auto &[name, spline] : data.items())
+				_splines.insert(std::make_pair(name, spline.get<Spline>()));
 		}
 
 		void	reload()
 		{
-			_continentalness.points.clear();
-			_peaksValleys.points.clear();
+			_splines.clear();
 			load();
 		}
 
-		float	getContinentalnessFreq() {return (_continentalness.freq);}
-		int	getContinentalnessAmp() {return (_continentalness.amp);}
-		int	getContinentalnessNoisiness() {return (_continentalness.noisiness);}
-		float	getContinentalness(float val) {return (getValueInSpline(_continentalness, val));}
-		float	getPeaksValleys(float val) {return (getValueInSpline(_peaksValleys, val));}
+		float	getNoise(const std::string &id, Vec2i pos)
+		{
+			Spline	&spline = _splines[id];
+
+			float noise = Perlin2D::calcNoise(pos, spline.freq, spline.amp, spline.noisiness);
+			if (spline.abs)
+				noise = std::abs(noise);
+			return (getValueInSpline(spline, noise));
+		}
 	private:
-		Spline	_continentalness;
-		Spline	_peaksValleys;
+		std::unordered_map<std::string, Spline>	_splines;
 };
