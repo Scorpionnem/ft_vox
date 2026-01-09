@@ -6,7 +6,7 @@
 /*   By: mbatty <mbatty@student.42angouleme.fr>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/03 20:22:47 by mbatty            #+#    #+#             */
-/*   Updated: 2026/01/09 17:08:01 by mbatty           ###   ########.fr       */
+/*   Updated: 2026/01/09 21:30:49 by mbatty           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -141,6 +141,10 @@ class	Chunk
 		{
 			return (pos + _pos * CHUNK_SIZE);
 		}
+		Vec3i	localPos(Vec3i pos)
+		{
+			return (pos - _pos * CHUNK_SIZE);
+		}
 		int	getGenerationHeight(Vec2i pos);
 		BlockStateId	getGenerationBlock(Vec3i pos);
 		void	generateTerrain();
@@ -169,6 +173,11 @@ class	Chunk
 			return (false);
 		}
 		void	genMesh(MeshCache &meshCache);
+		void	remesh(MeshCache &meshCache)
+		{
+			_uploaded = false;
+			genMesh(meshCache);
+		}
 		void	draw(std::shared_ptr<Shader> shader)
 		{
 			_mesh->draw(shader);
