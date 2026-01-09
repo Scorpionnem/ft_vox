@@ -6,7 +6,7 @@
 /*   By: mbatty <mbatty@student.42angouleme.fr>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/03 20:22:47 by mbatty            #+#    #+#             */
-/*   Updated: 2026/01/08 22:25:52 by mbatty           ###   ########.fr       */
+/*   Updated: 2026/01/09 17:08:01 by mbatty           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -161,6 +161,7 @@ class	Chunk
 			if (!_uploaded)
 			{
 				_mesh->upload();
+				_transparentMesh->upload();
 				_uploaded = true;
 				return (true);
 			}
@@ -171,6 +172,7 @@ class	Chunk
 		void	draw(std::shared_ptr<Shader> shader)
 		{
 			_mesh->draw(shader);
+			_transparentMesh->draw(shader);
 		}
 		bool	isBlockSolid(Vec3i pos);
 		BlockStateId	getBlock(Vec3i pos)
@@ -198,6 +200,7 @@ class	Chunk
 		std::vector<BlockStateId>	_blocks;
 		Vec3i						_pos;
 		std::shared_ptr<Mesh>		_mesh;
+		std::shared_ptr<Mesh>		_transparentMesh;
 		bool						_uploaded = false;
 		std::atomic_bool			_generated = false;
 		std::atomic_bool			_meshed = false;

@@ -6,7 +6,7 @@
 /*   By: mbatty <mbatty@student.42angouleme.fr>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/08 15:52:47 by mbatty            #+#    #+#             */
-/*   Updated: 2026/01/09 16:26:24 by mbatty           ###   ########.fr       */
+/*   Updated: 2026/01/09 17:09:09 by mbatty           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -35,6 +35,8 @@ BlockStateId	Chunk::getGenerationBlock(Vec3i pos)
 			return (Blocks::DIRT);
 		return (Blocks::STONE);
 	}
+	if (wp.y < WATERLEVEL)
+		return (Blocks::WATER);
 	return (Blocks::AIR);
 }
 
@@ -68,26 +70,31 @@ bool	Chunk::isBlockSolid(Vec3i pos)
 void	Chunk::genMesh(MeshCache &meshCache)
 {
 	_mesh = meshCache.gen();
+	_transparentMesh = meshCache.gen();
 
 	for (int x = 0; x < CHUNK_SIZE; x++)
 		for (int y = 0; y < CHUNK_SIZE; y++)
 			for (int z = 0; z < CHUNK_SIZE; z++)
 			{
-				if (isBlockSolid(Vec3i(x, y, z)))
+				BlockStateId	block = getBlock(Vec3i(x, y, z));
+				bool	solid = isBlockSolid(Vec3i(x, y, z));
+				std::shared_ptr<Mesh>	mesh = solid ? _mesh : _transparentMesh;
+				int	textureId = _world->getBlockState(block)->parent->textureId();
+
+				if (block != Blocks::AIR)
 				{
-					int	textureId = _world->getBlockState(getBlock(Vec3i(x, y, z)))->parent->textureId();
-					if (!isBlockSolid(Vec3i(x, y + 1, z)))
-						Cube::addFace(_mesh, Vec3i(x, y, z), Cube::Direction::TOP, textureId);
-					if (!isBlockSolid(Vec3i(x, y - 1, z)))
-						Cube::addFace(_mesh, Vec3i(x, y, z), Cube::Direction::BOTTOM, textureId);
-					if (!isBlockSolid(Vec3i(x + 1, y, z)))
-						Cube::addFace(_mesh, Vec3i(x, y, z), Cube::Direction::EAST, textureId);
-					if (!isBlockSolid(Vec3i(x - 1, y, z)))
-						Cube::addFace(_mesh, Vec3i(x, y, z), Cube::Direction::WEST, textureId);
-					if (!isBlockSolid(Vec3i(x, y, z + 1)))
-						Cube::addFace(_mesh, Vec3i(x, y, z), Cube::Direction::NORTH, textureId);
-					if (!isBlockSolid(Vec3i(x, y, z - 1)))
-						Cube::addFace(_mesh, Vec3i(x, y, z), Cube::Direction::SOUTH, textureId);
+					if (!isBlockSolid(Vec3i(x, y + 1, z)) && getBlock(Vec3i(x, y + 1, z)) != block)
+						Cube::addFace(mesh, Vec3i(x, y, z), Cube::Direction::TOP, textureId);
+					if (!isBlockSolid(Vec3i(x, y - 1, z)) && getBlock(Vec3i(x, y - 1, z)) != block)
+						Cube::addFace(mesh, Vec3i(x, y, z), Cube::Direction::BOTTOM, textureId);
+					if (!isBlockSolid(Vec3i(x + 1, y, z)) && getBlock(Vec3i(x + 1, y, z)) != block)
+						Cube::addFace(mesh, Vec3i(x, y, z), Cube::Direction::EAST, textureId);
+					if (!isBlockSolid(Vec3i(x - 1, y, z)) && getBlock(Vec3i(x - 1, y, z)) != block)
+						Cube::addFace(mesh, Vec3i(x, y, z), Cube::Direction::WEST, textureId);
+					if (!isBlockSolid(Vec3i(x, y, z + 1)) && getBlock(Vec3i(x, y, z + 1)) != block)
+						Cube::addFace(mesh, Vec3i(x, y, z), Cube::Direction::NORTH, textureId);
+					if (!isBlockSolid(Vec3i(x, y, z - 1)) && getBlock(Vec3i(x, y, z - 1)) != block)
+						Cube::addFace(mesh, Vec3i(x, y, z), Cube::Direction::SOUTH, textureId);
 				}
 			}
 	_meshed = true;

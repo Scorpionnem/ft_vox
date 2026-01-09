@@ -94,7 +94,7 @@ void main()
 
 	result += CalcSunLight(vNormal, vWorldPos, vec3(-0.5, -1, -0.25), sunColor);
 
-	vec3	fogColor = vec3(0.1, 0.1, 0.15);
+	vec3	fogColor = vec3(0.6, 0.8, 1.0);
 	int		fogPower = 4;
 
 	float	fogFactorHorizontal = pow(length(uViewPos.xz - vWorldPos.xz) / horizontalRenderDistance, fogPower);
@@ -105,5 +105,5 @@ void main()
 
 	materialColor.rgb = materialColor.rgb * clamp(result, 0.0, 1.0);
 
-	FragColor = vec4(mix(mix(materialColor.rgb, fogColor, fogFactorHorizontal), fogColor, fogFactorVertical), 1.0);
+	FragColor = vec4(mix(mix(materialColor.rgb, fogColor, fogFactorHorizontal), fogColor, fogFactorVertical), materialColor.a);
 }

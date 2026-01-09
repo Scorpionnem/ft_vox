@@ -6,7 +6,7 @@
 /*   By: mbatty <mbatty@student.42angouleme.fr>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/01 21:51:41 by mbatty            #+#    #+#             */
-/*   Updated: 2026/01/09 15:53:19 by mbatty           ###   ########.fr       */
+/*   Updated: 2026/01/09 17:14:50 by mbatty           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -141,6 +141,6 @@ void	Window::pollEvents()
 void	Window::display()
 {
 	SDL_GL_SwapWindow(_window);
-	glClearColor(0.1f, 0.1f, 0.15f, 1.0f);
+	glClearColor(0.6f, 0.8f, 1.0f, 1.0f);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 }
