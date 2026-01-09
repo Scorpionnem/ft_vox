@@ -6,14 +6,14 @@
 /*   By: mbatty <mbatty@student.42angouleme.fr>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/06 13:32:10 by mbatty            #+#    #+#             */
-/*   Updated: 2026/01/08 22:25:31 by mbatty           ###   ########.fr       */
+/*   Updated: 2026/01/09 20:11:03 by mbatty           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "Perlin2D.hpp"
 #include <limits.h>
 
-uint seed = 424546548;
+uint seed = 42;
 
 Vec2 randomGradient(int ix, int iy)
 {

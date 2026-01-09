@@ -6,16 +6,12 @@
 /*   By: mbatty <mbatty@student.42angouleme.fr>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/06 17:26:29 by mbatty            #+#    #+#             */
-/*   Updated: 2026/01/08 22:22:15 by mbatty           ###   ########.fr       */
+/*   Updated: 2026/01/09 20:06:17 by mbatty           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "Spline.hpp"
-
-float mix(float a, float b, float t)
-{
-	return a * (1.0f - t) + b * t;
-}
+#include "Math.hpp"
 
 float	getValueInSpline(const Spline &spline, float value)
 {
