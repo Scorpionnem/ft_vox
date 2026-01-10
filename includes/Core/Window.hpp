@@ -6,7 +6,7 @@
 /*   By: mbatty <mbatty@student.42angouleme.fr>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/01 21:44:54 by mbatty            #+#    #+#             */
-/*   Updated: 2026/01/07 17:06:51 by mbatty           ###   ########.fr       */
+/*   Updated: 2026/01/10 21:03:30 by mbatty           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -64,6 +64,13 @@ class	Window
 						return (false);
 					return (find->second);
 				}
+				bool	getKeyReleased(int key) const
+				{
+					auto find = _keysReleased.find(key);
+					if (find == _keysReleased.end())
+						return (false);
+					return (find->second);
+				}
 				float	getMouseScroll() const {return (_mouseScroll);}
 				void	setKey(int key, bool state)
 				{
@@ -85,6 +92,10 @@ class	Window
 				{
 					_keysPressed[key] = true;
 				}
+				void	setKeyReleased(int key)
+				{
+					_keysReleased[key] = true;
+				}
 				float	getMouseDeltaX() const {return (_mouseDeltaX);}
 				float	getMouseDeltaY() const {return (_mouseDeltaY);}
 				void	setMouseDeltaX(float val) {_mouseDeltaX = val;}
@@ -96,6 +107,7 @@ class	Window
 					_mouseDeltaY = 0;
 					_mouseScroll = 0;
 					_keysPressed.clear();
+					_keysReleased.clear();
 					_mouseBtnPressed.clear();
 					_mouseBtnLifted.clear();
 				}
@@ -105,6 +117,7 @@ class	Window
 				float	_mouseScroll = 0;
 				std::map<int, bool>	_keys;
 				std::map<int, bool>	_keysPressed;
+				std::map<int, bool>	_keysReleased;
 				std::map<int, bool>	_mouseBtn;
 				std::map<int, bool>	_mouseBtnPressed;
 				std::map<int, bool>	_mouseBtnLifted;

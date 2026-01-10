@@ -6,7 +6,7 @@
 /*   By: mbatty <mbatty@student.42angouleme.fr>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/03 20:15:34 by mbatty            #+#    #+#             */
-/*   Updated: 2026/01/10 16:39:48 by mbatty           ###   ########.fr       */
+/*   Updated: 2026/01/10 21:09:31 by mbatty           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -89,6 +89,8 @@ void	Cube::addFace(std::shared_ptr<Mesh> mesh, Vec3i pos, Direction dir, int tex
 
 void	VoxScene::build()
 {
+	SDL_ShowCursor(SDL_DISABLE);
+
 	_camera.pos = Vec3d(0, 0, 0);
 	_camera.pitch = 0;
 
@@ -104,11 +106,22 @@ float	getFpsFromArray(void *tab, int id)
 
 void	VoxScene::update(float delta, const Window::Events &events)
 {
-	// int	windowWidth = _engine.getWindow().width();
-	// int	windowHeight = _engine.getWindow().height();
+	int	windowWidth = _engine.getWindow().width();
+	int	windowHeight = _engine.getWindow().height();
 
-	// if (events.getMouseBtn(SDL_BUTTON_LEFT))
-	// 	_engine.getWindow().setMousePos(windowWidth / 2, windowHeight / 2);
+	if (events.getKeyPressed(SDLK_LALT))
+	{
+		_cursorMode = true;
+		SDL_ShowCursor(SDL_ENABLE);
+	}
+	if (events.getKeyReleased(SDLK_LALT))
+	{
+		_cursorMode = false;
+		SDL_ShowCursor(SDL_DISABLE);
+	}
+
+	if (!_cursorMode)
+		_engine.getWindow().setMousePos(windowWidth / 2, windowHeight / 2);
 
 	if (events.getKey(SDLK_ESCAPE))
 		requestStop();
@@ -163,7 +176,7 @@ void	VoxScene::update(float delta, const Window::Events &events)
 		ImGui::ProgressBar((float)_world->getLoadedChunks().size() / (float)_world->getMaxLoadedChunks());
 	}
 	ImGui::End();
-	
+
 
 	worldVec2i	wp(_camera.pos.x, _camera.pos.z);
 	float	continentalness = _world->wgen.getNoise("continentalness", wp);
@@ -181,8 +194,8 @@ void	VoxScene::update(float delta, const Window::Events &events)
 	{
 		std::cout << continentalness << " " << riverness << " " << erosion << " " << mountainness << std::endl;
 	}
-	
-	
+
+
 	if (ImGui::Begin("Generation Info", (bool *)__null))
 	{
 		ImGui::Text("Continental: %.3f Rivers: %.3f Erosion: %.3f Mountains: %.3f", continentalness, riverness, erosion, mountainness);
@@ -194,7 +207,7 @@ void	VoxScene::update(float delta, const Window::Events &events)
 void	VoxScene::_updateCamera(float delta, const Window::Events &events)
 {
 	float	speed = 50 * delta;
-	// float	sensitivity = 0.3;
+	float	sensitivity = 0.5;
 
 	if (events.getKey(SDLK_w))
 		_camera.pos = _camera.pos + _camera.front * speed;
@@ -217,17 +230,13 @@ void	VoxScene::_updateCamera(float delta, const Window::Events &events)
 	if (events.getKey(SDLK_LEFT))
 		_camera.yaw -= speed * 2;
 
-	// if (events.getMouseBtnPressed(SDL_BUTTON_LEFT))
-	// 	SDL_ShowCursor(SDL_DISABLE);
-	// if (events.getMouseBtnLifted(SDL_BUTTON_LEFT))
-	// 	SDL_ShowCursor(SDL_ENABLE);
-	// if (events.getMouseBtn(SDL_BUTTON_LEFT))
-	// {
-	// 	_camera.pitch -= events.getMouseDeltaY() * sensitivity;
-	// 	_camera.yaw += events.getMouseDeltaX() * sensitivity;
-	// }
+	if (!_cursorMode)
+	{
+		_camera.pitch -= events.getMouseDeltaY() * sensitivity;
+		_camera.yaw += events.getMouseDeltaX() * sensitivity;
+	}
 
-	_camera.update(_engine.getWindow().aspectRatio());
+	_camera.update(delta, _engine.getWindow().aspectRatio());
 }
 
 void	VoxScene::display()

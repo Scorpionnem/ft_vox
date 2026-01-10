@@ -6,7 +6,7 @@
 /*   By: mbatty <mbatty@student.42angouleme.fr>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/07 16:01:26 by mbatty            #+#    #+#             */
-/*   Updated: 2026/01/10 17:22:23 by mbatty           ###   ########.fr       */
+/*   Updated: 2026/01/10 20:51:19 by mbatty           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -36,6 +36,7 @@ void	World::update(Camera &camera)
 			_horizontalRenderDistance = 1;
 		if (_verticalRenderDistance < 1)
 			_verticalRenderDistance = 1;
+		ImGui::Text("Vertical %d Horizontal %d", _horizontalRenderDistance * CHUNK_SIZE, _verticalRenderDistance * CHUNK_SIZE);
 	}
 	ImGui::End();
 

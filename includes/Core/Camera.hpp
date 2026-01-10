@@ -6,7 +6,7 @@
 /*   By: mbatty <mbatty@student.42angouleme.fr>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/02 16:04:06 by mbatty            #+#    #+#             */
-/*   Updated: 2026/01/07 16:10:20 by mbatty           ###   ########.fr       */
+/*   Updated: 2026/01/10 20:55:33 by mbatty           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -43,21 +43,23 @@ class	Camera
 			front = Vec3(0.0f, 0.0f, -1.0f);
 			up = Vec3(0.0f, 1.0f, 0.0f);
 		}
-		
-		void	update(float aspectRatio);
+
+		void	update(float delta, float aspectRatio);
 
 		Mat4	getViewMatrix()
 		{
 			return (lookAt(Vec3(0), Vec3(0) + front, up));
 		}
-		
+
 		float	yaw = -90;
 		float	pitch = 0;
 		Vec3d	pos;
 		Vec3	front;
 		Vec3	up;
 		Frustum	frustum;
+		float	speed = 0;
 	private:
 		void	_updatePlaneNormals(float aspectRatio);
 		Vec3	_direction;
+		Vec3d	_lastPos;
 };

@@ -6,7 +6,7 @@
 /*   By: mbatty <mbatty@student.42angouleme.fr>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/07 16:08:20 by mbatty            #+#    #+#             */
-/*   Updated: 2026/01/07 17:37:43 by mbatty           ###   ########.fr       */
+/*   Updated: 2026/01/10 20:56:14 by mbatty           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,7 +16,7 @@
 #include <backends/imgui_impl_sdl2.h>
 #include <backends/imgui_impl_opengl3.h>
 
-void	Camera::update(float aspectRatio)
+void	Camera::update(float delta, float aspectRatio)
 {
 	if (pitch > 89.0f)
 		pitch = 89.0f;
@@ -34,6 +34,9 @@ void	Camera::update(float aspectRatio)
 	front = normalize(_direction);
 	_updatePlaneNormals(aspectRatio);
 
+	speed = length(pos - _lastPos) / delta;
+	_lastPos = pos;
+
 	if (ImGui::Begin("Camera", (bool *)__null))
 	{
 		ImGui::InputDouble("X", &pos.x);
@@ -42,6 +45,7 @@ void	Camera::update(float aspectRatio)
 
 		ImGui::InputFloat("Pitch", &pitch);
 		ImGui::InputFloat("Yaw", &yaw);
+		ImGui::Text("Speed: %.3f", speed);
 	}
 	ImGui::End();
 }
