@@ -6,7 +6,7 @@
 /*   By: mbatty <mbatty@student.42angouleme.fr>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/03 20:15:34 by mbatty            #+#    #+#             */
-/*   Updated: 2026/01/10 15:32:08 by mbatty           ###   ########.fr       */
+/*   Updated: 2026/01/10 16:39:48 by mbatty           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -93,6 +93,8 @@ void	VoxScene::build()
 	_camera.pitch = 0;
 
 	_shader = _engine.loadShader("assets/shaders/core/mesh");
+
+	_world = std::make_unique<World>(_engine.getMeshCache());
 }
 
 float	getFpsFromArray(void *tab, int id)
@@ -118,12 +120,12 @@ void	VoxScene::update(float delta, const Window::Events &events)
 	}
 	if (events.getKeyPressed(SDLK_c) && events.getKey(SDLK_LCTRL))
 	{
-		_world.reload();
+		_world->reload();
 	}
 
 	_updateCamera(delta, events);
 
-	_world.update(_camera);
+	_world->update(_camera);
 
 	static double lastFpsUpdate = 0;
 	static double lastMinMaxFpsUpdate = 0;
@@ -156,18 +158,18 @@ void	VoxScene::update(float delta, const Window::Events &events)
 		ImGui::Text("FPS: %.3f Min: %.3f Max: %.3f", FPS, minFPS, maxFPS);
 		ImGui::PlotLines("FPS Graph", getFpsFromArray, (void*)_fpss.data(), _fpss.size(), 0, __null, 50, 70, ImVec2(180, 48));
 		ImGui::Text("Time: %.3f", _engine.getTime());
-		ImGui::Text("Loaded chunks: %zu", _world.getLoadedChunks().size());
-		ImGui::Text("Visible chunks: %zu", _world.getVisibleChunks().size());
-		ImGui::ProgressBar((float)_world.getLoadedChunks().size() / (float)_world.getMaxLoadedChunks());
+		ImGui::Text("Loaded chunks: %zu", _world->getLoadedChunks().size());
+		ImGui::Text("Visible chunks: %zu", _world->getVisibleChunks().size());
+		ImGui::ProgressBar((float)_world->getLoadedChunks().size() / (float)_world->getMaxLoadedChunks());
 	}
 	ImGui::End();
 	
 
 	worldVec2i	wp(_camera.pos.x, _camera.pos.z);
-	float	continentalness = _world.wgen.getNoise("continentalness", wp);
-	float	riverness = _world.wgen.getNoise("riverness", wp);
-	float	erosion = _world.wgen.getNoise("erosion", wp);
-	float	mountainness = _world.wgen.getNoise("mountainness", wp);
+	float	continentalness = _world->wgen.getNoise("continentalness", wp);
+	float	riverness = _world->wgen.getNoise("riverness", wp);
+	float	erosion = _world->wgen.getNoise("erosion", wp);
+	float	mountainness = _world->wgen.getNoise("mountainness", wp);
 	std::string	terrainShape = "Unknown";
 	if (isPlains(continentalness, riverness, erosion, mountainness))
 		terrainShape = "Plains";
@@ -240,13 +242,13 @@ void	VoxScene::display()
 	_shader->setMat4("uView", view);
 	_shader->setMat4("uProjection", projection);
 
-	_shader->setFloat("horizontalRenderDistance", _world.getHorizontalRenderDistance() * CHUNK_SIZE);
-	_shader->setFloat("verticalRenderDistance", _world.getVerticalRenderDistance() * CHUNK_SIZE);
+	_shader->setFloat("horizontalRenderDistance", _world->getHorizontalRenderDistance() * CHUNK_SIZE);
+	_shader->setFloat("verticalRenderDistance", _world->getVerticalRenderDistance() * CHUNK_SIZE);
 
 	_shader->setFloat("uTime", _engine.getTime());
 	_shader->setVec3("uViewPos", Vec3(0));
 
-	auto chunks = _world.getVisibleChunks();
+	auto chunks = _world->getVisibleChunks();
 	for (auto chunk : chunks)
 	{
 		if (chunk->upload())

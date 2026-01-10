@@ -6,7 +6,7 @@
 /*   By: mbatty <mbatty@student.42angouleme.fr>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/03 20:13:58 by mbatty            #+#    #+#             */
-/*   Updated: 2026/01/07 17:59:23 by mbatty           ###   ########.fr       */
+/*   Updated: 2026/01/10 16:39:11 by mbatty           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,7 +23,7 @@
 class	VoxScene : public Scene
 {
 	public:
-		VoxScene(const Engine &engine) : Scene(engine), _world(engine.getMeshCache()) {}
+		VoxScene(const Engine &engine) : Scene(engine) {}
 		~VoxScene() {}
 		void	build();
 		void	update(float delta, const Window::Events &events);
@@ -34,7 +34,7 @@ class	VoxScene : public Scene
 		std::shared_ptr<Shader>	_shader;
 
 		Camera	_camera;
-		World	_world;
+		std::unique_ptr<World>	_world;
 		std::shared_ptr<Light>	_light;
 		std::vector<float>		_fpss;
 };
