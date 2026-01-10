@@ -6,7 +6,7 @@
 /*   By: mbatty <mbatty@student.42angouleme.fr>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/03 20:22:52 by mbatty            #+#    #+#             */
-/*   Updated: 2026/01/09 16:44:28 by mbatty           ###   ########.fr       */
+/*   Updated: 2026/01/10 14:38:29 by mbatty           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,6 +31,7 @@ struct Blocks
 	static BlockStateId	GRASS;
 	static BlockStateId	SAND;
 	static BlockStateId	WATER;
+	static BlockStateId	OAK_LOG;
 };
 
 class World
@@ -44,6 +45,7 @@ class World
 			Blocks::GRASS = getDefaultStateId("grass");
 			Blocks::SAND = getDefaultStateId("sand");
 			Blocks::WATER = getDefaultStateId("water");
+			Blocks::OAK_LOG = getDefaultStateId("oak_log");
 		}
 	public:
 		World(MeshCache &cache) : _generator(cache)
@@ -56,6 +58,7 @@ class World
 			_registerBlock("grass", 3, {}, true);
 			_registerBlock("sand", 4, {}, true);
 			_registerBlock("water", 9, {}, false);
+			_registerBlock("oak_log", 6, {}, true);
 
 			_computeBlockStates();
 

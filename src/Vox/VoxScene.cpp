@@ -6,7 +6,7 @@
 /*   By: mbatty <mbatty@student.42angouleme.fr>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/03 20:15:34 by mbatty            #+#    #+#             */
-/*   Updated: 2026/01/10 13:51:21 by mbatty           ###   ########.fr       */
+/*   Updated: 2026/01/10 15:32:08 by mbatty           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -159,6 +159,32 @@ void	VoxScene::update(float delta, const Window::Events &events)
 		ImGui::Text("Loaded chunks: %zu", _world.getLoadedChunks().size());
 		ImGui::Text("Visible chunks: %zu", _world.getVisibleChunks().size());
 		ImGui::ProgressBar((float)_world.getLoadedChunks().size() / (float)_world.getMaxLoadedChunks());
+	}
+	ImGui::End();
+	
+
+	worldVec2i	wp(_camera.pos.x, _camera.pos.z);
+	float	continentalness = _world.wgen.getNoise("continentalness", wp);
+	float	riverness = _world.wgen.getNoise("riverness", wp);
+	float	erosion = _world.wgen.getNoise("erosion", wp);
+	float	mountainness = _world.wgen.getNoise("mountainness", wp);
+	std::string	terrainShape = "Unknown";
+	if (isPlains(continentalness, riverness, erosion, mountainness))
+		terrainShape = "Plains";
+	else if (isRiver(continentalness, riverness, erosion, mountainness))
+		terrainShape = "River";
+	else if (isShallowOcean(continentalness, riverness, erosion, mountainness))
+		terrainShape = "ShallowOcean";
+	if (events.getKeyPressed(SDLK_r))
+	{
+		std::cout << continentalness << " " << riverness << " " << erosion << " " << mountainness << std::endl;
+	}
+	
+	
+	if (ImGui::Begin("Generation Info", (bool *)__null))
+	{
+		ImGui::Text("Continental: %.3f Rivers: %.3f Erosion: %.3f Mountains: %.3f", continentalness, riverness, erosion, mountainness);
+		ImGui::Text("Terrain Type: %s", terrainShape.c_str());
 	}
 	ImGui::End();
 }

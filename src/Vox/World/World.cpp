@@ -6,7 +6,7 @@
 /*   By: mbatty <mbatty@student.42angouleme.fr>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/07 16:01:26 by mbatty            #+#    #+#             */
-/*   Updated: 2026/01/10 13:50:57 by mbatty           ###   ########.fr       */
+/*   Updated: 2026/01/10 15:31:09 by mbatty           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,6 +23,7 @@ BlockStateId	Blocks::DIRT;
 BlockStateId	Blocks::GRASS;
 BlockStateId	Blocks::SAND;
 BlockStateId	Blocks::WATER;
+BlockStateId	Blocks::OAK_LOG;
 
 Vec3	cameraPos;
 
