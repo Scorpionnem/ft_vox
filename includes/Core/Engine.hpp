@@ -6,7 +6,7 @@
 /*   By: mbatty <mbatty@student.42angouleme.fr>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/02 17:42:51 by mbatty            #+#    #+#             */
-/*   Updated: 2026/01/05 20:32:00 by mbatty           ###   ########.fr       */
+/*   Updated: 2026/01/10 18:52:54 by mbatty           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -49,12 +49,12 @@ class	Engine
 		}
 	private:
 		void	_loop();
-		std::unique_ptr<Scene>	_scene;
 		Window	_window;
 		mutable TextureCache	_textures;
 		mutable MeshCache		_meshes;
 		mutable ShaderCache		_shaders;
 		mutable LightCache		_lights;
+		std::unique_ptr<Scene>	_scene;
 
 		struct timespec	_lastFrame = {0, 0};
 		double	_startTime = 0;
