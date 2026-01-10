@@ -6,7 +6,7 @@
 /*   By: mbatty <mbatty@student.42angouleme.fr>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/07 16:01:26 by mbatty            #+#    #+#             */
-/*   Updated: 2026/01/10 15:31:09 by mbatty           ###   ########.fr       */
+/*   Updated: 2026/01/10 17:22:23 by mbatty           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,13 +24,6 @@ BlockStateId	Blocks::GRASS;
 BlockStateId	Blocks::SAND;
 BlockStateId	Blocks::WATER;
 BlockStateId	Blocks::OAK_LOG;
-
-Vec3	cameraPos;
-
-float	dist(Vec3 p1, Vec3 p2)
-{
-	return (length(p1 - p2));
-}
 
 void	World::update(Camera &camera)
 {
@@ -76,12 +69,12 @@ void	World::update(Camera &camera)
 				if (camera.frustum.isInside(Vec3(chunk->getPos() * Vec3i(CHUNK_SIZE)) - camera.pos, Vec3(chunk->getPos() * Vec3i(CHUNK_SIZE) + Vec3i(CHUNK_SIZE)) - camera.pos))
 					_visibleChunks.push_back(chunk);
 			}
-	cameraPos = camera.pos;
 	std::sort(_visibleChunks.begin(), _visibleChunks.end(),
-	[](std::shared_ptr<Chunk> c1, std::shared_ptr<Chunk> c2)
+	[&camera](std::shared_ptr<Chunk> c1, std::shared_ptr<Chunk> c2)
 	{
-		return (dist(cameraPos, (c1->getPos() * CHUNK_SIZE) + CHUNK_SIZE / 2) > dist(cameraPos, (c2->getPos() * CHUNK_SIZE) + CHUNK_SIZE / 2));
+		return (dist(camera.pos, (c1->getPos() * CHUNK_SIZE) + CHUNK_SIZE / 2) > dist(camera.pos, (c2->getPos() * CHUNK_SIZE) + CHUNK_SIZE / 2));
 	});
+	_generator.sort(camera.pos);
 }
 
 std::shared_ptr<Chunk>	World::getChunk(Vec3i pos)

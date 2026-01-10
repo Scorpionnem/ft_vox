@@ -6,7 +6,7 @@
 /*   By: mbatty <mbatty@student.42angouleme.fr>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/02 13:00:48 by mbatty            #+#    #+#             */
-/*   Updated: 2026/01/09 20:06:09 by mbatty           ###   ########.fr       */
+/*   Updated: 2026/01/10 17:16:45 by mbatty           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -97,4 +97,9 @@ inline float radians(float deg)
 inline float mix(float a, float b, float t)
 {
 	return a * (1.0f - t) + b * t;
+}
+
+inline float	dist(Vec3 p1, Vec3 p2)
+{
+	return (length(p1 - p2));
 }

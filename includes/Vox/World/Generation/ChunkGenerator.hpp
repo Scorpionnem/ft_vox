@@ -6,7 +6,7 @@
 /*   By: mbatty <mbatty@student.42angouleme.fr>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/04 13:31:04 by mbatty            #+#    #+#             */
-/*   Updated: 2026/01/09 15:21:55 by mbatty           ###   ########.fr       */
+/*   Updated: 2026/01/10 17:20:21 by mbatty           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,6 +32,7 @@ class	ChunkGenerator
 		void	start(uint32_t workers);
 		void	stop();
 		void	gen(std::shared_ptr<Chunk> chunk);
+		void	sort(Vec3 pos);
 	private:
 		void	_generatorWorker();
 

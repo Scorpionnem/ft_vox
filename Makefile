@@ -47,9 +47,9 @@ SRCS :=	main\
 		Vox/World/World\
 		Vox/World/Chunk/Chunk\
 		Vox/World/Block/BlockType\
-		Vox/Generation/ChunkGenerator\
-		Vox/Generation/Spline\
-		Vox/Generation/Noise/Perlin2D\
+		Vox/World/Generation/ChunkGenerator\
+		Vox/World/Generation/Spline\
+		Vox/World/Generation/Noise/Perlin2D\
 		Math/Math
 
 ###
