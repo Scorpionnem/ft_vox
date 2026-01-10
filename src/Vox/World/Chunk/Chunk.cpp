@@ -6,36 +6,34 @@
 /*   By: mbatty <mbatty@student.42angouleme.fr>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/08 15:52:47 by mbatty            #+#    #+#             */
-/*   Updated: 2026/01/09 21:18:13 by mbatty           ###   ########.fr       */
+/*   Updated: 2026/01/10 13:53:00 by mbatty           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "Chunk.hpp"
 #include "World.hpp"
 
-int	Chunk::getGenerationHeight(Vec2i pos)
+int	Chunk::getGenerationHeight(worldVec2i pos)
 {
 	return (_world->wgen.getNoise("continentalness", pos) + _world->wgen.getNoise("riverness", pos) + _world->wgen.getNoise("erosion", pos) + _world->wgen.getNoise("mountainness", pos));
 }
 
-BlockStateId	Chunk::getGenerationBlock(Vec3i pos)
+BlockStateId	Chunk::getGenerationBlock(worldVec3i pos)
 {
-	Vec3i	wp = worldPos(pos);
-
-	int	genHeight = getGenerationHeight(Vec2i(wp.x, wp.z));
-	if (wp.y <= genHeight)
+	int	genHeight = getGenerationHeight(Vec2i(pos.x, pos.z));
+	if (pos.y <= genHeight)
 	{
-		if (wp.y == genHeight)
+		if (pos.y == genHeight)
 		{
-			if (wp.y <= WATERLEVEL)
+			if (pos.y <= WATERLEVEL)
 				return (Blocks::SAND);
 			return (Blocks::GRASS);
 		}
-		if (wp.y >= genHeight - 2)
+		if (pos.y >= genHeight - 2)
 			return (Blocks::DIRT);
 		return (Blocks::STONE);
 	}
-	if (wp.y < WATERLEVEL)
+	if (pos.y < WATERLEVEL)
 		return (Blocks::WATER);
 	return (Blocks::AIR);
 }
@@ -45,22 +43,22 @@ void	Chunk::generateTerrain()
 	for (int x = 0; x < CHUNK_SIZE; x++)
 		for (int z = 0; z < CHUNK_SIZE; z++)
 		{
-			Vec3i	wp = worldPos(Vec3i(x, 0, z));
+			worldVec3i	wp = getWorldPos(Vec3i(x, 0, z));
 
-			int	terrainHeight = getGenerationHeight(Vec2i(wp.x, wp.z));
+			int	terrainHeight = getGenerationHeight(worldVec2i(wp.x, wp.z));
 
 			if (wp.y > std::max(terrainHeight, WATERLEVEL))
 				continue ;
 
 			for (int y = CHUNK_SIZE; y >= 0; y--)
 			{
-				Vec3i	pos = Vec3i(x, y, z);
-				setBlock(pos, getGenerationBlock(pos));
+				localVec3i	pos(x, y, z);
+				setBlock(pos, getGenerationBlock(getWorldPos(pos)));
 			}
 		}
 }
 
-bool	Chunk::isBlockSolid(Vec3i pos)
+bool	Chunk::isBlockSolid(localVec3i pos)
 {
 	BlockStateId	id = getBlock(pos);
 

@@ -6,7 +6,7 @@
 /*   By: mbatty <mbatty@student.42angouleme.fr>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/03 20:15:34 by mbatty            #+#    #+#             */
-/*   Updated: 2026/01/09 21:35:43 by mbatty           ###   ########.fr       */
+/*   Updated: 2026/01/10 13:51:21 by mbatty           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -226,7 +226,7 @@ void	VoxScene::display()
 		if (chunk->upload())
 			continue ;
 		_shader->use();
-		_shader->setMat4("uModel", translate(Vec3d(chunk->_pos * CHUNK_SIZE) - _camera.pos));
+		_shader->setMat4("uModel", translate(Vec3d(chunk->getPos() * CHUNK_SIZE) - _camera.pos));
 		chunk->draw(_shader);
 	}
 

@@ -6,7 +6,7 @@
 /*   By: mbatty <mbatty@student.42angouleme.fr>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/07 16:01:26 by mbatty            #+#    #+#             */
-/*   Updated: 2026/01/09 17:02:35 by mbatty           ###   ########.fr       */
+/*   Updated: 2026/01/10 13:50:57 by mbatty           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -69,17 +69,17 @@ void	World::update(Camera &camera)
 					genChunk(Vec3i(x, y, z));
 					continue ;
 				}
-				if (!chunk->_meshed)
+				if (!chunk->isMeshed())
 					continue ;
 				_loadedChunks.push_back(chunk);
-				if (camera.frustum.isInside(Vec3(chunk->_pos * Vec3i(CHUNK_SIZE)) - camera.pos, Vec3(chunk->_pos * Vec3i(CHUNK_SIZE) + Vec3i(CHUNK_SIZE)) - camera.pos))
+				if (camera.frustum.isInside(Vec3(chunk->getPos() * Vec3i(CHUNK_SIZE)) - camera.pos, Vec3(chunk->getPos() * Vec3i(CHUNK_SIZE) + Vec3i(CHUNK_SIZE)) - camera.pos))
 					_visibleChunks.push_back(chunk);
 			}
 	cameraPos = camera.pos;
 	std::sort(_visibleChunks.begin(), _visibleChunks.end(),
 	[](std::shared_ptr<Chunk> c1, std::shared_ptr<Chunk> c2)
 	{
-		return (dist(cameraPos, (c1->_pos * CHUNK_SIZE) + CHUNK_SIZE / 2) > dist(cameraPos, (c2->_pos * CHUNK_SIZE) + CHUNK_SIZE / 2));
+		return (dist(cameraPos, (c1->getPos() * CHUNK_SIZE) + CHUNK_SIZE / 2) > dist(cameraPos, (c2->getPos() * CHUNK_SIZE) + CHUNK_SIZE / 2));
 	});
 }
 

@@ -6,7 +6,7 @@
 /*   By: mbatty <mbatty@student.42angouleme.fr>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/03 20:22:47 by mbatty            #+#    #+#             */
-/*   Updated: 2026/01/09 21:30:49 by mbatty           ###   ########.fr       */
+/*   Updated: 2026/01/10 13:50:41 by mbatty           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -126,27 +126,35 @@ namespace Cube
 
 #define WATERLEVEL 0
 
+using localVec3i = Vec3i;
+using worldVec3i = Vec3i;
+using chunkVec3i = Vec3i;
+
+using localVec2i = Vec2i;
+using worldVec2i = Vec2i;
+using chunkVec2i = Vec2i;
+
 class	World;
 
 class	Chunk
 {
 	public:
-		Chunk(Vec3i pos, World *world) : _pos(pos)
+		Chunk(chunkVec3i pos, World *world) : _pos(pos)
 		{
 			_world = world;
 		}
 		~Chunk() {}
 
-		Vec3i	worldPos(Vec3i pos)
+		Vec3i	getWorldPos(localVec3i pos)
 		{
 			return (pos + _pos * CHUNK_SIZE);
 		}
-		Vec3i	localPos(Vec3i pos)
+		Vec3i	getLocalPos(worldVec3i pos)
 		{
 			return (pos - _pos * CHUNK_SIZE);
 		}
-		int	getGenerationHeight(Vec2i pos);
-		BlockStateId	getGenerationBlock(Vec3i pos);
+		int	getGenerationHeight(worldVec2i pos);
+		BlockStateId	getGenerationBlock(worldVec3i pos);
 		void	generateTerrain();
 		void	generateFeatures()
 		{
@@ -183,15 +191,15 @@ class	Chunk
 			_mesh->draw(shader);
 			_transparentMesh->draw(shader);
 		}
-		bool	isBlockSolid(Vec3i pos);
-		BlockStateId	getBlock(Vec3i pos)
+		bool	isBlockSolid(localVec3i pos);
+		BlockStateId	getBlock(localVec3i pos)
 		{
 			if (!isInBounds(pos))
-				return (getGenerationBlock(pos));
+				return (getGenerationBlock(getWorldPos(pos)));
 			int index = pos.x + pos.y * CHUNK_SIZE + pos.z * CHUNK_SIZE * CHUNK_SIZE;
 			return (_blocks[index]);
 		}
-		void	setBlock(Vec3i pos, BlockStateId block)
+		void	setBlock(localVec3i pos, BlockStateId block)
 		{
 			if (!isInBounds(pos))
 				return ;
@@ -199,15 +207,17 @@ class	Chunk
 			_blocks[index] = block;
 		}
 
-		bool	isInBounds(Vec3i pos)
+		bool	isInBounds(localVec3i pos)
 		{
 			if (pos.x < 0 || pos.y < 0 || pos.z < 0 || pos.x >= CHUNK_SIZE || pos.y >= CHUNK_SIZE || pos.z >= CHUNK_SIZE)
 				return (false);
 			return (true);
 		}
-	// private:
+		chunkVec3i	getPos() {return (_pos);}
+		bool	isMeshed() {return (_meshed);}
+	private:
 		std::vector<BlockStateId>	_blocks;
-		Vec3i						_pos;
+		chunkVec3i					_pos;
 		std::shared_ptr<Mesh>		_mesh;
 		std::shared_ptr<Mesh>		_transparentMesh;
 		bool						_uploaded = false;
