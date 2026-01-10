@@ -6,7 +6,7 @@
 /*   By: mbatty <mbatty@student.42angouleme.fr>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/07 16:01:26 by mbatty            #+#    #+#             */
-/*   Updated: 2026/01/10 20:51:19 by mbatty           ###   ########.fr       */
+/*   Updated: 2026/01/10 21:23:33 by mbatty           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -78,7 +78,7 @@ void	World::update(Camera &camera)
 	_generator.sort(camera.pos);
 }
 
-std::shared_ptr<Chunk>	World::getChunk(Vec3i pos)
+std::shared_ptr<Chunk>	World::getChunk(chunkVec3i pos)
 {
 	auto find = _chunks.find(pos.hash());
 
@@ -87,7 +87,7 @@ std::shared_ptr<Chunk>	World::getChunk(Vec3i pos)
 	return (find->second);
 }
 
-void	World::genChunk(Vec3i pos)
+void	World::genChunk(chunkVec3i pos)
 {
 	std::shared_ptr<Chunk>	chunk = std::make_shared<Chunk>(pos, this);
 

@@ -6,7 +6,7 @@
 /*   By: mbatty <mbatty@student.42angouleme.fr>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/03 20:22:52 by mbatty            #+#    #+#             */
-/*   Updated: 2026/01/10 14:38:29 by mbatty           ###   ########.fr       */
+/*   Updated: 2026/01/10 21:40:41 by mbatty           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -79,6 +79,15 @@ class World
 			_chunks.clear();
 		}
 
+		BlockStateId	getBlock(worldVec3i pos)
+		{
+			std::shared_ptr<Chunk>	chunk = getChunk(pos / CHUNK_SIZE);
+
+			if (!chunk || !chunk->isMeshed())
+				return (Blocks::AIR);
+			return (chunk->getBlock(chunk->getLocalPos(pos)));
+		}
+
 		std::shared_ptr<BlockType>	getBlockType(const std::string &id)
 		{
 			return (_blockTypes[id]);
@@ -98,8 +107,8 @@ class World
 
 		void					update(Camera &camera);
 
-		std::shared_ptr<Chunk>	getChunk(Vec3i pos);
-		void					genChunk(Vec3i pos);
+		std::shared_ptr<Chunk>	getChunk(chunkVec3i pos);
+		void					genChunk(chunkVec3i pos);
 
 		std::vector<std::shared_ptr<Chunk>>	&getLoadedChunks() {return (_loadedChunks);}
 		std::vector<std::shared_ptr<Chunk>>	&getVisibleChunks() {return (_visibleChunks);}

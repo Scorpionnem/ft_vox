@@ -6,13 +6,16 @@
 /*   By: mbatty <mbatty@student.42angouleme.fr>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/04 12:56:39 by mbatty            #+#    #+#             */
-/*   Updated: 2026/01/04 13:21:58 by mbatty           ###   ########.fr       */
+/*   Updated: 2026/01/10 21:28:05 by mbatty           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #pragma once
 
 #include <cstdint>
+
+struct Vec3;
+struct Vec3d;
 
 struct Vec3i
 {
@@ -34,6 +37,8 @@ struct Vec3i
 		this->y = xyz;
 		this->z = xyz;
 	}
+	Vec3i(const Vec3 &v);
+	Vec3i(const Vec3d &v);
 
 	Vec3i operator+(const Vec3i &v) const;
 	Vec3i operator-(const Vec3i &v) const;
