@@ -6,7 +6,7 @@
 /*   By: mbatty <mbatty@student.42angouleme.fr>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/03 20:22:47 by mbatty            #+#    #+#             */
-/*   Updated: 2026/01/10 13:50:41 by mbatty           ###   ########.fr       */
+/*   Updated: 2026/01/10 16:31:31 by mbatty           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,9 +20,6 @@
 #include <limits.h>
 #include "BlockType.hpp"
 #include "Perlin2D.hpp"
-
-# define CHUNK_SIZE 32
-# define CHUNK_VOLUME CHUNK_SIZE * CHUNK_SIZE * CHUNK_SIZE
 
 namespace Cube
 {
@@ -125,16 +122,24 @@ namespace Cube
 }
 
 #define WATERLEVEL 0
-
-using localVec3i = Vec3i;
-using worldVec3i = Vec3i;
-using chunkVec3i = Vec3i;
-
-using localVec2i = Vec2i;
-using worldVec2i = Vec2i;
-using chunkVec2i = Vec2i;
+#define CHUNK_SIZE 32
+#define CHUNK_VOLUME CHUNK_SIZE * CHUNK_SIZE * CHUNK_SIZE
 
 class	World;
+
+// Position is chunk local space
+using localVec3i = Vec3i;
+// Position in wold space
+using worldVec3i = Vec3i;
+// Position in chunk space (1, 1, 1) is (CHUNK_SIZE, CHUNK_SIZE, CHUNK_SIZE) in world space
+using chunkVec3i = Vec3i;
+
+// Position is chunk local space
+using localVec2i = Vec2i;
+// Position in wold space
+using worldVec2i = Vec2i;
+// Position in chunk space (1, 1) is (CHUNK_SIZE, CHUNK_SIZE) in world space
+using chunkVec2i = Vec2i;
 
 class	Chunk
 {
@@ -153,75 +158,37 @@ class	Chunk
 		{
 			return (pos - _pos * CHUNK_SIZE);
 		}
-		int	getGenerationHeight(worldVec2i pos);
+
+		int				getGenerationHeight(worldVec2i pos);
 		BlockStateId	getGenerationBlock(worldVec3i pos);
+
 		void	generateTerrain();
-		void	generateFeatures()
-		{
+		void	generateFeatures();
+		void	generate();
 
-		}
-		void	generate()
-		{
-			_blocks.resize(CHUNK_VOLUME);
+		void	mesh(MeshCache &meshCache);
+		void	remesh(MeshCache &meshCache);
 
-			generateTerrain();
-			generateFeatures();
-			_generated = true;
-		}
-		bool	upload()
-		{
-			if (!_uploaded)
-			{
-				_mesh->upload();
-				_transparentMesh->upload();
-				_uploaded = true;
-				return (true);
-			}
-			_uploaded = true;
-			return (false);
-		}
-		void	genMesh(MeshCache &meshCache);
-		void	remesh(MeshCache &meshCache)
-		{
-			_uploaded = false;
-			genMesh(meshCache);
-		}
-		void	draw(std::shared_ptr<Shader> shader)
-		{
-			_mesh->draw(shader);
-			_transparentMesh->draw(shader);
-		}
-		bool	isBlockSolid(localVec3i pos);
-		BlockStateId	getBlock(localVec3i pos)
-		{
-			if (!isInBounds(pos))
-				return (getGenerationBlock(getWorldPos(pos)));
-			int index = pos.x + pos.y * CHUNK_SIZE + pos.z * CHUNK_SIZE * CHUNK_SIZE;
-			return (_blocks[index]);
-		}
-		void	setBlock(localVec3i pos, BlockStateId block)
-		{
-			if (!isInBounds(pos))
-				return ;
-			int index = pos.x + pos.y * CHUNK_SIZE + pos.z * CHUNK_SIZE * CHUNK_SIZE;
-			_blocks[index] = block;
-		}
+		void	draw(std::shared_ptr<Shader> shader);
+		bool	upload();
 
-		bool	isInBounds(localVec3i pos)
-		{
-			if (pos.x < 0 || pos.y < 0 || pos.z < 0 || pos.x >= CHUNK_SIZE || pos.y >= CHUNK_SIZE || pos.z >= CHUNK_SIZE)
-				return (false);
-			return (true);
-		}
+		bool			isBlockSolid(localVec3i pos);
+		BlockStateId	getBlock(localVec3i pos);
+		void			setBlock(localVec3i pos, BlockStateId block);
+		bool			isInBounds(localVec3i pos);
+		
 		chunkVec3i	getPos() {return (_pos);}
-		bool	isMeshed() {return (_meshed);}
+		bool		isMeshed() {return (_meshed);}
 	private:
 		std::vector<BlockStateId>	_blocks;
+		std::atomic_bool			_generated = false;
+
 		chunkVec3i					_pos;
+
+		bool						_uploaded = false;
+		std::atomic_bool			_meshed = false;
 		std::shared_ptr<Mesh>		_mesh;
 		std::shared_ptr<Mesh>		_transparentMesh;
-		bool						_uploaded = false;
-		std::atomic_bool			_generated = false;
-		std::atomic_bool			_meshed = false;
+
 		World						*_world;
 };

@@ -6,36 +6,20 @@
 /*   By: mbatty <mbatty@student.42angouleme.fr>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/08 15:52:47 by mbatty            #+#    #+#             */
-/*   Updated: 2026/01/10 15:29:14 by mbatty           ###   ########.fr       */
+/*   Updated: 2026/01/10 16:15:31 by mbatty           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "Chunk.hpp"
 #include "World.hpp"
 
-int	Chunk::getGenerationHeight(worldVec2i pos)
+void	Chunk::generate()
 {
-	return (_world->wgen.getSplineValue("continentalness", pos) + _world->wgen.getSplineValue("riverness", pos) + _world->wgen.getSplineValue("erosion", pos) + _world->wgen.getSplineValue("mountainness", pos));
-}
+	_blocks.resize(CHUNK_VOLUME);
 
-BlockStateId	Chunk::getGenerationBlock(worldVec3i pos)
-{
-	int	genHeight = getGenerationHeight(Vec2i(pos.x, pos.z));
-	if (pos.y <= genHeight)
-	{
-		if (pos.y == genHeight)
-		{
-			if (pos.y <= WATERLEVEL)
-				return (Blocks::SAND);
-			return (Blocks::GRASS);
-		}
-		if (pos.y >= genHeight - 2)
-			return (Blocks::DIRT);
-		return (Blocks::STONE);
-	}
-	if (pos.y < WATERLEVEL)
-		return (Blocks::WATER);
-	return (Blocks::AIR);
+	generateTerrain();
+	generateFeatures();
+	_generated = true;
 }
 
 void	Chunk::generateTerrain()
@@ -58,6 +42,59 @@ void	Chunk::generateTerrain()
 		}
 }
 
+void	Chunk::generateFeatures()
+{
+
+}
+
+BlockStateId	Chunk::getGenerationBlock(worldVec3i pos)
+{
+	int	genHeight = getGenerationHeight(Vec2i(pos.x, pos.z));
+	if (pos.y <= genHeight)
+	{
+		if (pos.y == genHeight)
+		{
+			if (pos.y <= WATERLEVEL)
+				return (Blocks::SAND);
+			return (Blocks::GRASS);
+		}
+		if (pos.y >= genHeight - 2)
+			return (Blocks::DIRT);
+		return (Blocks::STONE);
+	}
+	if (pos.y < WATERLEVEL)
+		return (Blocks::WATER);
+	return (Blocks::AIR);
+}
+
+int	Chunk::getGenerationHeight(worldVec2i pos)
+{
+	return (_world->wgen.getSplineValue("continentalness", pos) + _world->wgen.getSplineValue("riverness", pos) + _world->wgen.getSplineValue("erosion", pos) + _world->wgen.getSplineValue("mountainness", pos));
+}
+
+BlockStateId	Chunk::getBlock(localVec3i pos)
+{
+	if (!isInBounds(pos))
+		return (getGenerationBlock(getWorldPos(pos)));
+	int index = pos.x + pos.y * CHUNK_SIZE + pos.z * CHUNK_SIZE * CHUNK_SIZE;
+	return (_blocks[index]);
+}
+
+void	Chunk::setBlock(localVec3i pos, BlockStateId block)
+{
+	if (!isInBounds(pos))
+		return ;
+	int index = pos.x + pos.y * CHUNK_SIZE + pos.z * CHUNK_SIZE * CHUNK_SIZE;
+	_blocks[index] = block;
+}
+
+bool	Chunk::isInBounds(localVec3i pos)
+{
+	if (pos.x < 0 || pos.y < 0 || pos.z < 0 || pos.x >= CHUNK_SIZE || pos.y >= CHUNK_SIZE || pos.z >= CHUNK_SIZE)
+		return (false);
+	return (true);
+}
+
 bool	Chunk::isBlockSolid(localVec3i pos)
 {
 	BlockStateId	id = getBlock(pos);
@@ -65,7 +102,7 @@ bool	Chunk::isBlockSolid(localVec3i pos)
 	return (_world->isBlockStateSolid(id));
 }
 
-void	Chunk::genMesh(MeshCache &meshCache)
+void	Chunk::mesh(MeshCache &meshCache)
 {
 	_mesh = meshCache.gen();
 	_transparentMesh = meshCache.gen();
@@ -96,4 +133,29 @@ void	Chunk::genMesh(MeshCache &meshCache)
 				}
 			}
 	_meshed = true;
+}
+
+void	Chunk::remesh(MeshCache &meshCache)
+{
+	_uploaded = false;
+	mesh(meshCache);
+}
+
+void	Chunk::draw(std::shared_ptr<Shader> shader)
+{
+	_mesh->draw(shader);
+	_transparentMesh->draw(shader);
+}
+
+bool	Chunk::upload()
+{
+	if (!_uploaded)
+	{
+		_mesh->upload();
+		_transparentMesh->upload();
+		_uploaded = true;
+		return (true);
+	}
+	_uploaded = true;
+	return (false);
 }
