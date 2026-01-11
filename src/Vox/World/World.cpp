@@ -6,7 +6,7 @@
 /*   By: mbatty <mbatty@student.42angouleme.fr>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/07 16:01:26 by mbatty            #+#    #+#             */
-/*   Updated: 2026/01/11 14:35:23 by mbatty           ###   ########.fr       */
+/*   Updated: 2026/01/11 14:52:14 by mbatty           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -67,22 +67,32 @@ void	World::update(Camera &camera)
 				if (!chunk->isMeshed())
 					continue ;
 				_loadedChunks.push_back(chunk);
-				if (camera.frustum.isInside(Vec3(chunk->getPos() * Vec3i(CHUNK_SIZE)) - camera.pos, Vec3(chunk->getPos() * Vec3i(CHUNK_SIZE) + Vec3i(CHUNK_SIZE)) - camera.pos))
+				if (camera.frustum.isInside(Vec3(chunk->getPos() * CHUNK_SIZE) - camera.pos, Vec3(chunk->getPos() * CHUNK_SIZE + CHUNK_SIZE) - camera.pos))
 					_visibleChunks.push_back(chunk);
 			}
+
 	std::sort(_visibleChunks.begin(), _visibleChunks.end(),
 	[&camera](std::shared_ptr<Chunk> c1, std::shared_ptr<Chunk> c2)
 	{
 		return (dist(camera.pos, (c1->getPos() * CHUNK_SIZE) + CHUNK_SIZE / 2) > dist(camera.pos, (c2->getPos() * CHUNK_SIZE) + CHUNK_SIZE / 2));
 	});
+	
 	_updateGenerator(camera.pos);
 }
 
 void	World::_updateGenerator(Vec3 camPos)
 {
-	_generator.sort(camPos);
-	_generator.gen(_chunksGenQueue);
-	_chunksGenQueue.clear();
+	chunkVec3i	currentPos = getChunkPos(camPos);
+	
+	if (currentPos.x != _lastCamPos.x || currentPos.y != _lastCamPos.y || currentPos.z != _lastCamPos.z)
+		_generator.sort(camPos);
+	_lastCamPos = currentPos;
+	
+	if (_chunksGenQueue.size())
+	{
+		_generator.gen(_chunksGenQueue);
+		_chunksGenQueue.clear();
+	}
 }
 
 std::shared_ptr<Chunk>	World::getChunk(chunkVec3i pos)

@@ -6,7 +6,7 @@
 /*   By: mbatty <mbatty@student.42angouleme.fr>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/03 20:22:52 by mbatty            #+#    #+#             */
-/*   Updated: 2026/01/11 14:35:04 by mbatty           ###   ########.fr       */
+/*   Updated: 2026/01/11 14:49:03 by mbatty           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -116,6 +116,11 @@ class World
 		int	getVerticalRenderDistance() {return (_verticalRenderDistance);}
 		int	getMaxLoadedChunks() {return ((_horizontalRenderDistance * 2) * (_horizontalRenderDistance * 2) * (_verticalRenderDistance * 2));}
 		WorldGenerator	wgen;
+
+		static chunkVec3i	getChunkPos(worldVec3i pos)
+		{
+			return (pos / CHUNK_SIZE);
+		}
 	private:
 		void	_updateGenerator(Vec3 camPos);
 		void	_computeBlockStates()
@@ -149,6 +154,8 @@ class World
 		int	_horizontalRenderDistance = HORIZONTAL_RENDER_DISTANCE;
 		int	_verticalRenderDistance = VERTICAL_RENDER_DISTANCE;
 		ChunkGenerator	_generator;
+
+		chunkVec3i	_lastCamPos = Vec3i(42);
 
 		std::unordered_map<std::string, std::shared_ptr<BlockType>>		_blockTypes;
 		std::unordered_map<BlockStateId, std::shared_ptr<BlockState>>	_blockStates;
