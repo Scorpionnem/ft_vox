@@ -6,7 +6,7 @@
 /*   By: mbatty <mbatty@student.42angouleme.fr>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/08 15:52:47 by mbatty            #+#    #+#             */
-/*   Updated: 2026/01/10 16:15:31 by mbatty           ###   ########.fr       */
+/*   Updated: 2026/01/11 15:48:46 by mbatty           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -80,12 +80,13 @@ BlockStateId	Chunk::getBlock(localVec3i pos)
 	return (_blocks[index]);
 }
 
-void	Chunk::setBlock(localVec3i pos, BlockStateId block)
+bool	Chunk::setBlock(localVec3i pos, BlockStateId block)
 {
 	if (!isInBounds(pos))
-		return ;
+		return (false);
 	int index = pos.x + pos.y * CHUNK_SIZE + pos.z * CHUNK_SIZE * CHUNK_SIZE;
 	_blocks[index] = block;
+	return (true);
 }
 
 bool	Chunk::isInBounds(localVec3i pos)

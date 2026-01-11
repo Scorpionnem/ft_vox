@@ -6,7 +6,7 @@
 /*   By: mbatty <mbatty@student.42angouleme.fr>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/02 13:00:48 by mbatty            #+#    #+#             */
-/*   Updated: 2026/01/10 17:16:45 by mbatty           ###   ########.fr       */
+/*   Updated: 2026/01/11 15:37:08 by mbatty           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,6 +21,23 @@
 #include <cmath>
 
 // Vec3
+
+inline Vec3	abs(const Vec3 &v)
+{
+	return (Vec3(std::abs(v.x), std::abs(v.y), std::abs(v.z)));
+}
+
+inline int	sign(float v)
+{
+	if (v >= 0)
+		return (1);
+	return (-1);
+}
+
+inline Vec3	sign(const Vec3 &v)
+{
+	return (Vec3(sign(v.x), sign(v.y), sign(v.z)));
+}
 
 float	dot(const Vec3 &v1, const Vec3 &v2);
 float	length(const Vec3 &v);

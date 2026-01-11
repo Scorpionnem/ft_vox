@@ -6,7 +6,7 @@
 /*   By: mbatty <mbatty@student.42angouleme.fr>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/03 20:22:52 by mbatty            #+#    #+#             */
-/*   Updated: 2026/01/11 14:49:03 by mbatty           ###   ########.fr       */
+/*   Updated: 2026/01/11 15:41:47 by mbatty           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -86,6 +86,15 @@ class World
 			if (!chunk || !chunk->isMeshed())
 				return (Blocks::AIR);
 			return (chunk->getBlock(chunk->getLocalPos(pos)));
+		}
+		bool	setBlock(worldVec3i pos, BlockStateId block)
+		{
+			std::shared_ptr<Chunk>	chunk = getChunk(pos / CHUNK_SIZE);
+
+			if (!chunk || !chunk->isMeshed())
+				return (false);
+			chunk->setBlock(chunk->getLocalPos(pos), block);
+			return (true);
 		}
 
 		std::shared_ptr<BlockType>	getBlockType(const std::string &id)

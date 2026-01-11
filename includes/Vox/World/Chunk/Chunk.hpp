@@ -6,7 +6,7 @@
 /*   By: mbatty <mbatty@student.42angouleme.fr>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/03 20:22:47 by mbatty            #+#    #+#             */
-/*   Updated: 2026/01/11 14:45:22 by mbatty           ###   ########.fr       */
+/*   Updated: 2026/01/11 15:48:34 by mbatty           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -174,7 +174,7 @@ class	Chunk
 
 		bool			isBlockSolid(localVec3i pos);
 		BlockStateId	getBlock(localVec3i pos);
-		void			setBlock(localVec3i pos, BlockStateId block);
+		bool			setBlock(localVec3i pos, BlockStateId block);
 		bool			isInBounds(localVec3i pos);
 		
 		chunkVec3i	getPos() {return (_pos);}
