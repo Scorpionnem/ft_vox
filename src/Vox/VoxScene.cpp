@@ -6,7 +6,7 @@
 /*   By: mbatty <mbatty@student.42angouleme.fr>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/03 20:15:34 by mbatty            #+#    #+#             */
-/*   Updated: 2026/01/11 15:54:47 by mbatty           ###   ########.fr       */
+/*   Updated: 2026/01/11 18:37:27 by mbatty           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -145,6 +145,7 @@ void	VoxScene::update(float delta, const Window::Events &events)
 		_interact();
 
 	_updateCamera(delta, events);
+	_castRay();
 
 	_world->update(_camera);
 
@@ -279,31 +280,29 @@ void	moveRay(Vec3i &mapPos, Vec3 &sideDist, const Vec3 &deltaDist, const Vec3i &
 
 void	VoxScene::_attack()
 {
-	Vec3	rayDir = _camera.front;
-	Vec3	rayPos = _camera.pos;
-	Vec3i	mapPos = _camera.pos;
-	Vec3	deltaDist = abs(Vec3(length(rayDir)) / rayDir);
-	Vec3i	rayStep = Vec3i(sign(rayDir));
-	Vec3	sideDist = (sign(rayDir) * (Vec3(mapPos) - rayPos) + (sign(rayDir) * 0.5f) + 0.5f) * deltaDist;
+	auto chunk = _world->getChunk(_targetedBlock/ CHUNK_SIZE);
 
-	int	MAX_RAY_STEPS = 8;
-	for (int i = 0; i < MAX_RAY_STEPS; ++i)
+	if (_hitBlock && chunk)
 	{
-		moveRay(mapPos, sideDist, deltaDist, rayStep);
-		auto chunk = _world->getChunk(mapPos / CHUNK_SIZE);
-		if (!chunk || !chunk->isMeshed())
-			continue ;
-		if (chunk->getBlock(chunk->getLocalPos(mapPos)) != Blocks::AIR)
-		{
-			chunk->setBlock(chunk->getLocalPos(mapPos), Blocks::AIR);
-			chunk->remesh(_engine.getMeshCache());
-			chunk->upload();
-			break ;
-		}
+		chunk->setBlock(chunk->getLocalPos(_targetedBlock), Blocks::AIR);
+		chunk->remesh(_engine.getMeshCache());
+		chunk->upload();
 	}
 }
 
 void	VoxScene::_interact()
+{
+	auto chunk = _world->getChunk(_prevTargetedBlock / CHUNK_SIZE);
+
+	if (_hitBlock && chunk)
+	{
+		chunk->setBlock(chunk->getLocalPos(_prevTargetedBlock), Blocks::STONE);
+		chunk->remesh(_engine.getMeshCache());
+		chunk->upload();
+	}
+}
+
+void	VoxScene::_castRay()
 {
 	Vec3	rayDir = _camera.front;
 	Vec3	rayPos = _camera.pos;
@@ -314,6 +313,7 @@ void	VoxScene::_interact()
 	Vec3	sideDist = (sign(rayDir) * (Vec3(mapPos) - rayPos) + (sign(rayDir) * 0.5f) + 0.5f) * deltaDist;
 
 	int	MAX_RAY_STEPS = 8;
+	_hitBlock = false;
 	for (int i = 0; i < MAX_RAY_STEPS; ++i)
 	{
 		prevMapPos = mapPos;
@@ -323,12 +323,12 @@ void	VoxScene::_interact()
 			continue ;
 		if (chunk->getBlock(chunk->getLocalPos(mapPos)) != Blocks::AIR)
 		{
-			chunk->setBlock(chunk->getLocalPos(prevMapPos), Blocks::STONE);
-			chunk->remesh(_engine.getMeshCache());
-			chunk->upload();
+			_hitBlock = true;
 			break ;
 		}
 	}
+	_targetedBlock = mapPos;
+	_prevTargetedBlock = prevMapPos;
 }
 
 void	VoxScene::display()

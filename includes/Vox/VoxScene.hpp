@@ -6,7 +6,7 @@
 /*   By: mbatty <mbatty@student.42angouleme.fr>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/03 20:13:58 by mbatty            #+#    #+#             */
-/*   Updated: 2026/01/11 15:54:10 by mbatty           ###   ########.fr       */
+/*   Updated: 2026/01/11 18:39:02 by mbatty           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,6 +32,7 @@ class	VoxScene : public Scene
 		void	_updateCamera(float delta, const Window::Events &events);
 		void	_attack();
 		void	_interact();
+		void	_castRay();
 
 		std::shared_ptr<Shader>	_shader;
 
@@ -42,4 +43,9 @@ class	VoxScene : public Scene
 
 		bool	_cursorMode = false;
 		bool	_lockedFPS = true;
+
+		worldVec3i	_targetedBlock;
+		// The block before targetedBlock hit
+		worldVec3i	_prevTargetedBlock;
+		bool		_hitBlock = false;
 };
