@@ -6,7 +6,7 @@
 /*   By: mbatty <mbatty@student.42angouleme.fr>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/07 16:05:17 by mbatty            #+#    #+#             */
-/*   Updated: 2026/01/10 17:20:38 by mbatty           ###   ########.fr       */
+/*   Updated: 2026/01/11 14:32:41 by mbatty           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,14 +19,19 @@ void	ChunkGenerator::gen(std::shared_ptr<Chunk> chunk)
 	_cv_task.notify_one();
 }
 
+void	ChunkGenerator::gen(std::vector<std::shared_ptr<Chunk>> chunks)
+{
+	std::unique_lock<std::mutex> lock(_queue_mutex);
+	for (auto chunk : chunks)
+		_tasks.emplace_back(chunk);
+	_cv_task.notify_all();
+}
+
 void	ChunkGenerator::sort(Vec3 pos)
 {
 	std::unique_lock<std::mutex> lock(_queue_mutex);
-	std::sort(_tasks.begin(), _tasks.end(),
-	[&pos](std::shared_ptr<Chunk> c1, std::shared_ptr<Chunk> c2)
-	{
-		return (dist(pos, (c1->getPos() * CHUNK_SIZE) + CHUNK_SIZE / 2) < dist(pos, (c2->getPos() * CHUNK_SIZE) + CHUNK_SIZE / 2));
-	});
+	_sort = true;
+	_camPos = pos;
 }
 
 void	ChunkGenerator::start(uint32_t workers)
@@ -53,9 +58,18 @@ void	ChunkGenerator::_generatorWorker()
 	while (true)
 	{
 		std::unique_lock<std::mutex> latch(_queue_mutex);
-		_cv_task.wait(latch, [this](){ return _stop || !_tasks.empty(); });
+		_cv_task.wait(latch, [this](){ return (_stop || !_tasks.empty()); });
 		if (!_stop && !_tasks.empty())
 		{
+			if (_sort)
+			{
+				std::sort(_tasks.begin(), _tasks.end(),
+				[this](std::shared_ptr<Chunk> c1, std::shared_ptr<Chunk> c2)
+				{
+					return (dist(_camPos, (c1->getPos() * CHUNK_SIZE) + CHUNK_SIZE / 2) < dist(_camPos, (c2->getPos() * CHUNK_SIZE) + CHUNK_SIZE / 2));
+				});
+			}
+
 			std::shared_ptr<Chunk>	chunk = _tasks.front();
 			_tasks.pop_front();
 

@@ -6,7 +6,7 @@
 /*   By: mbatty <mbatty@student.42angouleme.fr>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/04 13:31:04 by mbatty            #+#    #+#             */
-/*   Updated: 2026/01/10 17:20:21 by mbatty           ###   ########.fr       */
+/*   Updated: 2026/01/11 14:31:24 by mbatty           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,6 +32,7 @@ class	ChunkGenerator
 		void	start(uint32_t workers);
 		void	stop();
 		void	gen(std::shared_ptr<Chunk> chunk);
+		void	gen(std::vector<std::shared_ptr<Chunk>> chunks);
 		void	sort(Vec3 pos);
 	private:
 		void	_generatorWorker();
@@ -41,5 +42,7 @@ class	ChunkGenerator
 		std::mutex							_queue_mutex;
 		std::condition_variable 			_cv_task;
 		std::atomic_bool					_stop = false;
+		std::atomic_bool					_sort = false;
+		Vec3								_camPos;
 		MeshCache 							&_cache;
 };

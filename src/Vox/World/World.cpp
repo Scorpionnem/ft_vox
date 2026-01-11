@@ -6,7 +6,7 @@
 /*   By: mbatty <mbatty@student.42angouleme.fr>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/07 16:01:26 by mbatty            #+#    #+#             */
-/*   Updated: 2026/01/10 21:23:33 by mbatty           ###   ########.fr       */
+/*   Updated: 2026/01/11 14:35:23 by mbatty           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -75,7 +75,14 @@ void	World::update(Camera &camera)
 	{
 		return (dist(camera.pos, (c1->getPos() * CHUNK_SIZE) + CHUNK_SIZE / 2) > dist(camera.pos, (c2->getPos() * CHUNK_SIZE) + CHUNK_SIZE / 2));
 	});
-	_generator.sort(camera.pos);
+	_updateGenerator(camera.pos);
+}
+
+void	World::_updateGenerator(Vec3 camPos)
+{
+	_generator.sort(camPos);
+	_generator.gen(_chunksGenQueue);
+	_chunksGenQueue.clear();
 }
 
 std::shared_ptr<Chunk>	World::getChunk(chunkVec3i pos)
@@ -91,6 +98,6 @@ void	World::genChunk(chunkVec3i pos)
 {
 	std::shared_ptr<Chunk>	chunk = std::make_shared<Chunk>(pos, this);
 
-	_generator.gen(chunk);
+	_chunksGenQueue.push_back(chunk);
 	_chunks.insert(std::make_pair(pos.hash(), chunk));
 }
