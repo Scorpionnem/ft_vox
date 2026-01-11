@@ -6,7 +6,7 @@
 /*   By: mbatty <mbatty@student.42angouleme.fr>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/11 01:58:22 by mbatty            #+#    #+#             */
-/*   Updated: 2026/01/11 03:25:02 by mbatty           ###   ########.fr       */
+/*   Updated: 2026/01/11 03:32:10 by mbatty           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -65,10 +65,6 @@ class	PackedChunk
 					return (pair.first);
 			}
 			return (0);
-		}
-		uint64_t	computeSize()
-		{
-
 		}
 	private:
 		std::vector<std::pair<BlockStateId, uint32_t>>	&_getSlice(localVec3i pos)
