@@ -6,7 +6,7 @@
 /*   By: mbatty <mbatty@student.42angouleme.fr>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/03 20:15:34 by mbatty            #+#    #+#             */
-/*   Updated: 2026/01/10 21:09:31 by mbatty           ###   ########.fr       */
+/*   Updated: 2026/01/11 14:54:13 by mbatty           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -131,9 +131,13 @@ void	VoxScene::update(float delta, const Window::Events &events)
 		std::cout << "Reloading shader" << std::endl;
 		_shader->reload();
 	}
-	if (events.getKeyPressed(SDLK_c) && events.getKey(SDLK_LCTRL))
+	if (events.getKeyPressed(SDLK_F3))
 	{
-		_world->reload();
+		if (_lockedFPS)
+			SDL_GL_SetSwapInterval(0);
+		else
+			SDL_GL_SetSwapInterval(1);
+		_lockedFPS = !_lockedFPS;
 	}
 
 	_updateCamera(delta, events);

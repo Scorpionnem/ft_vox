@@ -6,7 +6,7 @@
 /*   By: mbatty <mbatty@student.42angouleme.fr>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/03 20:13:58 by mbatty            #+#    #+#             */
-/*   Updated: 2026/01/10 21:04:57 by mbatty           ###   ########.fr       */
+/*   Updated: 2026/01/11 14:54:29 by mbatty           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -39,4 +39,5 @@ class	VoxScene : public Scene
 		std::vector<float>		_fpss;
 
 		bool	_cursorMode = false;
+		bool	_lockedFPS = true;
 };
