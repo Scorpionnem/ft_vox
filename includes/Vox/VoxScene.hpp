@@ -6,7 +6,7 @@
 /*   By: mbatty <mbatty@student.42angouleme.fr>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/03 20:13:58 by mbatty            #+#    #+#             */
-/*   Updated: 2026/01/11 18:39:02 by mbatty           ###   ########.fr       */
+/*   Updated: 2026/01/11 19:00:54 by mbatty           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -48,4 +48,7 @@ class	VoxScene : public Scene
 		// The block before targetedBlock hit
 		worldVec3i	_prevTargetedBlock;
 		bool		_hitBlock = false;
+
+		std::shared_ptr<Mesh>	_targetedBlockModel;
+		std::shared_ptr<Shader>	_targetedBlockShader;
 };

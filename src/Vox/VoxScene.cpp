@@ -6,7 +6,7 @@
 /*   By: mbatty <mbatty@student.42angouleme.fr>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/03 20:15:34 by mbatty            #+#    #+#             */
-/*   Updated: 2026/01/11 18:37:27 by mbatty           ###   ########.fr       */
+/*   Updated: 2026/01/11 19:03:46 by mbatty           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -95,8 +95,18 @@ void	VoxScene::build()
 	_camera.pitch = 0;
 
 	_shader = _engine.loadShader("assets/shaders/core/mesh");
+	_targetedBlockShader = _engine.loadShader("assets/shaders/core/targeted_block");
 
 	_world = std::make_unique<World>(_engine.getMeshCache());
+
+	_targetedBlockModel = _engine.getMeshCache().gen();
+	Cube::addFace(_targetedBlockModel, Vec3i(0), Cube::Direction::TOP, 0);
+	Cube::addFace(_targetedBlockModel, Vec3i(0), Cube::Direction::BOTTOM, 0);
+	Cube::addFace(_targetedBlockModel, Vec3i(0), Cube::Direction::NORTH, 0);
+	Cube::addFace(_targetedBlockModel, Vec3i(0), Cube::Direction::SOUTH, 0);
+	Cube::addFace(_targetedBlockModel, Vec3i(0), Cube::Direction::EAST, 0);
+	Cube::addFace(_targetedBlockModel, Vec3i(0), Cube::Direction::WEST, 0);
+	_targetedBlockModel->upload();
 }
 
 float	getFpsFromArray(void *tab, int id)
@@ -357,6 +367,21 @@ void	VoxScene::display()
 		_shader->use();
 		_shader->setMat4("uModel", translate(Vec3d(chunk->getPos() * CHUNK_SIZE) - _camera.pos));
 		chunk->draw(_shader);
+	}
+
+	if (_hitBlock)
+	{
+		Vec3	blockPos = Vec3d(_targetedBlock) - _camera.pos;
+		Vec3	center = Vec3(0.5);
+
+		Mat4	model = translate(blockPos + center) * scale(Vec3(1.01)) * translate(center * -1);
+
+		_targetedBlockShader->use();
+		_targetedBlockShader->setMat4("uView", view);
+		_targetedBlockShader->setMat4("uProjection", projection);
+		_targetedBlockShader->setMat4("uModel", model);
+		_targetedBlockShader->setFloat("uTime", _engine.getTime());
+		_targetedBlockModel->draw(_targetedBlockShader);
 	}
 
 	_engine.getLightCache().draw(view, projection, _camera.pos);
