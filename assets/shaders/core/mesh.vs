@@ -13,12 +13,20 @@ out vec3 vPos;
 out vec2 vUV;
 out vec3 vWorldPos;
 
+uniform mat4 uShadowProjection;
+uniform mat4 uShadowView;
+
+out vec4 FragPosLightSpace;
+
 void main()
 {
 	vNormal = aNormal;
 	vUV = aUV;
 	vPos = aPos;
 	vWorldPos = vec4(uModel * vec4(aPos, 1.0)).xyz;
+
+	vec3	fragPos = vec3(uModel * vec4(aPos, 1.0));
+	FragPosLightSpace = uShadowProjection * uShadowView * vec4(fragPos, 1.0);
 
 	gl_Position = uProjection * uView * uModel * vec4(aPos, 1.0);
 }

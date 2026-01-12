@@ -6,7 +6,7 @@
 /*   By: mbatty <mbatty@student.42angouleme.fr>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/03 20:13:58 by mbatty            #+#    #+#             */
-/*   Updated: 2026/01/11 19:00:54 by mbatty           ###   ########.fr       */
+/*   Updated: 2026/01/12 17:15:48 by mbatty           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,6 +33,8 @@ class	VoxScene : public Scene
 		void	_attack();
 		void	_interact();
 		void	_castRay();
+		void	_drawChunks(std::shared_ptr<Shader> shader, Mat4 view, Mat4 proj);
+		void	_drawSelectedBlock(std::shared_ptr<Shader> shader, Mat4 view, Mat4 proj);
 
 		std::shared_ptr<Shader>	_shader;
 
@@ -51,4 +53,16 @@ class	VoxScene : public Scene
 
 		std::shared_ptr<Mesh>	_targetedBlockModel;
 		std::shared_ptr<Shader>	_targetedBlockShader;
+
+		uint	_FBO;
+		std::shared_ptr<Mesh>	_frameMesh;
+		std::shared_ptr<Shader>	_postProcessShader;
+		uint	_RBO;
+		uint	_FBOTexture;
+
+		uint	_shadowFBO;
+		uint	_shadowFBOTexture;
+		std::shared_ptr<Shader>	_shadowShader;
+		
+		bool	focus = false;
 };

@@ -6,7 +6,7 @@
 /*   By: mbatty <mbatty@student.42angouleme.fr>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/03 20:15:34 by mbatty            #+#    #+#             */
-/*   Updated: 2026/01/11 19:03:46 by mbatty           ###   ########.fr       */
+/*   Updated: 2026/01/12 18:55:34 by mbatty           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -91,11 +91,13 @@ void	VoxScene::build()
 {
 	SDL_ShowCursor(SDL_DISABLE);
 
-	_camera.pos = Vec3d(0, 0, 0);
+	_camera.pos = Vec3d(10, 8, 20);
 	_camera.pitch = 0;
 
 	_shader = _engine.loadShader("assets/shaders/core/mesh");
 	_targetedBlockShader = _engine.loadShader("assets/shaders/core/targeted_block");
+	_postProcessShader = _engine.loadShader("assets/shaders/core/post_process");
+	_shadowShader = _engine.loadShader("assets/shaders/core/shadow");
 
 	_world = std::make_unique<World>(_engine.getMeshCache());
 
@@ -107,6 +109,61 @@ void	VoxScene::build()
 	Cube::addFace(_targetedBlockModel, Vec3i(0), Cube::Direction::EAST, 0);
 	Cube::addFace(_targetedBlockModel, Vec3i(0), Cube::Direction::WEST, 0);
 	_targetedBlockModel->upload();
+
+	glGenFramebuffers(1, &_FBO);
+	glBindFramebuffer(GL_FRAMEBUFFER, _FBO);
+
+	glGenTextures(1, &_FBOTexture);
+	glBindTexture(GL_TEXTURE_2D, _FBOTexture);
+	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, 800, 800, 0, GL_RGB, GL_UNSIGNED_BYTE, NULL);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+	glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, _FBOTexture, 0);
+
+	glGenRenderbuffers(1, &_RBO);
+	glBindRenderbuffer(GL_RENDERBUFFER, _RBO);
+	glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH24_STENCIL8, 800, 800);
+	glBindRenderbuffer(GL_RENDERBUFFER, 0);
+
+	glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_STENCIL_ATTACHMENT, GL_RENDERBUFFER, _RBO);
+
+	glBindFramebuffer(GL_FRAMEBUFFER, 0);
+
+	const Mesh::Vertex	V1(Vec3(-1.0, 1.0, 0.0), Vec3(), Vec2(0.0, 1.0));
+	const Mesh::Vertex	V2(Vec3(-1.0, -1.0, 0.0), Vec3(), Vec2(0.0, 0.0));
+	const Mesh::Vertex	V3(Vec3(1.0, -1.0, 0.0), Vec3(), Vec2(1.0, 0.0));
+	const Mesh::Vertex	V4(Vec3(1.0, 1.0, 0.0), Vec3(), Vec2(1.0, 1.0));
+
+	Mesh::Face	face1;
+	face1.v1 = V2;
+	face1.v2 = V4;
+	face1.v3 = V1;
+	Mesh::Face	face2;
+	face2.v1 = V3;
+	face2.v2 = V4;
+	face2.v3 = V2;
+
+	_frameMesh = _engine.getMeshCache().gen();
+	_frameMesh->addFace("default", face1);
+	_frameMesh->addFace("default", face2);
+	_frameMesh->upload();
+
+	glGenFramebuffers(1, &_shadowFBO);
+	
+	const unsigned int SHADOW_WIDTH = 1024 * 4, SHADOW_HEIGHT = 1024 * 4;
+	glGenTextures(1, &_shadowFBOTexture);
+	glBindTexture(GL_TEXTURE_2D, _shadowFBOTexture);
+	glTexImage2D(GL_TEXTURE_2D, 0, GL_DEPTH_COMPONENT, SHADOW_WIDTH,
+	SHADOW_HEIGHT, 0, GL_DEPTH_COMPONENT, GL_FLOAT, NULL);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+	glBindFramebuffer(GL_FRAMEBUFFER, _shadowFBO);
+	glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_TEXTURE_2D, _shadowFBOTexture, 0);
+	glDrawBuffer(GL_NONE);
+	glReadBuffer(GL_NONE);
+	glBindFramebuffer(GL_FRAMEBUFFER, 0);
 }
 
 float	getFpsFromArray(void *tab, int id)
@@ -157,6 +214,9 @@ void	VoxScene::update(float delta, const Window::Events &events)
 	_updateCamera(delta, events);
 	_castRay();
 
+	if (events.getKeyPressed(SDLK_f))
+		focus = !focus;
+		
 	_world->update(_camera);
 
 	static double lastFpsUpdate = 0;
@@ -341,34 +401,31 @@ void	VoxScene::_castRay()
 	_prevTargetedBlock = prevMapPos;
 }
 
-void	VoxScene::display()
+void	VoxScene::_drawChunks(std::shared_ptr<Shader> shader, Mat4 view, Mat4 proj)
 {
-	Mat4	model(1);
-	Mat4	view = _camera.getViewMatrix();
-	Mat4	projection = perspective(70, _engine.getWindow().aspectRatio(), 0.01, 1000);
+	shader->use();
+	shader->setMat4("uView", view);
+	shader->setMat4("uProjection", proj);
 
-	_engine.getLightCache().setUniforms(_shader, _camera.pos);
+	shader->setFloat("horizontalRenderDistance", _world->getHorizontalRenderDistance() * CHUNK_SIZE);
+	shader->setFloat("verticalRenderDistance", _world->getVerticalRenderDistance() * CHUNK_SIZE);
 
-	_shader->use();
-	_shader->setMat4("uView", view);
-	_shader->setMat4("uProjection", projection);
+	shader->setFloat("uTime", _engine.getTime());
+	shader->setVec3("uViewPos", Vec3(0));
 
-	_shader->setFloat("horizontalRenderDistance", _world->getHorizontalRenderDistance() * CHUNK_SIZE);
-	_shader->setFloat("verticalRenderDistance", _world->getVerticalRenderDistance() * CHUNK_SIZE);
-
-	_shader->setFloat("uTime", _engine.getTime());
-	_shader->setVec3("uViewPos", Vec3(0));
-
-	auto chunks = _world->getVisibleChunks();
+	auto chunks = _world->getLoadedChunks();
 	for (auto chunk : chunks)
 	{
 		if (chunk->upload())
 			continue ;
-		_shader->use();
-		_shader->setMat4("uModel", translate(Vec3d(chunk->getPos() * CHUNK_SIZE) - _camera.pos));
-		chunk->draw(_shader);
-	}
+		shader->use();
+		shader->setMat4("uModel", translate(Vec3d(chunk->getPos() * CHUNK_SIZE) - _camera.pos));
+		chunk->draw(shader);
+	}	
+}
 
+void	VoxScene::_drawSelectedBlock(std::shared_ptr<Shader> shader, Mat4 view, Mat4 proj)
+{
 	if (_hitBlock)
 	{
 		Vec3	blockPos = Vec3d(_targetedBlock) - _camera.pos;
@@ -376,13 +433,85 @@ void	VoxScene::display()
 
 		Mat4	model = translate(blockPos + center) * scale(Vec3(1.01)) * translate(center * -1);
 
-		_targetedBlockShader->use();
-		_targetedBlockShader->setMat4("uView", view);
-		_targetedBlockShader->setMat4("uProjection", projection);
-		_targetedBlockShader->setMat4("uModel", model);
-		_targetedBlockShader->setFloat("uTime", _engine.getTime());
-		_targetedBlockModel->draw(_targetedBlockShader);
+		shader->use();
+		shader->setMat4("uView", view);
+		shader->setMat4("uProjection", proj);
+		shader->setMat4("uModel", model);
+		shader->setFloat("uTime", _engine.getTime());
+		_targetedBlockModel->draw(shader);
 	}
+}
 
-	_engine.getLightCache().draw(view, projection, _camera.pos);
+Mat4	ortho(float left, float right, float bottom, float top, float near, float far)
+{
+	Mat4	m(1.0);
+
+	m(0, 0) = 2.0f / (right - left);
+	m(1, 1) = 2.0f / (top - bottom);
+	m(2, 2) = -2.0f / (far - near);
+
+	m(3, 0) = -((right + left) / (right - left));
+	m(3, 1) = -((top + bottom) / (top - bottom));
+	m(3, 2) = -((far + near) / (far - near));
+	return (m);
+}
+
+void	VoxScene::display()
+{
+	Mat4	view = _camera.getViewMatrix();
+	Mat4	proj = perspective(70, _engine.getWindow().aspectRatio(), 0.01, 1000);
+
+	//////////
+	
+	Vec3	lightDir = Vec3(-0.5, -1, -0.25);
+	Mat4	shadowView = lookAt(Vec3(-2.0f, 4.0f, -1.0f), Vec3(0), Vec3(0.0f, 1.0f, 0.0f));;
+	Mat4	shadowProj = ortho(-30.0, 30.0, -30.0, 30.0, 0.01, 500);
+
+	const unsigned int SHADOW_WIDTH = 1024 * 4, SHADOW_HEIGHT = 1024 * 4;
+
+	glViewport(0, 0, SHADOW_WIDTH, SHADOW_HEIGHT);
+	glBindFramebuffer(GL_FRAMEBUFFER, _shadowFBO);
+	glClear(GL_DEPTH_BUFFER_BIT);
+
+	glCullFace(GL_CCW);
+		_drawChunks(_shadowShader, shadowView, shadowProj);
+	glCullFace(GL_CW);
+
+	glBindFramebuffer(GL_FRAMEBUFFER, 0);
+	glViewport(0, 0, _engine.getWindow().width(), _engine.getWindow().height());
+	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
+	////////
+
+	_engine.getLightCache().setUniforms(_shader, _camera.pos);
+
+	glBindFramebuffer(GL_FRAMEBUFFER, _FBO);
+	glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
+	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+	glEnable(GL_DEPTH_TEST);
+
+	_shader->setMat4("uShadowProjection", shadowProj);
+	_shader->setMat4("uShadowView", shadowView);
+	_shader->setInt("shadowMap", 1);
+	glActiveTexture(GL_TEXTURE1);
+	glBindTexture(GL_TEXTURE_2D, _shadowFBOTexture);
+
+	_drawChunks(_shader, view, proj);
+	// _drawSelectedBlock(_targetedBlockShader, view, proj);
+
+	glBindFramebuffer(GL_FRAMEBUFFER, 0);
+	glClearColor(1.0f, 1.0f, 1.0f, 1.0f);
+	glClear(GL_COLOR_BUFFER_BIT);
+
+	glDisable(GL_DEPTH_TEST);
+	_postProcessShader->use();
+	_postProcessShader->setInt("screenTexture", 1);
+	glActiveTexture(GL_TEXTURE1);
+	glBindTexture(GL_TEXTURE_2D, _FBOTexture);
+	if (focus)
+		glBindTexture(GL_TEXTURE_2D, _shadowFBOTexture);
+	_frameMesh->draw(_postProcessShader);
+	glEnable(GL_DEPTH_TEST);
+
+	_engine.getLightCache().draw(view, proj, _camera.pos);
 }
