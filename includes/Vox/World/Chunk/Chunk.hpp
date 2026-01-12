@@ -6,7 +6,7 @@
 /*   By: mbatty <mbatty@student.42angouleme.fr>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/03 20:22:47 by mbatty            #+#    #+#             */
-/*   Updated: 2026/01/11 15:48:34 by mbatty           ###   ########.fr       */
+/*   Updated: 2026/01/12 19:27:41 by mbatty           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -169,6 +169,15 @@ class	Chunk
 		void	mesh(MeshCache &meshCache);
 		void	remesh(MeshCache &meshCache);
 
+		void	update(float delta)
+		{
+			if (_spawnFade > 0)
+			{
+				_spawnFade -= delta;
+				if (_spawnFade < 0)
+					_spawnFade = 0;
+			}
+		}
 		void	draw(std::shared_ptr<Shader> shader);
 		bool	upload();
 
@@ -191,4 +200,7 @@ class	Chunk
 		std::shared_ptr<Mesh>		_transparentMesh;
 
 		World						*_world;
+		
+		#define MAX_SPAWN_FADE		0.5
+		float						_spawnFade = MAX_SPAWN_FADE;
 };

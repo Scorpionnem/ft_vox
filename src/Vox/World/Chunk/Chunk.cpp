@@ -6,7 +6,7 @@
 /*   By: mbatty <mbatty@student.42angouleme.fr>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/08 15:52:47 by mbatty            #+#    #+#             */
-/*   Updated: 2026/01/11 15:48:46 by mbatty           ###   ########.fr       */
+/*   Updated: 2026/01/12 19:23:05 by mbatty           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -144,6 +144,7 @@ void	Chunk::remesh(MeshCache &meshCache)
 
 void	Chunk::draw(std::shared_ptr<Shader> shader)
 {
+	shader->setFloat("uSpawnFade", _spawnFade / MAX_SPAWN_FADE);
 	_mesh->draw(shader);
 	_transparentMesh->draw(shader);
 }

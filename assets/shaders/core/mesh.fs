@@ -77,6 +77,8 @@ vec3 CalcSunLight(vec3 normal, vec3 fragPos, vec3 sunDir, vec3 sunColor)
 uniform float	horizontalRenderDistance;
 uniform float	verticalRenderDistance;
 
+uniform float	uSpawnFade;
+
 void main()
 {
 	vec3 viewDir = normalize(uViewPos - vWorldPos);
@@ -106,4 +108,5 @@ void main()
 	materialColor.rgb = materialColor.rgb * clamp(result, 0.0, 1.0);
 
 	FragColor = vec4(mix(mix(materialColor.rgb, fogColor, fogFactorHorizontal), fogColor, fogFactorVertical), materialColor.a);
+	FragColor.rgb = mix(FragColor.rgb, fogColor, uSpawnFade);
 }

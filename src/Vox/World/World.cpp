@@ -6,7 +6,7 @@
 /*   By: mbatty <mbatty@student.42angouleme.fr>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/07 16:01:26 by mbatty            #+#    #+#             */
-/*   Updated: 2026/01/11 15:45:31 by mbatty           ###   ########.fr       */
+/*   Updated: 2026/01/12 19:21:56 by mbatty           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,9 +25,8 @@ BlockStateId	Blocks::SAND;
 BlockStateId	Blocks::WATER;
 BlockStateId	Blocks::OAK_LOG;
 
-void	World::update(Camera &camera)
+void	World::update(float delta, Camera &camera)
 {
-
 	if (ImGui::Begin("Render Distance", (bool *)__null))
 	{
 		ImGui::InputInt("Horizontal", &_horizontalRenderDistance);
@@ -69,6 +68,7 @@ void	World::update(Camera &camera)
 				_loadedChunks.push_back(chunk);
 				if (camera.frustum.isInside(Vec3(chunk->getPos() * CHUNK_SIZE) - camera.pos, Vec3(chunk->getPos() * CHUNK_SIZE + CHUNK_SIZE) - camera.pos))
 					_visibleChunks.push_back(chunk);
+				chunk->update(delta);
 			}
 
 	std::sort(_visibleChunks.begin(), _visibleChunks.end(),

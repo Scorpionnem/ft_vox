@@ -6,7 +6,7 @@
 /*   By: mbatty <mbatty@student.42angouleme.fr>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/03 20:15:34 by mbatty            #+#    #+#             */
-/*   Updated: 2026/01/11 19:03:46 by mbatty           ###   ########.fr       */
+/*   Updated: 2026/01/12 19:22:07 by mbatty           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -157,7 +157,7 @@ void	VoxScene::update(float delta, const Window::Events &events)
 	_updateCamera(delta, events);
 	_castRay();
 
-	_world->update(_camera);
+	_world->update(delta, _camera);
 
 	static double lastFpsUpdate = 0;
 	static double lastMinMaxFpsUpdate = 0;

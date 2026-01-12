@@ -6,7 +6,7 @@
 /*   By: mbatty <mbatty@student.42angouleme.fr>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/03 20:22:52 by mbatty            #+#    #+#             */
-/*   Updated: 2026/01/11 15:41:47 by mbatty           ###   ########.fr       */
+/*   Updated: 2026/01/12 19:21:48 by mbatty           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -114,7 +114,7 @@ class World
 			return (getBlockType(id)->getDefault()->id());
 		}
 
-		void					update(Camera &camera);
+		void					update(float delta, Camera &camera);
 
 		std::shared_ptr<Chunk>	getChunk(chunkVec3i pos);
 		void					genChunk(chunkVec3i pos);
