@@ -133,11 +133,13 @@ imgui: $(EXTERNAL_DIR)
 $(NAME): $(OBJS)
 	@echo Compiling $(NAME)
 	@$(CXX) $(CXXFLAGS) $(LFLAGS) $(INCLUDE_DIRS) -o $@ $^
+	@echo Compiled $(NAME)
 
 $(OBJ_DIR)/%.o: %.cpp
 	@mkdir -p $(dir $@)
 	@echo Compiling $@
 	@$(CXX) $(CXXFLAGS) $(INCLUDE_DIRS) -c $< -o $@
+	@echo Compiled $@
 
 re: fclean compile
 
