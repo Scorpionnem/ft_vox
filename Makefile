@@ -137,7 +137,7 @@ $(NAME): $(OBJS)
 
 $(OBJ_DIR)/%.o: %.cpp
 	@mkdir -p $(dir $@)
-	@echo Compiling $@
+	@echo Compiling $<
 	@$(CXX) $(CXXFLAGS) $(INCLUDE_DIRS) -c $< -o $@
 	@echo Compiled $@
 
