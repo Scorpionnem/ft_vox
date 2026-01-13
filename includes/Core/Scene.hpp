@@ -6,7 +6,7 @@
 /*   By: mbatty <mbatty@student.42angouleme.fr>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/02 17:43:28 by mbatty            #+#    #+#             */
-/*   Updated: 2026/01/03 14:01:48 by mbatty           ###   ########.fr       */
+/*   Updated: 2026/01/13 13:51:18 by mbatty           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,6 +17,10 @@
 
 class Engine;
 
+/*
+	Abstract Scene class, it has access to a const ref to engine, every frame update and display functions are called,
+	when switching/starting on a scene build is called.
+*/
 class	Scene
 {
 	public:

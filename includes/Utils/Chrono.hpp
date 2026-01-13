@@ -6,7 +6,7 @@
 /*   By: mbatty <mbatty@student.42angouleme.fr>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/05 20:32:39 by mbatty            #+#    #+#             */
-/*   Updated: 2026/01/05 20:38:02 by mbatty           ###   ########.fr       */
+/*   Updated: 2026/01/13 13:50:09 by mbatty           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,22 +16,26 @@
 #include <iostream>
 #include <string>
 
+/*
+	Simple chrono to get and measure time
+*/
 class	Chrono
 {
 	public:
-		Chrono(const std::string id)
+		Chrono() {}
+		~Chrono() {}
+
+		void	start()
 		{
-			_id = id;
 			_start = getTime();
 		}
+		// Returns time since chrono was started
 		double	get()
 		{
 			return (getTime() - _start);
 		}
-		~Chrono()
-		{
-			std::cout << _id << " time: " << get() << std::endl;
-		}
+
+		// Returns current time, if you want time since startup use engine.getTime()
 		static double getTime()
 		{
 			double	res;
@@ -41,6 +45,5 @@ class	Chrono
 			return (res);
 		}
 	private:
-		double		_start;
-		std::string	_id;
+		double		_start = 0;
 };

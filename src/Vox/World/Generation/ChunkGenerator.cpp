@@ -6,7 +6,7 @@
 /*   By: mbatty <mbatty@student.42angouleme.fr>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/07 16:05:17 by mbatty            #+#    #+#             */
-/*   Updated: 2026/01/11 14:32:41 by mbatty           ###   ########.fr       */
+/*   Updated: 2026/01/13 13:53:39 by mbatty           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -58,7 +58,7 @@ void	ChunkGenerator::_generatorWorker()
 	while (true)
 	{
 		std::unique_lock<std::mutex> latch(_queue_mutex);
-		_cv_task.wait(latch, [this](){ return (_stop || !_tasks.empty()); });
+		_cv_task.wait(latch, [this](){ return (_stop || !_tasks.empty()); }); // Waits until it is notified (using _cv_task.notify_*) and the lambda returns true
 		if (!_stop && !_tasks.empty())
 		{
 			if (_sort)
@@ -68,6 +68,7 @@ void	ChunkGenerator::_generatorWorker()
 				{
 					return (dist(_camPos, (c1->getPos() * CHUNK_SIZE) + CHUNK_SIZE / 2) < dist(_camPos, (c2->getPos() * CHUNK_SIZE) + CHUNK_SIZE / 2));
 				});
+				_sort = false;
 			}
 
 			std::shared_ptr<Chunk>	chunk = _tasks.front();

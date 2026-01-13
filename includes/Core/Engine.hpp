@@ -6,7 +6,7 @@
 /*   By: mbatty <mbatty@student.42angouleme.fr>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/02 17:42:51 by mbatty            #+#    #+#             */
-/*   Updated: 2026/01/10 18:52:54 by mbatty           ###   ########.fr       */
+/*   Updated: 2026/01/13 13:46:11 by mbatty           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,6 +18,7 @@
 #include "TextureCache.hpp"
 #include "ShaderCache.hpp"
 #include "LightCache.hpp"
+#include "Chrono.hpp"
 
 class	Engine
 {
@@ -39,13 +40,7 @@ class	Engine
 		// Time since engine.start was called
 		double getTime() const
 		{
-			double	res;
-
-			struct timespec	current;
-
-			clock_gettime(CLOCK_MONOTONIC, &current);
-			res = (current.tv_sec) + (current.tv_nsec) * 1e-9;
-			return (res - _startTime);
+			return (Chrono::getTime() - _startTime);
 		}
 	private:
 		void	_loop();
