@@ -6,7 +6,7 @@
 /*   By: mbatty <mbatty@student.42angouleme.fr>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/08 15:52:47 by mbatty            #+#    #+#             */
-/*   Updated: 2026/01/12 19:23:05 by mbatty           ###   ########.fr       */
+/*   Updated: 2026/01/13 13:25:47 by mbatty           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -115,7 +115,7 @@ void	Chunk::mesh(MeshCache &meshCache)
 				BlockStateId	block = getBlock(Vec3i(x, y, z));
 				bool	solid = isBlockSolid(Vec3i(x, y, z));
 				std::shared_ptr<Mesh>	mesh = solid ? _mesh : _transparentMesh;
-				int	textureId = _world->getBlockState(block)->parent->textureId();
+				int	textureId = _world->getBlockState(block)->getParent()->textureId();
 
 				if (block != Blocks::AIR)
 				{

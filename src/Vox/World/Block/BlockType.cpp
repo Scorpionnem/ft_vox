@@ -6,20 +6,11 @@
 /*   By: mbatty <mbatty@student.42angouleme.fr>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/07 23:36:34 by mbatty            #+#    #+#             */
-/*   Updated: 2026/01/08 19:29:00 by mbatty           ###   ########.fr       */
+/*   Updated: 2026/01/13 13:14:24 by mbatty           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "BlockType.hpp"
-
-BlockStateId	BlockState::_globalId = 0;
-
-uint8_t	BlockState::getProperty(const std::string &prop)
-{
-	(void)prop;
-	return (0);
-	// return ((_properties >> parent->offsetOf(prop)) & _bitMask(parent->sizeOf(prop)));
-}
 
 BlockStateHash	BlockType::_getBlockStateHash(std::map<std::string, uint8_t> properties)
 {
@@ -30,7 +21,7 @@ BlockStateHash	BlockType::_getBlockStateHash(std::map<std::string, uint8_t> prop
 		auto find = _properties.find(pair.first);
 		if (find != _properties.end())
 		{
-			Property	&prop = find->second;
+			BlockProperty	&prop = find->second;
 
 			res = _setBits(res, _offsets[prop.name], properties.find(prop.name)->second);
 		}
@@ -44,7 +35,7 @@ void	BlockType::_processHashLayout()
 
 	for (auto &pair : _properties)
 	{
-		Property &prop = pair.second;
+		BlockProperty &prop = pair.second;
 
 		_offsets[prop.name] = offset;
 		offset += prop.bitCount;

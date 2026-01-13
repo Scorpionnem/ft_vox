@@ -6,7 +6,7 @@
 /*   By: mbatty <mbatty@student.42angouleme.fr>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/03 20:22:52 by mbatty            #+#    #+#             */
-/*   Updated: 2026/01/12 19:21:48 by mbatty           ###   ########.fr       */
+/*   Updated: 2026/01/13 13:26:33 by mbatty           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -111,7 +111,7 @@ class World
 		}
 		BlockStateId getDefaultStateId(const std::string &id)
 		{
-			return (getBlockType(id)->getDefault()->id());
+			return (getBlockType(id)->getDefaultState()->id());
 		}
 
 		void					update(float delta, Camera &camera);
@@ -151,12 +151,12 @@ class World
 
 			for (auto pair : _blockStates)
 			{
-				_blockStateSolid[pair.first] = pair.second->parent->isSolid();
+				_blockStateSolid[pair.first] = pair.second->getParent()->isSolid();
 			}
 
 			_setBlocksDefines();
 		}
-		void	_registerBlock(const std::string &id, int textureId, std::vector<Property> properties, bool solid)
+		void	_registerBlock(const std::string &id, int textureId, std::vector<BlockProperty> properties, bool solid)
 		{
 			_blockTypes.insert(std::make_pair(id, std::make_shared<BlockType>(id, textureId, properties, solid)));
 		}
