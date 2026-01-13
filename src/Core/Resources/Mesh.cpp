@@ -6,7 +6,7 @@
 /*   By: mbatty <mbatty@student.42angouleme.fr>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/02 15:32:26 by mbatty            #+#    #+#             */
-/*   Updated: 2026/01/08 21:29:16 by mbatty           ###   ########.fr       */
+/*   Updated: 2026/01/13 13:06:21 by mbatty           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -40,7 +40,7 @@ void	Mesh::draw(std::shared_ptr<Shader> shader)
 		shader->setVec3("uMaterial.specular", mtl.material.specular);
 
 		glBindVertexArray(mtl.VAO);
-		glDrawArrays(GL_TRIANGLES, 0, mtl.vertices.size());
+		glDrawArrays(GL_TRIANGLES, 0, mtl.verticesSize);
 	}
 }
 
@@ -125,6 +125,10 @@ void	Mesh::upload()
 		glEnableVertexAttribArray(2);
 
 		glBindVertexArray(0);
+
+		mtl.verticesSize = mtl.vertices.size();
+		mtl.vertices.clear();
+		mtl.vertices.shrink_to_fit();
 	}
 }
 
