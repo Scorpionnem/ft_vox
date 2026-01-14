@@ -6,7 +6,7 @@
 /*   By: mbatty <mbatty@student.42angouleme.fr>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/08 15:52:47 by mbatty            #+#    #+#             */
-/*   Updated: 2026/01/14 19:24:51 by mbatty           ###   ########.fr       */
+/*   Updated: 2026/01/14 23:14:38 by mbatty           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -47,14 +47,32 @@ void	Chunk::generateFeatures()
 
 }
 
+float smoothstep(float edge0, float edge1, float x)
+{
+	float t = (x - edge0) / (edge1 - edge0);
+	t = std::clamp(t, 0.0f, 1.0f);
+	return t * t * (3.0f - 2.0f * t);
+}
+
 BlockStateId	Chunk::getGenerationBlock(worldVec3i pos)
 {
 	int	genHeight = getGenerationHeight(Vec2i(pos.x, pos.z));
 	if (pos.y <= genHeight)
 	{
-		float	intensity = abs(pos.y) / 100.0f;
+		// CAVES V
+		int	depth = genHeight - pos.y;
+
+		float	tunnelsIntensity = 1 - smoothstep(0.0, 300, depth);
+		tunnelsIntensity = std::clamp(tunnelsIntensity, 0.0f, 0.75f);
+		if (Noise::calcNoise(pos, 0.015, 1, 3) * tunnelsIntensity > 0.25)
+			return (Blocks::AIR);
+
+		float	intensity = smoothstep(0.0, 100, depth);
 		if ((Noise::calcNoise(pos, 0.01, 1, 4) * intensity) > 0.2)
 			return (Blocks::AIR);
+		// CAVES ^
+
+		// SURFACE FEATURES V (Should be replaced by biome's later on)
 		if (pos.y == genHeight)
 		{
 			if (pos.y <= WATERLEVEL)
@@ -64,6 +82,7 @@ BlockStateId	Chunk::getGenerationBlock(worldVec3i pos)
 		if (pos.y >= genHeight - 2)
 			return (Blocks::DIRT);
 		return (Blocks::STONE);
+		// SURFACE FEATURES ^
 	}
 	if (pos.y < WATERLEVEL)
 		return (Blocks::WATER);
