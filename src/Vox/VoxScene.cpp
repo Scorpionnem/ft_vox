@@ -6,7 +6,7 @@
 /*   By: mbatty <mbatty@student.42angouleme.fr>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/03 20:15:34 by mbatty            #+#    #+#             */
-/*   Updated: 2026/01/14 16:36:36 by mbatty           ###   ########.fr       */
+/*   Updated: 2026/01/14 19:09:53 by mbatty           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -305,7 +305,7 @@ void	VoxScene::_interact()
 
 	if (_hitBlock && chunk)
 	{
-		chunk->setBlock(chunk->getLocalPos(_prevTargetedBlock), Blocks::STONE);
+		chunk->setBlock(chunk->getLocalPos(_prevTargetedBlock), Blocks::OAK_LOG);
 		chunk->remesh(_engine.getMeshCache());
 		chunk->upload();
 	}
@@ -321,8 +321,12 @@ void	VoxScene::_castRay()
 	Vec3i	rayStep = Vec3i(sign(rayDir));
 	Vec3	sideDist = (sign(rayDir) * (Vec3(mapPos) - rayPos) + (sign(rayDir) * 0.5f) + 0.5f) * deltaDist;
 
-	int	MAX_RAY_STEPS = 8;
 	_hitBlock = false;
+
+	if (_world->getBlock(_camera.pos) != Blocks::AIR)
+		return ;
+
+	int	MAX_RAY_STEPS = 8;
 	for (int i = 0; i < MAX_RAY_STEPS; ++i)
 	{
 		prevMapPos = mapPos;

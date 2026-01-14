@@ -6,7 +6,7 @@
 /*   By: mbatty <mbatty@student.42angouleme.fr>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/03 20:22:47 by mbatty            #+#    #+#             */
-/*   Updated: 2026/01/14 16:42:59 by mbatty           ###   ########.fr       */
+/*   Updated: 2026/01/14 18:05:51 by mbatty           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,7 +19,7 @@
 #include <atomic>
 #include <limits.h>
 #include "BlockType.hpp"
-#include "Perlin2D.hpp"
+#include "Perlin3D.hpp"
 
 #include "BlockModel.hpp"
 

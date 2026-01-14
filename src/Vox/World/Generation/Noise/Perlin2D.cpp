@@ -6,7 +6,7 @@
 /*   By: mbatty <mbatty@student.42angouleme.fr>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/06 13:32:10 by mbatty            #+#    #+#             */
-/*   Updated: 2026/01/09 20:11:03 by mbatty           ###   ########.fr       */
+/*   Updated: 2026/01/14 17:56:17 by mbatty           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -51,7 +51,7 @@ float interpolate(float a0, float a1, float w)
 	return (a1 - a0) * (3.0 - w * 2.0) * w * w + a0;
 }
 
-float Perlin2D::perlin2D(float x, float y)
+float Noise::perlin2D(float x, float y)
 {
 	int x0 = (int)std::floor(x);
 	int y0 = (int)std::floor(y);
@@ -74,7 +74,7 @@ float Perlin2D::perlin2D(float x, float y)
 	return (value);
 }
 
-float	Perlin2D::calcNoise(const Vec2i &pos, float freq, float amp, int noisiness)
+float	Noise::calcNoise(const Vec2i &pos, float freq, float amp, int noisiness)
 {
 	float	res = 0;
 	for (int i = 0; i < noisiness; i++)

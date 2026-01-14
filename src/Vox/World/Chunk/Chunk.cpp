@@ -6,7 +6,7 @@
 /*   By: mbatty <mbatty@student.42angouleme.fr>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/08 15:52:47 by mbatty            #+#    #+#             */
-/*   Updated: 2026/01/14 16:36:54 by mbatty           ###   ########.fr       */
+/*   Updated: 2026/01/14 19:24:51 by mbatty           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -52,6 +52,9 @@ BlockStateId	Chunk::getGenerationBlock(worldVec3i pos)
 	int	genHeight = getGenerationHeight(Vec2i(pos.x, pos.z));
 	if (pos.y <= genHeight)
 	{
+		float	intensity = abs(pos.y) / 100.0f;
+		if ((Noise::calcNoise(pos, 0.01, 1, 4) * intensity) > 0.2)
+			return (Blocks::AIR);
 		if (pos.y == genHeight)
 		{
 			if (pos.y <= WATERLEVEL)

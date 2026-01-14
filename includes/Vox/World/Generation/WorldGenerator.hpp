@@ -6,7 +6,7 @@
 /*   By: mbatty <mbatty@student.42angouleme.fr>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/07 20:35:35 by mbatty            #+#    #+#             */
-/*   Updated: 2026/01/14 17:03:30 by mbatty           ###   ########.fr       */
+/*   Updated: 2026/01/14 17:56:35 by mbatty           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -122,7 +122,7 @@ class	WorldGenerator
 
 			const Spline	&spline = find->second;
 
-			float noise = Perlin2D::calcNoise(pos, spline.freq, spline.amp, spline.noisiness);
+			float noise = Noise::calcNoise(pos, spline.freq, spline.amp, spline.noisiness);
 			if (spline.abs)
 				noise = std::abs(noise);
 			return (getValueInSpline(spline, noise));
@@ -135,7 +135,7 @@ class	WorldGenerator
 
 			const Spline	&spline = find->second;
 
-			float noise = Perlin2D::calcNoise(pos, spline.freq, spline.amp, spline.noisiness);
+			float noise = Noise::calcNoise(pos, spline.freq, spline.amp, spline.noisiness);
 			if (spline.abs)
 				noise = std::abs(noise);
 			return (noise);
