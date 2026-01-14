@@ -6,7 +6,7 @@
 /*   By: mbatty <mbatty@student.42angouleme.fr>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/07 16:01:26 by mbatty            #+#    #+#             */
-/*   Updated: 2026/01/12 19:21:56 by mbatty           ###   ########.fr       */
+/*   Updated: 2026/01/14 16:19:11 by mbatty           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,7 +25,7 @@ BlockStateId	Blocks::SAND;
 BlockStateId	Blocks::WATER;
 BlockStateId	Blocks::OAK_LOG;
 
-void	World::update(float delta, Camera &camera)
+void	World::_imGui()
 {
 	if (ImGui::Begin("Render Distance", (bool *)__null))
 	{
@@ -38,7 +38,12 @@ void	World::update(float delta, Camera &camera)
 		ImGui::Text("Vertical %d Horizontal %d", _horizontalRenderDistance * CHUNK_SIZE, _verticalRenderDistance * CHUNK_SIZE);
 	}
 	ImGui::End();
+}
 
+void	World::update(float delta, Camera &camera)
+{
+	_imGui();
+	
 	Vec3	camChunkPos;
 	camChunkPos.x = (int)(camera.pos.x / CHUNK_SIZE);
 	camChunkPos.y = (int)(camera.pos.y / CHUNK_SIZE);
@@ -110,4 +115,29 @@ void	World::genChunk(chunkVec3i pos)
 
 	_chunksGenQueue.push_back(chunk);
 	_chunks.insert(std::make_pair(pos.hash(), chunk));
+}
+
+void	World::_computeBlockStates()
+{
+	for (auto pair : _blockTypes)
+	{
+		std::shared_ptr<BlockType>	bt = pair.second;
+		std::unordered_map<BlockStateHash, std::shared_ptr<BlockState>>	&bss = bt->getBlockStates();
+
+		for (auto pairr : bss)
+		{
+			std::shared_ptr<BlockState> bs = pairr.second;
+
+			_blockStates.insert(std::make_pair(bs->id(), bs));
+		}
+	}
+
+	_blockStateSolid.resize(_blockStates.size());
+
+	for (auto pair : _blockStates)
+	{
+		_blockStateSolid[pair.first] = pair.second->getParent()->isSolid();
+	}
+
+	_setBlocksDefines();
 }

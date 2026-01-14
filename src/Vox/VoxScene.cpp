@@ -6,7 +6,7 @@
 /*   By: mbatty <mbatty@student.42angouleme.fr>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/03 20:15:34 by mbatty            #+#    #+#             */
-/*   Updated: 2026/01/12 19:22:07 by mbatty           ###   ########.fr       */
+/*   Updated: 2026/01/14 16:36:36 by mbatty           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,6 +16,33 @@
 #include <imgui.h>
 #include <backends/imgui_impl_sdl2.h>
 #include <backends/imgui_impl_opengl3.h>
+
+float	getFpsFromArray(void *tab, int id)
+{
+	return (((float*)tab)[id]);
+}
+
+void	VoxScene::_imGui()
+{
+	if (ImGui::Begin("Scene Info", (bool *)__null))
+	{
+		ImGui::Text("FPS: %.3f Min: %.3f Max: %.3f", _FPS, _minFPS, _maxFPS);
+		ImGui::PlotLines("FPS Graph", getFpsFromArray, (void*)_FPSs.data(), _FPSs.size(), 0, __null, 50, 70, ImVec2(180, 48));
+		ImGui::Text("Time: %.3f", _engine.getTime());
+		ImGui::Text("Loaded chunks: %zu", _world->getLoadedChunks().size());
+		ImGui::Text("Visible chunks: %zu", _world->getVisibleChunks().size());
+		ImGui::Text("All chunks: %zu", _world->getAllChunks().size());
+		ImGui::ProgressBar((float)_world->getLoadedChunks().size() / (float)_world->getMaxLoadedChunks());
+	}
+	ImGui::End();
+
+	if (ImGui::Begin("Generation Info", (bool *)__null))
+	{
+		ImGui::Text("Continental: %.3f Rivers: %.3f Erosion: %.3f Mountains: %.3f", _continentalness, _riverness, _erosion, _mountainness);
+		ImGui::Text("Terrain Type: %s", _terrainShape.c_str());
+	}
+	ImGui::End();
+}
 
 Vec2	getAtlasUV(Vec2 uv, int textureId)
 {
@@ -109,11 +136,6 @@ void	VoxScene::build()
 	_targetedBlockModel->upload();
 }
 
-float	getFpsFromArray(void *tab, int id)
-{
-	return (((float*)tab)[id]);
-}
-
 void	VoxScene::update(float delta, const Window::Events &events)
 {
 	int	windowWidth = _engine.getWindow().width();
@@ -159,68 +181,45 @@ void	VoxScene::update(float delta, const Window::Events &events)
 
 	_world->update(delta, _camera);
 
-	static double lastFpsUpdate = 0;
-	static double lastMinMaxFpsUpdate = 0;
-	static double maxFPS = 0;
-	static double minFPS = 0;
+	_FPS = 1.0 / delta;
 
-	double FPS = 1.0 / delta;
-
-	if (_engine.getTime() - lastFpsUpdate > 0.1)
+	if (_engine.getTime() - _lastFPSUpdate > 0.1)
 	{
-		_fpss.push_back(FPS);
-		if (_fpss.size() > 16)
-			_fpss.erase(_fpss.begin());
-		lastFpsUpdate = _engine.getTime();
+		_FPSs.push_back(_FPS);
+		if (_FPSs.size() > 16)
+			_FPSs.erase(_FPSs.begin());
+		_lastFPSUpdate = _engine.getTime();
 	}
-	if (_engine.getTime() - lastMinMaxFpsUpdate > 1)
+	if (_engine.getTime() - _lastMinMaxFPSUpdate > 1)
 	{
-		lastMinMaxFpsUpdate = _engine.getTime();
-		minFPS = FPS;
-		maxFPS = FPS;
+		_lastMinMaxFPSUpdate = _engine.getTime();
+		_minFPS = _FPS;
+		_maxFPS = _FPS;
 	}
 
-	if (FPS > maxFPS)
-		maxFPS = FPS;
-	if (FPS < minFPS)
-		minFPS = FPS;
+	if (_FPS > _maxFPS)
+		_maxFPS = _FPS;
+	if (_FPS < _minFPS)
+		_minFPS = _FPS;
 
-	if (ImGui::Begin("Scene Info", (bool *)__null))
-	{
-		ImGui::Text("FPS: %.3f Min: %.3f Max: %.3f", FPS, minFPS, maxFPS);
-		ImGui::PlotLines("FPS Graph", getFpsFromArray, (void*)_fpss.data(), _fpss.size(), 0, __null, 50, 70, ImVec2(180, 48));
-		ImGui::Text("Time: %.3f", _engine.getTime());
-		ImGui::Text("Loaded chunks: %zu", _world->getLoadedChunks().size());
-		ImGui::Text("Visible chunks: %zu", _world->getVisibleChunks().size());
-		ImGui::ProgressBar((float)_world->getLoadedChunks().size() / (float)_world->getMaxLoadedChunks());
-	}
-	ImGui::End();
+	_getLocalGeneration();
+	_imGui();
+}
 
-
+void	VoxScene::_getLocalGeneration()
+{
 	worldVec2i	wp(_camera.pos.x, _camera.pos.z);
-	float	continentalness = _world->wgen.getNoise("continentalness", wp);
-	float	riverness = _world->wgen.getNoise("riverness", wp);
-	float	erosion = _world->wgen.getNoise("erosion", wp);
-	float	mountainness = _world->wgen.getNoise("mountainness", wp);
-	std::string	terrainShape = "Unknown";
-	if (isPlains(continentalness, riverness, erosion, mountainness))
-		terrainShape = "Plains";
-	else if (isRiver(continentalness, riverness, erosion, mountainness))
-		terrainShape = "River";
-	else if (isShallowOcean(continentalness, riverness, erosion, mountainness))
-		terrainShape = "ShallowOcean";
-	if (events.getKeyPressed(SDLK_r))
-	{
-		std::cout << continentalness << " " << riverness << " " << erosion << " " << mountainness << std::endl;
-	}
-
-
-	if (ImGui::Begin("Generation Info", (bool *)__null))
-	{
-		ImGui::Text("Continental: %.3f Rivers: %.3f Erosion: %.3f Mountains: %.3f", continentalness, riverness, erosion, mountainness);
-		ImGui::Text("Terrain Type: %s", terrainShape.c_str());
-	}
-	ImGui::End();
+	_continentalness = _world->getWgen().getNoise("continentalness", wp);
+	_riverness = _world->getWgen().getNoise("riverness", wp);
+	_erosion = _world->getWgen().getNoise("erosion", wp);
+	_mountainness = _world->getWgen().getNoise("mountainness", wp);
+	_terrainShape = "Unknown";
+	if (isPlains(_continentalness, _riverness, _erosion, _mountainness))
+		_terrainShape = "Plains";
+	else if (isRiver(_continentalness, _riverness, _erosion, _mountainness))
+		_terrainShape = "River";
+	else if (isShallowOcean(_continentalness, _riverness, _erosion, _mountainness))
+		_terrainShape = "ShallowOcean";	
 }
 
 void	VoxScene::_updateCamera(float delta, const Window::Events &events)

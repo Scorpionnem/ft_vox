@@ -6,7 +6,7 @@
 /*   By: mbatty <mbatty@student.42angouleme.fr>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/07 20:35:35 by mbatty            #+#    #+#             */
-/*   Updated: 2026/01/10 15:33:20 by mbatty           ###   ########.fr       */
+/*   Updated: 2026/01/14 17:03:30 by mbatty           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -114,18 +114,26 @@ class	WorldGenerator
 			load();
 		}
 
-		float	getSplineValue(const std::string &id, Vec2i pos)
+		float	getSplineValue(const std::string &id, Vec2i pos) const
 		{
-			Spline	&spline = _splines[id];
+			auto find = _splines.find(id);
+			if (find == _splines.end())
+				return (0);
+
+			const Spline	&spline = find->second;
 
 			float noise = Perlin2D::calcNoise(pos, spline.freq, spline.amp, spline.noisiness);
 			if (spline.abs)
 				noise = std::abs(noise);
 			return (getValueInSpline(spline, noise));
 		}
-		float	getNoise(const std::string &id, Vec2i pos)
+		float	getNoise(const std::string &id, Vec2i pos) const
 		{
-			Spline	&spline = _splines[id];
+			auto find = _splines.find(id);
+			if (find == _splines.end())
+				return (0);
+
+			const Spline	&spline = find->second;
 
 			float noise = Perlin2D::calcNoise(pos, spline.freq, spline.amp, spline.noisiness);
 			if (spline.abs)

@@ -6,7 +6,7 @@
 /*   By: mbatty <mbatty@student.42angouleme.fr>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/08 15:52:47 by mbatty            #+#    #+#             */
-/*   Updated: 2026/01/13 13:25:47 by mbatty           ###   ########.fr       */
+/*   Updated: 2026/01/14 16:36:54 by mbatty           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -69,7 +69,7 @@ BlockStateId	Chunk::getGenerationBlock(worldVec3i pos)
 
 int	Chunk::getGenerationHeight(worldVec2i pos)
 {
-	return (_world->wgen.getSplineValue("continentalness", pos) + _world->wgen.getSplineValue("riverness", pos) + _world->wgen.getSplineValue("erosion", pos) + _world->wgen.getSplineValue("mountainness", pos));
+	return (_world->getWgen().getSplineValue("continentalness", pos) + _world->getWgen().getSplineValue("riverness", pos) + _world->getWgen().getSplineValue("erosion", pos) + _world->getWgen().getSplineValue("mountainness", pos));
 }
 
 BlockStateId	Chunk::getBlock(localVec3i pos)

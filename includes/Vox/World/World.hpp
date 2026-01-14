@@ -6,7 +6,7 @@
 /*   By: mbatty <mbatty@student.42angouleme.fr>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/03 20:22:52 by mbatty            #+#    #+#             */
-/*   Updated: 2026/01/13 13:26:33 by mbatty           ###   ########.fr       */
+/*   Updated: 2026/01/14 16:41:38 by mbatty           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -47,10 +47,12 @@ class World
 			Blocks::WATER = getDefaultStateId("water");
 			Blocks::OAK_LOG = getDefaultStateId("oak_log");
 		}
+
+		void	_imGui();
 	public:
 		World(MeshCache &cache) : _generator(cache)
 		{
-			wgen.load();
+			_wgen.load();
 
 			_registerBlock("air", 0, {}, false);
 			_registerBlock("stone", 0, {}, true);
@@ -75,9 +77,14 @@ class World
 
 		void	reload()
 		{
-			wgen.reload();
+			_wgen.reload();
 			_chunks.clear();
 		}
+
+		void					update(float delta, Camera &camera);
+
+		std::shared_ptr<Chunk>	getChunk(chunkVec3i pos);
+		void					genChunk(chunkVec3i pos);
 
 		BlockStateId	getBlock(worldVec3i pos)
 		{
@@ -114,48 +121,20 @@ class World
 			return (getBlockType(id)->getDefaultState()->id());
 		}
 
-		void					update(float delta, Camera &camera);
+		const std::vector<std::shared_ptr<Chunk>>					&getLoadedChunks() {return (_loadedChunks);}
+		const std::vector<std::shared_ptr<Chunk>>					&getVisibleChunks() {return (_visibleChunks);}
+		const std::unordered_map<uint64_t, std::shared_ptr<Chunk>>	&getAllChunks() {return (_chunks);}
 
-		std::shared_ptr<Chunk>	getChunk(chunkVec3i pos);
-		void					genChunk(chunkVec3i pos);
-
-		std::vector<std::shared_ptr<Chunk>>	&getLoadedChunks() {return (_loadedChunks);}
-		std::vector<std::shared_ptr<Chunk>>	&getVisibleChunks() {return (_visibleChunks);}
 		int	getHorizontalRenderDistance() {return (_horizontalRenderDistance);}
 		int	getVerticalRenderDistance() {return (_verticalRenderDistance);}
 		int	getMaxLoadedChunks() {return ((_horizontalRenderDistance * 2) * (_horizontalRenderDistance * 2) * (_verticalRenderDistance * 2));}
-		WorldGenerator	wgen;
 
-		static chunkVec3i	getChunkPos(worldVec3i pos)
-		{
-			return (pos / CHUNK_SIZE);
-		}
+		static chunkVec3i	getChunkPos(worldVec3i pos) {return (pos / CHUNK_SIZE);}
+
+		const WorldGenerator	&getWgen() {return (_wgen);}
 	private:
 		void	_updateGenerator(Vec3 camPos);
-		void	_computeBlockStates()
-		{
-			for (auto pair : _blockTypes)
-			{
-				std::shared_ptr<BlockType>	bt = pair.second;
-				std::unordered_map<BlockStateHash, std::shared_ptr<BlockState>>	&bss = bt->getBlockStates();
-
-				for (auto pairr : bss)
-				{
-					std::shared_ptr<BlockState> bs = pairr.second;
-
-					_blockStates.insert(std::make_pair(bs->id(), bs));
-				}
-			}
-
-			_blockStateSolid.resize(_blockStates.size());
-
-			for (auto pair : _blockStates)
-			{
-				_blockStateSolid[pair.first] = pair.second->getParent()->isSolid();
-			}
-
-			_setBlocksDefines();
-		}
+		void	_computeBlockStates();
 		void	_registerBlock(const std::string &id, int textureId, std::vector<BlockProperty> properties, bool solid)
 		{
 			_blockTypes.insert(std::make_pair(id, std::make_shared<BlockType>(id, textureId, properties, solid)));
@@ -174,4 +153,6 @@ class World
 		std::vector<std::shared_ptr<Chunk>>						_loadedChunks;
 		std::vector<std::shared_ptr<Chunk>>						_visibleChunks;
 		std::vector<std::shared_ptr<Chunk>>						_chunksGenQueue;
+
+		WorldGenerator											_wgen;
 };
