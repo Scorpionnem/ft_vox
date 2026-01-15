@@ -6,7 +6,7 @@
 /*   By: mbatty <mbatty@student.42angouleme.fr>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/08 15:52:47 by mbatty            #+#    #+#             */
-/*   Updated: 2026/01/14 23:14:38 by mbatty           ###   ########.fr       */
+/*   Updated: 2026/01/15 18:00:44 by mbatty           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,8 +18,14 @@ void	Chunk::generate()
 	_blocks.resize(CHUNK_VOLUME);
 
 	generateTerrain();
-	generateFeatures();
 	_generated = true;
+}
+
+float smoothstep(float edge0, float edge1, float x)
+{
+	float t = (x - edge0) / (edge1 - edge0);
+	t = std::clamp(t, 0.0f, 1.0f);
+	return t * t * (3.0f - 2.0f * t);
 }
 
 void	Chunk::generateTerrain()
@@ -27,13 +33,6 @@ void	Chunk::generateTerrain()
 	for (int x = 0; x < CHUNK_SIZE; x++)
 		for (int z = 0; z < CHUNK_SIZE; z++)
 		{
-			worldVec3i	wp = getWorldPos(Vec3i(x, 0, z));
-
-			int	terrainHeight = getGenerationHeight(worldVec2i(wp.x, wp.z));
-
-			if (wp.y > std::max(terrainHeight, WATERLEVEL))
-				continue ;
-
 			for (int y = CHUNK_SIZE; y >= 0; y--)
 			{
 				localVec3i	pos(x, y, z);
@@ -42,16 +41,55 @@ void	Chunk::generateTerrain()
 		}
 }
 
-void	Chunk::generateFeatures()
+BlockStateId	Chunk::getGenerationShape(worldVec3i pos)
 {
+	int	genHeight = getGenerationHeight(Vec2i(pos.x, pos.z));
+	
+	if (pos.y <= genHeight)
+	{
+		int	depth = genHeight - pos.y;
 
+		float	tunnelsIntensity = 1 - smoothstep(0.0, 300, depth);
+		tunnelsIntensity = std::clamp(tunnelsIntensity, 0.0f, 0.75f);
+		if (Noise::calcNoise(pos, 0.015, 1, 3) * tunnelsIntensity > 0.25)
+			return (Blocks::AIR);
+
+		float	intensity = smoothstep(0.0, 100, depth);
+		if ((Noise::calcNoise(pos, 0.01, 1, 4) * intensity) > 0.2)
+			return (Blocks::AIR);
+
+		return (Blocks::STONE);
+	}
+	if (pos.y < WATERLEVEL)
+		return (Blocks::WATER);
+	return (Blocks::AIR);
 }
 
-float smoothstep(float edge0, float edge1, float x)
+BlockStateId	Chunk::getGenerationDecoration(worldVec3i pos)
 {
-	float t = (x - edge0) / (edge1 - edge0);
-	t = std::clamp(t, 0.0f, 1.0f);
-	return t * t * (3.0f - 2.0f * t);
+	int	genHeight = getGenerationHeight(Vec2i(pos.x, pos.z));
+	if (pos.y <= genHeight)
+	{
+		if (pos.y == genHeight)
+		{
+			if (pos.y <= WATERLEVEL)
+				return (Blocks::SAND);
+			return (Blocks::GRASS);
+		}
+		if (pos.y >= genHeight - 2)
+			return (Blocks::DIRT);
+	}
+	return (Blocks::NO_BLOCK);
+}
+
+BlockStateId	Chunk::getGenerationFeatures(worldVec3i pos)
+{
+	int	genHeight = getGenerationHeight(Vec2i(pos.x, pos.z));
+	bool	isOnSurface = pos.y == genHeight + 1;
+
+	if (isOnSurface && (int)(Noise::White(Vec3i(pos.x, pos.y, pos.z)) * 100.0) == 1)
+		return (Blocks::OAK_LOG);
+	return (Blocks::AIR); // SHOULD BE CHANGED TO NO_BLOCK WHEN ILL SPLIT THE GEN FUNC
 }
 
 BlockStateId	Chunk::getGenerationBlock(worldVec3i pos)
@@ -86,7 +124,7 @@ BlockStateId	Chunk::getGenerationBlock(worldVec3i pos)
 	}
 	if (pos.y < WATERLEVEL)
 		return (Blocks::WATER);
-	return (Blocks::AIR);
+	return (getGenerationFeatures(pos));
 }
 
 int	Chunk::getGenerationHeight(worldVec2i pos)
@@ -104,7 +142,7 @@ BlockStateId	Chunk::getBlock(localVec3i pos)
 
 bool	Chunk::setBlock(localVec3i pos, BlockStateId block)
 {
-	if (!isInBounds(pos))
+	if (block == Blocks::NO_BLOCK || !isInBounds(pos))
 		return (false);
 	int index = pos.x + pos.y * CHUNK_SIZE + pos.z * CHUNK_SIZE * CHUNK_SIZE;
 	_blocks[index] = block;

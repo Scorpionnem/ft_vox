@@ -6,7 +6,7 @@
 /*   By: mbatty <mbatty@student.42angouleme.fr>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/03 20:22:47 by mbatty            #+#    #+#             */
-/*   Updated: 2026/01/15 16:05:30 by mbatty           ###   ########.fr       */
+/*   Updated: 2026/01/15 17:41:35 by mbatty           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -53,10 +53,12 @@ class	Chunk
 		~Chunk() {}
 
 		int				getGenerationHeight(worldVec2i pos);
+		BlockStateId	getGenerationFeatures(worldVec3i pos);
+		BlockStateId	getGenerationShape(worldVec3i pos);
+		BlockStateId	getGenerationDecoration(worldVec3i pos);
 		BlockStateId	getGenerationBlock(worldVec3i pos);
 
 		void	generateTerrain();
-		void	generateFeatures();
 		void	generate();
 
 		void	draw(std::shared_ptr<Shader> shader);

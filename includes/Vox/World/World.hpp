@@ -6,7 +6,7 @@
 /*   By: mbatty <mbatty@student.42angouleme.fr>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/03 20:22:52 by mbatty            #+#    #+#             */
-/*   Updated: 2026/01/14 16:41:38 by mbatty           ###   ########.fr       */
+/*   Updated: 2026/01/15 17:45:06 by mbatty           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,6 +25,8 @@
 
 struct Blocks
 {
+	static BlockStateId	NO_BLOCK;
+
 	static BlockStateId	AIR;
 	static BlockStateId	STONE;
 	static BlockStateId	DIRT;
@@ -39,6 +41,8 @@ class World
 	private:
 		void	_setBlocksDefines()
 		{
+			Blocks::NO_BLOCK = BlockState::getGlobalId() + 1;
+
 			Blocks::AIR = getDefaultStateId("air");
 			Blocks::STONE = getDefaultStateId("stone");
 			Blocks::DIRT = getDefaultStateId("dirt");

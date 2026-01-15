@@ -6,7 +6,7 @@
 /*   By: mbatty <mbatty@student.42angouleme.fr>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/13 13:09:58 by mbatty            #+#    #+#             */
-/*   Updated: 2026/01/13 13:25:01 by mbatty           ###   ########.fr       */
+/*   Updated: 2026/01/15 17:44:48 by mbatty           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -34,6 +34,8 @@ class	BlockState
 
 		BlockStateId	id() {return (_id);}
 		BlockType	*getParent() {return (_parent);}
+
+		static BlockStateId	getGlobalId() {return (_globalId);}
 	private:
 		BlockType					*_parent;
 
