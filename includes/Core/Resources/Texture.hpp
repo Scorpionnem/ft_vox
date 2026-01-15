@@ -6,7 +6,7 @@
 /*   By: mbatty <mbatty@student.42angouleme.fr>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/03 11:18:50 by mbatty            #+#    #+#             */
-/*   Updated: 2026/01/03 11:23:11 by mbatty           ###   ########.fr       */
+/*   Updated: 2026/01/15 18:10:04 by mbatty           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -43,6 +43,8 @@ class	Texture
 				_format = GL_RGBA;
 
 			_pixels = std::vector<unsigned char>(data, data + _width * _height * channels);
+
+			stbi_image_free(data);
 		}
 		void	upload()
 		{
