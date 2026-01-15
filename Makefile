@@ -53,6 +53,7 @@ SRCS :=	main\
 		Vox/World/Generation/Spline\
 		Vox/World/Generation/Noise/Perlin2D\
 		Vox/World/Generation/Noise/Perlin3D\
+		Vox/World/Generation/Noise/White\
 		Math/Math
 
 ###

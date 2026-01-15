@@ -6,7 +6,7 @@
 /*   By: mbatty <mbatty@student.42angouleme.fr>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/02 13:00:48 by mbatty            #+#    #+#             */
-/*   Updated: 2026/01/11 15:37:08 by mbatty           ###   ########.fr       */
+/*   Updated: 2026/01/15 16:41:06 by mbatty           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,9 +22,19 @@
 
 // Vec3
 
+inline float frac(float v)
+{
+	return (v - std::floor(v));
+}
+
 inline Vec3	abs(const Vec3 &v)
 {
 	return (Vec3(std::abs(v.x), std::abs(v.y), std::abs(v.z)));
+}
+
+inline Vec3	sin(const Vec3 &v)
+{
+	return (Vec3(std::sin(v.x), std::sin(v.y), std::sin(v.z)));
 }
 
 inline int	sign(float v)
