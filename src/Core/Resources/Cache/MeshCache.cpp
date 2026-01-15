@@ -6,7 +6,7 @@
 /*   By: mbatty <mbatty@student.42angouleme.fr>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/03 12:02:29 by mbatty            #+#    #+#             */
-/*   Updated: 2026/01/04 14:03:25 by mbatty           ###   ########.fr       */
+/*   Updated: 2026/01/15 12:46:54 by mbatty           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,7 +17,7 @@ std::shared_ptr<Mesh>	MeshCache::gen()
 	const std::lock_guard<std::mutex>	lock(_mutex);
 
 	std::shared_ptr<Mesh>	mesh = std::make_shared<Mesh>(_engine->getTextureCache());
-	_meshes.push_back(mesh);
+	// _meshes.push_back(mesh);
 	return (mesh);
 }
 

@@ -6,7 +6,7 @@
 /*   By: mbatty <mbatty@student.42angouleme.fr>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/07 16:01:26 by mbatty            #+#    #+#             */
-/*   Updated: 2026/01/14 16:19:11 by mbatty           ###   ########.fr       */
+/*   Updated: 2026/01/15 13:17:17 by mbatty           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -58,6 +58,8 @@ void	World::update(float delta, Camera &camera)
 
 	_loadedChunks.clear();
 	_visibleChunks.clear();
+	for (auto [hash, chunk] : _chunks)
+		chunk->setLoadedThisFrame(false);
 	for (int y = startY; y >= endY; y--)
 		for (int x = startX; x >= endX; x--)
 			for (int z = startZ; z >= endZ; z--)
@@ -68,6 +70,10 @@ void	World::update(float delta, Camera &camera)
 					genChunk(Vec3i(x, y, z));
 					continue ;
 				}
+
+				chunk->setLoaded(true);
+				chunk->setLoadedThisFrame(true);
+
 				if (!chunk->isMeshed())
 					continue ;
 				_loadedChunks.push_back(chunk);
@@ -81,7 +87,20 @@ void	World::update(float delta, Camera &camera)
 	{
 		return (dist(camera.pos, (c1->getPos() * CHUNK_SIZE) + CHUNK_SIZE / 2) > dist(camera.pos, (c2->getPos() * CHUNK_SIZE) + CHUNK_SIZE / 2));
 	});
-	
+
+	for (auto it = _chunks.begin(); it != _chunks.end();)
+	{
+		std::shared_ptr<Chunk>	chunk = it->second;
+
+		if (!chunk->isLoadedThisFrame())
+		{
+			chunk->setLoaded(false);
+			it = _chunks.erase(it);
+		}
+		else
+			it++;
+	}
+
 	_updateGenerator(camera.pos);
 }
 

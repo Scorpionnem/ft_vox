@@ -6,7 +6,7 @@
 /*   By: mbatty <mbatty@student.42angouleme.fr>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/07 16:05:17 by mbatty            #+#    #+#             */
-/*   Updated: 2026/01/13 13:53:39 by mbatty           ###   ########.fr       */
+/*   Updated: 2026/01/15 13:20:46 by mbatty           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -73,6 +73,9 @@ void	ChunkGenerator::_generatorWorker()
 
 			std::shared_ptr<Chunk>	chunk = _tasks.front();
 			_tasks.pop_front();
+
+			if (!chunk->isLoaded())
+				continue ;
 
 			latch.unlock();
 

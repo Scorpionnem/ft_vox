@@ -6,7 +6,7 @@
 /*   By: mbatty <mbatty@student.42angouleme.fr>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/03 20:22:47 by mbatty            #+#    #+#             */
-/*   Updated: 2026/01/14 18:05:51 by mbatty           ###   ########.fr       */
+/*   Updated: 2026/01/15 13:16:35 by mbatty           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -52,15 +52,6 @@ class	Chunk
 		}
 		~Chunk() {}
 
-		Vec3i	getWorldPos(localVec3i pos)
-		{
-			return (pos + _pos * CHUNK_SIZE);
-		}
-		Vec3i	getLocalPos(worldVec3i pos)
-		{
-			return (pos - _pos * CHUNK_SIZE);
-		}
-
 		int				getGenerationHeight(worldVec2i pos);
 		BlockStateId	getGenerationBlock(worldVec3i pos);
 
@@ -68,8 +59,12 @@ class	Chunk
 		void	generateFeatures();
 		void	generate();
 
+		void	draw(std::shared_ptr<Shader> shader);
+		bool	upload();
+
 		void	mesh(MeshCache &meshCache);
 		void	remesh(MeshCache &meshCache);
+		bool	isMeshed() {return (_meshed);}
 
 		void	update(float delta)
 		{
@@ -80,29 +75,38 @@ class	Chunk
 					_spawnFade = 0;
 			}
 		}
-		void	draw(std::shared_ptr<Shader> shader);
-		bool	upload();
 
-		bool			isBlockSolid(localVec3i pos);
 		BlockStateId	getBlock(localVec3i pos);
 		bool			setBlock(localVec3i pos, BlockStateId block);
+
+		bool			isBlockSolid(localVec3i pos);
 		bool			isInBounds(localVec3i pos);
-		
+
+		worldVec3i	getWorldPos(localVec3i pos) {return (pos + _pos * CHUNK_SIZE);}
+		localVec3i	getLocalPos(worldVec3i pos) {return (pos - _pos * CHUNK_SIZE);}
 		chunkVec3i	getPos() {return (_pos);}
-		bool		isMeshed() {return (_meshed);}
+
+		bool	isLoaded() {return (_loaded);}
+		void	setLoaded(bool state) {_loaded = state;}
+
+		bool	isLoadedThisFrame() {return (_loadedThisFrame);}
+		void	setLoadedThisFrame(bool state) {_loadedThisFrame = state;}
 	private:
+		chunkVec3i					_pos;
+
 		std::vector<BlockStateId>	_blocks;
 		std::atomic_bool			_generated = false;
-
-		chunkVec3i					_pos;
 
 		bool						_uploaded = false;
 		std::atomic_bool			_meshed = false;
 		std::shared_ptr<Mesh>		_mesh;
 		std::shared_ptr<Mesh>		_transparentMesh;
 
-		World						*_world;
-		
 		#define MAX_SPAWN_FADE		0.5
 		float						_spawnFade = MAX_SPAWN_FADE;
+
+		std::atomic_bool			_loaded = true;
+		bool						_loadedThisFrame = true;
+		World						*_world;
 };
+
