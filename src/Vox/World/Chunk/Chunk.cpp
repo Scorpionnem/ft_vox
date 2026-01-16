@@ -6,7 +6,7 @@
 /*   By: mbatty <mbatty@student.42angouleme.fr>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/08 15:52:47 by mbatty            #+#    #+#             */
-/*   Updated: 2026/01/15 18:00:44 by mbatty           ###   ########.fr       */
+/*   Updated: 2026/01/16 21:14:42 by mbatty           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -65,66 +65,59 @@ BlockStateId	Chunk::getGenerationShape(worldVec3i pos)
 	return (Blocks::AIR);
 }
 
-BlockStateId	Chunk::getGenerationDecoration(worldVec3i pos)
+BlockStateId	Chunk::getGenerationDecoration(worldVec3i pos, BlockStateId cur)
 {
 	int	genHeight = getGenerationHeight(Vec2i(pos.x, pos.z));
-	if (pos.y <= genHeight)
+
+	if (pos.y <= genHeight && cur != Blocks::AIR)
 	{
+		int		depth = genHeight - pos.y;
+
+		if (pos.y == genHeight && pos.y == WATERLEVEL - 1) // Return biome's water level block (for rivers sand)
+			return (Blocks::SAND);
+		if (pos.y == genHeight && pos.y < WATERLEVEL)
+			return (Blocks::SAND); // Return biome's top underwater block
+		if (depth <= 3 && pos.y < WATERLEVEL)
+			return (Blocks::SAND);
 		if (pos.y == genHeight)
-		{
-			if (pos.y <= WATERLEVEL)
-				return (Blocks::SAND);
-			return (Blocks::GRASS);
-		}
-		if (pos.y >= genHeight - 2)
+			return (Blocks::GRASS); // Return top biome's top decoration block
+		if (depth <= 3)
 			return (Blocks::DIRT);
+
+		bool	isSurface = cur == Blocks::STONE && getGenerationShape(Vec3i(pos.x, pos.y + 1, pos.z)) == Blocks::AIR;
+
+		if (isSurface)
+			return (Blocks::STONE); // Return cave/sky biome's top decoration block
 	}
+
 	return (Blocks::NO_BLOCK);
 }
 
-BlockStateId	Chunk::getGenerationFeatures(worldVec3i pos)
+BlockStateId	Chunk::getGenerationFeatures(worldVec3i pos, BlockStateId cur)
 {
-	int	genHeight = getGenerationHeight(Vec2i(pos.x, pos.z));
-	bool	isOnSurface = pos.y == genHeight + 1;
+	if ((int)(Noise::White(Vec3i(pos.x, pos.y, pos.z)) * 100.0) == 1)
+		if (getGenerationBlock(Vec3i(pos.x, pos.y - 1, pos.z)) == Blocks::GRASS)
+			return (Blocks::OAK_LOG);
 
-	if (isOnSurface && (int)(Noise::White(Vec3i(pos.x, pos.y, pos.z)) * 100.0) == 1)
-		return (Blocks::OAK_LOG);
-	return (Blocks::AIR); // SHOULD BE CHANGED TO NO_BLOCK WHEN ILL SPLIT THE GEN FUNC
+	if ((int)(Noise::White(Vec3i(pos.x, pos.y, pos.z)) * 100.0) == 1)
+		if (cur == Blocks::AIR && getGenerationBlock(Vec3i(pos.x, pos.y - 1, pos.z)) == Blocks::STONE)
+			return (Blocks::SAND);
+
+	return (Blocks::NO_BLOCK);
 }
 
 BlockStateId	Chunk::getGenerationBlock(worldVec3i pos)
 {
-	int	genHeight = getGenerationHeight(Vec2i(pos.x, pos.z));
-	if (pos.y <= genHeight)
-	{
-		// CAVES V
-		int	depth = genHeight - pos.y;
+	BlockStateId	res = getGenerationShape(pos);
 
-		float	tunnelsIntensity = 1 - smoothstep(0.0, 300, depth);
-		tunnelsIntensity = std::clamp(tunnelsIntensity, 0.0f, 0.75f);
-		if (Noise::calcNoise(pos, 0.015, 1, 3) * tunnelsIntensity > 0.25)
-			return (Blocks::AIR);
+	BlockStateId	decoration = getGenerationDecoration(pos, res);
+	if (decoration != Blocks::NO_BLOCK)
+		res = decoration;
 
-		float	intensity = smoothstep(0.0, 100, depth);
-		if ((Noise::calcNoise(pos, 0.01, 1, 4) * intensity) > 0.2)
-			return (Blocks::AIR);
-		// CAVES ^
-
-		// SURFACE FEATURES V (Should be replaced by biome's later on)
-		if (pos.y == genHeight)
-		{
-			if (pos.y <= WATERLEVEL)
-				return (Blocks::SAND);
-			return (Blocks::GRASS);
-		}
-		if (pos.y >= genHeight - 2)
-			return (Blocks::DIRT);
-		return (Blocks::STONE);
-		// SURFACE FEATURES ^
-	}
-	if (pos.y < WATERLEVEL)
-		return (Blocks::WATER);
-	return (getGenerationFeatures(pos));
+	BlockStateId	feature = getGenerationFeatures(pos, res);
+	if (feature != Blocks::NO_BLOCK)
+		res = feature;
+	return (res);
 }
 
 int	Chunk::getGenerationHeight(worldVec2i pos)
