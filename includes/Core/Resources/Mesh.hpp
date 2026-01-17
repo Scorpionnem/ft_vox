@@ -6,7 +6,7 @@
 /*   By: mbatty <mbatty@student.42angouleme.fr>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/01 22:22:50 by mbatty            #+#    #+#             */
-/*   Updated: 2026/01/13 13:03:00 by mbatty           ###   ########.fr       */
+/*   Updated: 2026/01/17 13:45:05 by mbatty           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -72,7 +72,7 @@ class	Mesh
 		~Mesh() {}
 
 		void	load(const std::string &path);
-		void	upload();
+		bool	upload();
 		void	unlink()
 		{
 			for (auto &pair : _materialGroups)

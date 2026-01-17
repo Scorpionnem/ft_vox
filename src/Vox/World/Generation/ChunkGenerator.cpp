@@ -6,7 +6,7 @@
 /*   By: mbatty <mbatty@student.42angouleme.fr>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/07 16:05:17 by mbatty            #+#    #+#             */
-/*   Updated: 2026/01/15 13:20:46 by mbatty           ###   ########.fr       */
+/*   Updated: 2026/01/17 13:39:27 by mbatty           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,6 +22,7 @@ void	ChunkGenerator::gen(std::shared_ptr<Chunk> chunk)
 void	ChunkGenerator::gen(std::vector<std::shared_ptr<Chunk>> chunks)
 {
 	std::unique_lock<std::mutex> lock(_queue_mutex);
+	
 	for (auto chunk : chunks)
 		_tasks.emplace_back(chunk);
 	_cv_task.notify_all();

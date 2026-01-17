@@ -6,7 +6,7 @@
 /*   By: mbatty <mbatty@student.42angouleme.fr>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/03 20:15:34 by mbatty            #+#    #+#             */
-/*   Updated: 2026/01/14 19:09:53 by mbatty           ###   ########.fr       */
+/*   Updated: 2026/01/17 13:53:58 by mbatty           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -365,8 +365,10 @@ void	VoxScene::display()
 	auto chunks = _world->getVisibleChunks();
 	for (auto chunk : chunks)
 	{
-		if (chunk->upload())
+		if (!chunk->visible())
 			continue ;
+
+		chunk->upload();
 		_shader->use();
 		_shader->setMat4("uModel", translate(Vec3d(chunk->getPos() * CHUNK_SIZE) - _camera.pos));
 		chunk->draw(_shader);

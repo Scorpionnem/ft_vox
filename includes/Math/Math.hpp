@@ -6,7 +6,7 @@
 /*   By: mbatty <mbatty@student.42angouleme.fr>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/02 13:00:48 by mbatty            #+#    #+#             */
-/*   Updated: 2026/01/15 16:41:06 by mbatty           ###   ########.fr       */
+/*   Updated: 2026/01/17 13:34:10 by mbatty           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,6 +21,13 @@
 #include <cmath>
 
 // Vec3
+
+inline float smoothstep(float edge0, float edge1, float x)
+{
+	float t = (x - edge0) / (edge1 - edge0);
+	t = std::clamp(t, 0.0f, 1.0f);
+	return t * t * (3.0f - 2.0f * t);
+}
 
 inline float frac(float v)
 {

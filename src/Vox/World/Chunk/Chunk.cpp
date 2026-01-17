@@ -6,7 +6,7 @@
 /*   By: mbatty <mbatty@student.42angouleme.fr>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/08 15:52:47 by mbatty            #+#    #+#             */
-/*   Updated: 2026/01/16 21:14:42 by mbatty           ###   ########.fr       */
+/*   Updated: 2026/01/17 13:50:44 by mbatty           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,30 +21,22 @@ void	Chunk::generate()
 	_generated = true;
 }
 
-float smoothstep(float edge0, float edge1, float x)
-{
-	float t = (x - edge0) / (edge1 - edge0);
-	t = std::clamp(t, 0.0f, 1.0f);
-	return t * t * (3.0f - 2.0f * t);
-}
+#include "Chrono.hpp"
 
 void	Chunk::generateTerrain()
 {
 	for (int x = 0; x < CHUNK_SIZE; x++)
 		for (int z = 0; z < CHUNK_SIZE; z++)
-		{
 			for (int y = CHUNK_SIZE; y >= 0; y--)
 			{
 				localVec3i	pos(x, y, z);
+				
 				setBlock(pos, getGenerationBlock(getWorldPos(pos)));
 			}
-		}
 }
 
-BlockStateId	Chunk::getGenerationShape(worldVec3i pos)
-{
-	int	genHeight = getGenerationHeight(Vec2i(pos.x, pos.z));
-	
+BlockStateId	Chunk::getGenerationShape(worldVec3i pos, int genHeight)
+{	
 	if (pos.y <= genHeight)
 	{
 		int	depth = genHeight - pos.y;
@@ -65,10 +57,8 @@ BlockStateId	Chunk::getGenerationShape(worldVec3i pos)
 	return (Blocks::AIR);
 }
 
-BlockStateId	Chunk::getGenerationDecoration(worldVec3i pos, BlockStateId cur)
+BlockStateId	Chunk::getGenerationDecoration(worldVec3i pos, int genHeight, BlockStateId cur)
 {
-	int	genHeight = getGenerationHeight(Vec2i(pos.x, pos.z));
-
 	if (pos.y <= genHeight && cur != Blocks::AIR)
 	{
 		int		depth = genHeight - pos.y;
@@ -79,12 +69,13 @@ BlockStateId	Chunk::getGenerationDecoration(worldVec3i pos, BlockStateId cur)
 			return (Blocks::SAND); // Return biome's top underwater block
 		if (depth <= 3 && pos.y < WATERLEVEL)
 			return (Blocks::SAND);
+			
 		if (pos.y == genHeight)
 			return (Blocks::GRASS); // Return top biome's top decoration block
 		if (depth <= 3)
 			return (Blocks::DIRT);
 
-		bool	isSurface = cur == Blocks::STONE && getGenerationShape(Vec3i(pos.x, pos.y + 1, pos.z)) == Blocks::AIR;
+		bool	isSurface = cur == Blocks::STONE && getGenerationShape(Vec3i(pos.x, pos.y + 1, pos.z), genHeight) == Blocks::AIR;
 
 		if (isSurface)
 			return (Blocks::STONE); // Return cave/sky biome's top decoration block
@@ -95,22 +86,25 @@ BlockStateId	Chunk::getGenerationDecoration(worldVec3i pos, BlockStateId cur)
 
 BlockStateId	Chunk::getGenerationFeatures(worldVec3i pos, BlockStateId cur)
 {
-	if ((int)(Noise::White(Vec3i(pos.x, pos.y, pos.z)) * 100.0) == 1)
-		if (getGenerationBlock(Vec3i(pos.x, pos.y - 1, pos.z)) == Blocks::GRASS)
-			return (Blocks::OAK_LOG);
+	(void)pos;(void)cur;
+	// if ((int)(Noise::White(Vec3i(pos.x, pos.y, pos.z)) * 100.0) == 1)
+	// 	if (getGenerationBlock(Vec3i(pos.x, pos.y - 1, pos.z)) == Blocks::GRASS)
+	// 		return (Blocks::OAK_LOG);
 
-	if ((int)(Noise::White(Vec3i(pos.x, pos.y, pos.z)) * 100.0) == 1)
-		if (cur == Blocks::AIR && getGenerationBlock(Vec3i(pos.x, pos.y - 1, pos.z)) == Blocks::STONE)
-			return (Blocks::SAND);
+	// if ((int)(Noise::White(Vec3i(pos.x, pos.y, pos.z)) * 100.0) == 1)
+	// 	if (cur == Blocks::AIR && getGenerationBlock(Vec3i(pos.x, pos.y - 1, pos.z)) == Blocks::STONE)
+	// 		return (Blocks::SAND);
 
 	return (Blocks::NO_BLOCK);
 }
 
 BlockStateId	Chunk::getGenerationBlock(worldVec3i pos)
 {
-	BlockStateId	res = getGenerationShape(pos);
+	int	genHeight = getGenerationHeight(Vec2i(pos.x, pos.z));
 
-	BlockStateId	decoration = getGenerationDecoration(pos, res);
+	BlockStateId	res = getGenerationShape(pos, genHeight);
+
+	BlockStateId	decoration = getGenerationDecoration(pos, genHeight, res);
 	if (decoration != Blocks::NO_BLOCK)
 		res = decoration;
 
@@ -208,9 +202,9 @@ bool	Chunk::upload()
 	{
 		_mesh->upload();
 		_transparentMesh->upload();
+
 		_uploaded = true;
 		return (true);
 	}
-	_uploaded = true;
 	return (false);
 }

@@ -6,7 +6,7 @@
 /*   By: mbatty <mbatty@student.42angouleme.fr>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/02 15:32:26 by mbatty            #+#    #+#             */
-/*   Updated: 2026/01/13 13:06:21 by mbatty           ###   ########.fr       */
+/*   Updated: 2026/01/17 13:49:09 by mbatty           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,7 +14,7 @@
 
 void	Mesh::draw(std::shared_ptr<Shader> shader)
 {
-	if (_triangleCount == 0)
+	if (_triangleCount == 0 || !uploaded)
 		return ;
 
 	shader->use();
@@ -95,10 +95,10 @@ void	Mesh::load(const std::string &path)
 	}
 }
 
-void	Mesh::upload()
+bool	Mesh::upload()
 {
 	if (_triangleCount == 0)
-		return ;
+		return (false);
 
 	if (uploaded)
 		unlink();
@@ -130,6 +130,7 @@ void	Mesh::upload()
 		mtl.vertices.clear();
 		mtl.vertices.shrink_to_fit();
 	}
+	return (true);
 }
 
 void	Mesh::_parseFace(MaterialGroup *mtlGroup, std::istringstream &iss)

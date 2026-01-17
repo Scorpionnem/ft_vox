@@ -6,7 +6,7 @@
 /*   By: mbatty <mbatty@student.42angouleme.fr>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/03 20:22:47 by mbatty            #+#    #+#             */
-/*   Updated: 2026/01/16 20:48:04 by mbatty           ###   ########.fr       */
+/*   Updated: 2026/01/17 13:51:56 by mbatty           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -53,10 +53,10 @@ class	Chunk
 		~Chunk() {}
 
 		int				getGenerationHeight(worldVec2i pos);
-		BlockStateId	getGenerationShape(worldVec3i pos);
-		BlockStateId	getGenerationDecoration(worldVec3i pos, BlockStateId cur);
+		BlockStateId	getGenerationShape(worldVec3i pos, int genHeight);
+		BlockStateId	getGenerationDecoration(worldVec3i pos, int genHeight, BlockStateId cur);
 		BlockStateId	getGenerationFeatures(worldVec3i pos, BlockStateId cur);
-		
+
 		BlockStateId	getGenerationBlock(worldVec3i pos);
 
 		void	generateTerrain();
@@ -65,6 +65,10 @@ class	Chunk
 		void	draw(std::shared_ptr<Shader> shader);
 		bool	upload();
 
+		bool	visible()
+		{
+			return (_mesh->getTriangleCount() > 0 || _transparentMesh->getTriangleCount() > 0);
+		}
 		void	mesh(MeshCache &meshCache);
 		void	remesh(MeshCache &meshCache);
 		bool	isMeshed() {return (_meshed);}
