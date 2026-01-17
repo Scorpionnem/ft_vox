@@ -6,7 +6,7 @@
 /*   By: mbatty <mbatty@student.42angouleme.fr>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/08 15:52:47 by mbatty            #+#    #+#             */
-/*   Updated: 2026/01/17 13:50:44 by mbatty           ###   ########.fr       */
+/*   Updated: 2026/01/17 15:33:16 by mbatty           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -104,11 +104,16 @@ BlockStateId	Chunk::getGenerationBlock(worldVec3i pos)
 
 	BlockStateId	res = getGenerationShape(pos, genHeight);
 
-	BlockStateId	decoration = getGenerationDecoration(pos, genHeight, res);
+	BlockStateId	decoration = Blocks::NO_BLOCK;
+	if (res != Blocks::AIR)
+		decoration = getGenerationDecoration(pos, genHeight, res);
 	if (decoration != Blocks::NO_BLOCK)
 		res = decoration;
 
-	BlockStateId	feature = getGenerationFeatures(pos, res);
+	BlockStateId	feature = Blocks::NO_BLOCK;
+
+	if (res == Blocks::AIR)
+		feature = getGenerationFeatures(pos, res);
 	if (feature != Blocks::NO_BLOCK)
 		res = feature;
 	return (res);
