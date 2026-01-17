@@ -6,7 +6,7 @@
 /*   By: mbatty <mbatty@student.42angouleme.fr>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/08 15:52:47 by mbatty            #+#    #+#             */
-/*   Updated: 2026/01/17 15:33:16 by mbatty           ###   ########.fr       */
+/*   Updated: 2026/01/17 20:08:57 by mbatty           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -127,7 +127,7 @@ int	Chunk::getGenerationHeight(worldVec2i pos)
 BlockStateId	Chunk::getBlock(localVec3i pos)
 {
 	if (!isInBounds(pos))
-		return (getGenerationBlock(getWorldPos(pos)));
+		return (Blocks::AIR);
 	int index = pos.x + pos.y * CHUNK_SIZE + pos.z * CHUNK_SIZE * CHUNK_SIZE;
 	return (_blocks[index]);
 }

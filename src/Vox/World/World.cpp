@@ -6,7 +6,7 @@
 /*   By: mbatty <mbatty@student.42angouleme.fr>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/07 16:01:26 by mbatty            #+#    #+#             */
-/*   Updated: 2026/01/15 17:45:15 by mbatty           ###   ########.fr       */
+/*   Updated: 2026/01/17 21:23:50 by mbatty           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -113,9 +113,10 @@ void	World::_updateGenerator(Vec3 camPos)
 	if (currentPos.x != _lastCamPos.x || currentPos.y != _lastCamPos.y || currentPos.z != _lastCamPos.z)
 		_generator.sort(camPos);
 	_lastCamPos = currentPos;
-	
+
 	if (_chunksGenQueue.size())
 	{
+		// _boostedGenerator.dispatch(_chunksGenQueue, _generator);
 		_generator.gen(_chunksGenQueue);
 		_chunksGenQueue.clear();
 	}

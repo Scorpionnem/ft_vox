@@ -6,7 +6,7 @@
 /*   By: mbatty <mbatty@student.42angouleme.fr>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/03 20:22:47 by mbatty            #+#    #+#             */
-/*   Updated: 2026/01/17 13:51:56 by mbatty           ###   ########.fr       */
+/*   Updated: 2026/01/17 19:55:57 by mbatty           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -61,6 +61,10 @@ class	Chunk
 
 		void	generateTerrain();
 		void	generate();
+		void	vectorToChunk(std::vector<uint32_t> chunkData)
+		{
+			_blocks = chunkData;
+		}
 
 		void	draw(std::shared_ptr<Shader> shader);
 		bool	upload();

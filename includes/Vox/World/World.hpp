@@ -6,7 +6,7 @@
 /*   By: mbatty <mbatty@student.42angouleme.fr>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/03 20:22:52 by mbatty            #+#    #+#             */
-/*   Updated: 2026/01/17 16:07:43 by mbatty           ###   ########.fr       */
+/*   Updated: 2026/01/17 21:30:52 by mbatty           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -70,13 +70,12 @@ class World
 
 			_computeBlockStates();
 
-			uint32_t	threadCount = std::thread::hardware_concurrency() - 1;
+			uint32_t	threadCount = std::thread::hardware_concurrency() / 2;
 
 			std::cout << "Starting " << threadCount << " generation thread" << std::endl;
 
 			_generator.start(threadCount);
 			_boostedGenerator.init(computeShader);
-			_boostedGenerator.dispatch({});
 		}
 		~World()
 		{
