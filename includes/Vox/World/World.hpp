@@ -6,7 +6,7 @@
 /*   By: mbatty <mbatty@student.42angouleme.fr>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/03 20:22:52 by mbatty            #+#    #+#             */
-/*   Updated: 2026/01/17 15:34:05 by mbatty           ###   ########.fr       */
+/*   Updated: 2026/01/17 16:07:43 by mbatty           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,6 +22,8 @@
 
 #define HORIZONTAL_RENDER_DISTANCE 8
 #define VERTICAL_RENDER_DISTANCE 4
+
+#include <BoostedGenerator.hpp>
 
 struct Blocks
 {
@@ -54,7 +56,7 @@ class World
 
 		void	_imGui();
 	public:
-		World(MeshCache &cache) : _generator(cache)
+		World(MeshCache &cache, std::shared_ptr<Shader> computeShader) : _generator(cache)
 		{
 			_wgen.load();
 
@@ -73,6 +75,8 @@ class World
 			std::cout << "Starting " << threadCount << " generation thread" << std::endl;
 
 			_generator.start(threadCount);
+			_boostedGenerator.init(computeShader);
+			_boostedGenerator.dispatch({});
 		}
 		~World()
 		{
@@ -146,6 +150,7 @@ class World
 		int	_horizontalRenderDistance = HORIZONTAL_RENDER_DISTANCE;
 		int	_verticalRenderDistance = VERTICAL_RENDER_DISTANCE;
 		ChunkGenerator	_generator;
+		BoostedGenerator	_boostedGenerator;
 
 		chunkVec3i	_lastCamPos = Vec3i(42);
 

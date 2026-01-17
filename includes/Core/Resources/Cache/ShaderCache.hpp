@@ -6,7 +6,7 @@
 /*   By: mbatty <mbatty@student.42angouleme.fr>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/03 12:05:45 by mbatty            #+#    #+#             */
-/*   Updated: 2026/01/05 17:09:52 by mbatty           ###   ########.fr       */
+/*   Updated: 2026/01/17 16:01:41 by mbatty           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,6 +28,7 @@ class	ShaderCache
 		~ShaderCache() {}
 
 		std::shared_ptr<Shader>	get(const std::string &path);
+		std::shared_ptr<Shader>	getCompute(const std::string &path);
 	private:
 		Engine	*_engine;
 		std::unordered_map<std::string, std::shared_ptr<Shader>>	_shaders;

@@ -6,7 +6,7 @@
 /*   By: mbatty <mbatty@student.42angouleme.fr>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/03 20:13:58 by mbatty            #+#    #+#             */
-/*   Updated: 2026/01/14 16:32:25 by mbatty           ###   ########.fr       */
+/*   Updated: 2026/01/17 16:01:07 by mbatty           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -54,6 +54,7 @@ class	VoxScene : public Scene
 
 		std::shared_ptr<Mesh>	_targetedBlockModel;
 		std::shared_ptr<Shader>	_targetedBlockShader;
+		std::shared_ptr<Shader>	_computeShader;
 
 		std::vector<float>		_FPSs;
 		double	_maxFPS = 0;

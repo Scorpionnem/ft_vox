@@ -6,7 +6,7 @@
 /*   By: mbatty <mbatty@student.42angouleme.fr>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/03 20:15:34 by mbatty            #+#    #+#             */
-/*   Updated: 2026/01/17 13:53:58 by mbatty           ###   ########.fr       */
+/*   Updated: 2026/01/17 16:07:29 by mbatty           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -122,9 +122,10 @@ void	VoxScene::build()
 	_camera.pitch = 0;
 
 	_shader = _engine.loadShader("assets/shaders/core/mesh");
-	_targetedBlockShader = _engine.loadShader("assets/shaders/core/targeted_block");
+	_targetedBlockShader = _engine.loadShader("assets/shaders/vox/targeted_block");
+	_computeShader = _engine.getShaderCache().getCompute("assets/shaders/vox/gen_chunks");
 
-	_world = std::make_unique<World>(_engine.getMeshCache());
+	_world = std::make_unique<World>(_engine.getMeshCache(), _computeShader);
 
 	_targetedBlockModel = _engine.getMeshCache().gen();
 	Cube::addFace(_targetedBlockModel, Vec3i(0), Cube::Direction::TOP, 0);
