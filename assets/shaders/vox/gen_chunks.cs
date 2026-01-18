@@ -9,7 +9,7 @@ layout(std430, binding = 0) buffer Blocks
 
 layout(std430, binding = 1) buffer Positions
 {
-	ivec3	positions[];
+	int	positions[];
 };
 
 uint seed = 42;
@@ -100,7 +100,7 @@ void	main()
 {
 	uint idx = gl_GlobalInvocationID.x;
 
-	ivec3 chunkPos = positions[idx];
+	ivec3 chunkPos = ivec3(positions[idx * 3], positions[idx * 3 + 1], positions[idx * 3 + 2]);
 
 	for (int x = 0; x < CHUNK_SIZE; x++)
 		for (int z = 0; z < CHUNK_SIZE; z++)
@@ -108,7 +108,7 @@ void	main()
 			{
 				vec3	wp = worldPos(vec3(x, y, z), chunkPos);
 
-				if (wp.y < calcNoise(vec2(wp.x, wp.z), 0.1, 1, 1) * 10)
+				if (wp.y < calcNoise(vec2(wp.x, wp.z), 0.01, 1, 1) * 10)
 					setBlock(ivec3(x, y, z), 1, idx);
 			}
 }
