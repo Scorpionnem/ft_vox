@@ -1,6 +1,6 @@
 #version 430
 
-layout (local_size_x = 10) in;
+layout (local_size_x = 1) in;
 
 layout(std430, binding = 0) buffer Blocks
 {
@@ -14,72 +14,53 @@ layout(std430, binding = 1) buffer Positions
 
 uint seed = 42;
 
-vec2 randomGradient(int ix, int iy)
+float	randVec3ToFloat(vec3 pos, vec3 dotDir = vec3(12.9898, 78.233, 37.719))
 {
-	uint w = 8 * 4;
-	uint s = w / 2;
-	uint a = ix;
-	uint b = iy;
-	a *= 3284157443 + (seed + 1);
-
-	b ^= a << s | a >> (w - s);
-	b *= 1911520717;
-
-	a ^= b << s | b >> (w - s);
-	a *= 2048419325;
-	float random = (float(a) / float(4294967295)) * 2.0f * 3.14159f;
-
-	vec2 v;
-	v.x = sin(random);
-	v.y = cos(random);
-
-	return v;
+	vec3 smallValue = sin(pos);
+	float random = dot(smallValue, dotDir);
+	random = fract(sin(random) * 143758.5453);
+	return (random);
 }
 
-float dotGridGradient(int ix, int iy, float x, float y)
+float randVec2ToFloat(vec2 value, vec2 dotDir = vec2(12.9898, 78.233))
 {
-	vec2 gradient = randomGradient(ix, iy);
-
-	float dx = x - float(ix);
-	float dy = y - float(iy);
-
-	return (dx * gradient.x + dy * gradient.y);
+	vec2 smallValue = sin(value);
+	float random = dot(smallValue, dotDir);
+	random = fract(sin(random) * 143758.5453);
+	return (random);
 }
 
-float interpolate(float a0, float a1, float w)
+vec2 randVec2ToVec2(vec2 value)
 {
-	return (a1 - a0) * (3.0 - w * 2.0) * w * w + a0;
+	return vec2(randVec2ToFloat(value, vec2(12.989, 78.233)), randVec2ToFloat(value, vec2(39.346, 11.135)));
 }
 
-float perlin2D(float x, float y)
+float hash(vec2 p)
 {
-	int x0 = int(floor(x));
-	int y0 = int(floor(y));
-	int x1 = x0 + 1;
-	int y1 = y0 + 1;
-
-	float sx = x - float(x0);
-	float sy = y - float(y0);
-
-	float n0 = dotGridGradient(x0, y0, x, y);
-	float n1 = dotGridGradient(x1, y0, x, y);
-	float ix0 = interpolate(n0, n1, sx);
-
-	n0 = dotGridGradient(x0, y1, x, y);
-	n1 = dotGridGradient(x1, y1, x, y);
-	float ix1 = interpolate(n0, n1, sx);
-
-	float value = interpolate(ix0, ix1, sy);
-
-	return (value);
+	return fract(sin(dot(p, vec2(127.1, 311.7))) * 43758.5453);
 }
 
-float	calcNoise(ivec2 pos, float freq, float amp, int noisiness)
+float perlin2D(vec2 p)
+{
+	vec2 i = floor(p);
+	vec2 f = fract(p);
+
+	float a = hash(i);
+	float b = hash(i + vec2(1.0, 0.0));
+	float c = hash(i + vec2(0.0, 1.0));
+	float d = hash(i + vec2(1.0, 1.0));
+
+	vec2 u = f * f * (3.0 - 2.0 * f);
+
+	return (mix(a, b, u.x) + (c - a) * u.y * (1.0 - u.x) + (d - b) * u.x * u.y);
+}
+
+float	calcNoise(vec2 pos, float freq, float amp, int noisiness)
 {
 	float	res = 0;
 	for (int i = 0; i < noisiness; i++)
 	{
-		res += perlin2D(float(pos.x) * freq, float(pos.y) * freq) * amp;
+		res += perlin2D(vec2(pos.x * freq, pos.y * freq)) * amp;
 
 		freq *= 2;
 		amp /= 2;
@@ -110,15 +91,24 @@ void	setBlock(ivec3 pos, uint block, uint id)
 	blocks[index] = block;
 }
 
+vec3	worldPos(vec3 pos, ivec3 chunkPos)
+{
+	return (pos + chunkPos * CHUNK_SIZE);
+}
+
 void	main()
 {
-	uint id = gl_GlobalInvocationID.x;
+	uint idx = gl_GlobalInvocationID.x;
 
-	ivec3 chunkPos = positions[id];
+	ivec3 chunkPos = positions[idx];
 
 	for (int x = 0; x < CHUNK_SIZE; x++)
 		for (int z = 0; z < CHUNK_SIZE; z++)
 			for (int y = 0; y < CHUNK_SIZE; y++)
-				if (y < calcNoise(ivec2(x, z), 0.01, 1, 1) * 100)
-					setBlock(ivec3(x, y, z), 1, id);
+			{
+				vec3	wp = worldPos(vec3(x, y, z), chunkPos);
+
+				if (wp.y < calcNoise(vec2(wp.x, wp.z), 0.1, 1, 1) * 10)
+					setBlock(ivec3(x, y, z), 1, idx);
+			}
 }

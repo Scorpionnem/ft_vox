@@ -6,7 +6,7 @@
 /*   By: mbatty <mbatty@student.42angouleme.fr>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/07 16:01:26 by mbatty            #+#    #+#             */
-/*   Updated: 2026/01/17 21:23:50 by mbatty           ###   ########.fr       */
+/*   Updated: 2026/01/18 12:28:44 by mbatty           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -116,8 +116,8 @@ void	World::_updateGenerator(Vec3 camPos)
 
 	if (_chunksGenQueue.size())
 	{
-		// _boostedGenerator.dispatch(_chunksGenQueue, _generator);
-		_generator.gen(_chunksGenQueue);
+		_boostedGenerator.dispatch(_chunksGenQueue, _generator);
+		// _generator.gen(_chunksGenQueue);
 		_chunksGenQueue.clear();
 	}
 }

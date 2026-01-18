@@ -6,7 +6,7 @@
 /*   By: mbatty <mbatty@student.42angouleme.fr>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/07 16:05:17 by mbatty            #+#    #+#             */
-/*   Updated: 2026/01/17 13:39:27 by mbatty           ###   ########.fr       */
+/*   Updated: 2026/01/18 12:28:48 by mbatty           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -80,7 +80,7 @@ void	ChunkGenerator::_generatorWorker()
 
 			latch.unlock();
 
-			chunk->generate();
+			// chunk->generate();
 			chunk->mesh(_cache);
 
 			latch.lock();
