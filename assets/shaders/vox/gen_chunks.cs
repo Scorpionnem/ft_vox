@@ -30,11 +30,6 @@ float randVec2ToFloat(vec2 value, vec2 dotDir = vec2(12.9898, 78.233))
 	return (random);
 }
 
-vec2 randVec2ToVec2(vec2 value)
-{
-	return vec2(randVec2ToFloat(value, vec2(12.989, 78.233)), randVec2ToFloat(value, vec2(39.346, 11.135)));
-}
-
 float hash(vec2 p)
 {
 	return fract(sin(dot(p, vec2(127.1, 311.7))) * 43758.5453);
@@ -108,7 +103,7 @@ void	main()
 			{
 				vec3	wp = worldPos(vec3(x, y, z), chunkPos);
 
-				if (wp.y < calcNoise(vec2(wp.x, wp.z), 0.01, 1, 1) * 10)
+				if (wp.y < calcNoise(vec2(wp.x, wp.z), 0.00125, 1, 6) * 100)
 					setBlock(ivec3(x, y, z), 1, idx);
 			}
 }

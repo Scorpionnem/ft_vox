@@ -6,7 +6,7 @@
 /*   By: mbatty <mbatty@student.42angouleme.fr>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/03 20:22:52 by mbatty            #+#    #+#             */
-/*   Updated: 2026/01/17 21:30:52 by mbatty           ###   ########.fr       */
+/*   Updated: 2026/01/19 16:18:58 by mbatty           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -97,7 +97,7 @@ class World
 		{
 			std::shared_ptr<Chunk>	chunk = getChunk(pos / CHUNK_SIZE);
 
-			if (!chunk || !chunk->isMeshed())
+			if (!chunk || !chunk->isGenerated())
 				return (Blocks::AIR);
 			return (chunk->getBlock(chunk->getLocalPos(pos)));
 		}

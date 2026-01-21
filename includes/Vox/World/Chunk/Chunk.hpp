@@ -6,7 +6,7 @@
 /*   By: mbatty <mbatty@student.42angouleme.fr>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/03 20:22:47 by mbatty            #+#    #+#             */
-/*   Updated: 2026/01/17 19:55:57 by mbatty           ###   ########.fr       */
+/*   Updated: 2026/01/19 17:18:28 by mbatty           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -64,6 +64,7 @@ class	Chunk
 		void	vectorToChunk(std::vector<uint32_t> chunkData)
 		{
 			_blocks = chunkData;
+			_generated = true;
 		}
 
 		void	draw(std::shared_ptr<Shader> shader);
@@ -100,6 +101,8 @@ class	Chunk
 		bool	isLoaded() {return (_loaded);}
 		void	setLoaded(bool state) {_loaded = state;}
 
+		bool	isGenerated() {return (_generated);}
+
 		bool	isLoadedThisFrame() {return (_loadedThisFrame);}
 		void	setLoadedThisFrame(bool state) {_loadedThisFrame = state;}
 	private:
@@ -119,5 +122,6 @@ class	Chunk
 		std::atomic_bool			_loaded = true;
 		bool						_loadedThisFrame = true;
 		World						*_world;
+		std::mutex					_mutex;
 };
 

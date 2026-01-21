@@ -6,7 +6,7 @@
 /*   By: mbatty <mbatty@student.42angouleme.fr>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/17 15:41:08 by mbatty            #+#    #+#             */
-/*   Updated: 2026/01/18 13:14:41 by mbatty           ###   ########.fr       */
+/*   Updated: 2026/01/19 16:12:21 by mbatty           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -65,8 +65,10 @@ class	BoostedGenerator
 
 			glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 0, _chunksBuf);
 			glGetBufferSubData(GL_SHADER_STORAGE_BUFFER, 0, sizeof(uint32_t) * size * CHUNK_VOLUME, blocks); // function to get data back from the gpu
-			glDeleteBuffers(1, &_chunksBuf);
+			
+			glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 0, 0);
 
+			glDeleteBuffers(1, &_chunksBuf);
 			glDeleteBuffers(1, &_positionsBuf);
 
 			i = 0;
